@@ -9,7 +9,7 @@ AST_FUNCTION_TYPES = Union[ast.FunctionDef, ast.AsyncFunctionDef]
 
 class FunctionType(Enum):
     """
-    Enum to represent Python's function types.
+    Represent Python's function types.
 
     Note: while Python differentiates between a function and a method, for the purposes of this
     tool, both will be referred to as functions outside of any class-specific context. This also
@@ -23,14 +23,14 @@ class FunctionType(Enum):
 
 
 class ClassDecoratorType(Enum):
-    """Enum to represent Python's built-in class method decorators."""
+    """Represent Python's built-in class method decorators."""
 
     CLASSMETHOD = auto()
     STATICMETHOD = auto()
 
 
 class Argument:
-    """An object for representing a function argument & its location in the source code."""
+    """Represent a function argument & its metadata."""
 
     def __init__(self, argname: str):
         self.argname = argname
@@ -56,7 +56,7 @@ class Argument:
 
 class Function:
     """
-    An object for representing a function and its relevant attributes.
+    Represent a function and its relevant metadata.
 
     Note: while Python differentiates between a function and a method, for the purposes of this
     tool, both will be referred to as functions outside of any class-specific context. This also
@@ -167,7 +167,7 @@ class Function:
             return None
 
 
-class Visitor(ast.NodeVisitor):
+class FunctionVisitor(ast.NodeVisitor):
     """An ast.NodeVisitor instance for walking the AST and describing all contained functions."""
 
     def __init__(self):
@@ -202,11 +202,3 @@ class Visitor(ast.NodeVisitor):
         # Use ast.NodeVisitor.generic_visit to punt class method processing to the other function
         # visitors
         self.generic_visit(node)
-
-
-with open("test.py", "r") as f:
-    tree = ast.parse(f.read())
-
-top_level = Visitor()
-top_level.visit(tree)
-# [print(str(fun)) for fun in top_level.definitions]

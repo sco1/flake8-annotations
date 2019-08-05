@@ -7,9 +7,6 @@ __pycache__/
 .ipynb_checkpoints
 *.ipynb
 
-# Scratchpad
-test.py
-
 # Environments
 .env
 .venv
@@ -28,3 +25,7 @@ venv.bak/
 
 # logs
 *.log
+
+# Scratchpad (to be deleted later)
+test.py
+test_output.txt
