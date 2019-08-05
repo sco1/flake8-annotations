@@ -25,3 +25,6 @@ venv.bak/
 
 # vscode
 .vscode
+
+# logs
+*.log

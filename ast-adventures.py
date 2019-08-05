@@ -181,6 +181,7 @@ class Visitor(ast.NodeVisitor):
         statements
         """
         self.definitions.append(Function.from_function_node(node))
+        self.generic_visit(node)  # Walk through any nested functions
 
     def visit_AsyncFunctionDef(self, node: ast.AsyncFunctionDef) -> None:
         """
@@ -190,6 +191,7 @@ class Visitor(ast.NodeVisitor):
         statements
         """
         self.definitions.append(Function.from_function_node(node))
+        self.generic_visit(node)  # Walk through any nested functions
 
     def visit_ClassDef(self, node: ast.ClassDef) -> None:
         """
@@ -197,17 +199,9 @@ class Visitor(ast.NodeVisitor):
 
         Class methods will all be contained in the body of the node
         """
-        method_nodes = [
-            child_node
-            for child_node in node.body
-            if isinstance(child_node, (ast.FunctionDef, ast.AsyncFunctionDef))
-        ]
-        self.definitions.extend(
-            [
-                Function.from_function_node(method_node, is_class_method=True)
-                for method_node in method_nodes
-            ]
-        )
+        # Use ast.NodeVisitor.generic_visit to punt class method processing to the other function
+        # visitors
+        self.generic_visit(node)
 
 
 with open("test.py", "r") as f:
