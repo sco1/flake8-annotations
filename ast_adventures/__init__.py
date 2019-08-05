@@ -1,6 +1,7 @@
 import ast
-from enum import Enum, auto
-from typing import Union
+from typing import Dict, Union
+
+from ast_adventures.enums import AnnotationType, ClassDecoratorType, FunctionType
 
 
 __version__ = "2019.0"
@@ -9,35 +10,14 @@ AST_ARG_TYPES = ("args", "vararg", "kwonlyargs", "kwarg")
 AST_FUNCTION_TYPES = Union[ast.FunctionDef, ast.AsyncFunctionDef]
 
 
-class FunctionType(Enum):
-    """
-    Represent Python's function types.
-
-    Note: while Python differentiates between a function and a method, for the purposes of this
-    tool, both will be referred to as functions outside of any class-specific context. This also
-    aligns with ast's naming convention.
-    """
-
-    PUBLIC = auto()
-    PROTECTED = auto()  # Leading single underscore
-    PRIVATE = auto()  # Leading double underscore
-    MAGIC = auto()  # Leading & trailing double underscore
-
-
-class ClassDecoratorType(Enum):
-    """Represent Python's built-in class method decorators."""
-
-    CLASSMETHOD = auto()
-    STATICMETHOD = auto()
-
-
 class Argument:
     """Represent a function argument & its metadata."""
 
-    def __init__(self, argname: str, line: int, column: int):
+    def __init__(self, argname: str, line: int, column: int, annotation_type: AnnotationType):
         self.argname = argname
         self.line = line
         self.column = column
+        self.annotation_type = annotation_type
         self.has_type_annotation = None
 
     def __repr__(self):
@@ -49,13 +29,15 @@ class Argument:
             f"{self.argname}\n"
             f"         Line Number: {self.line}\n"
             f"       Column Number: {self.column}\n"
+            f"     Annotation type: {self.annotation_type}\n"
             f"Has Type Annotation?: {self.has_type_annotation}\n"
         )
 
     @classmethod
-    def from_arg_node(cls, node: ast.arguments):
+    def from_arg_node(cls, node: ast.arguments, annotation_type_name: str):
         """Create an Argument object from an ast.arguments node."""
-        new_arg = cls(node.arg, node.lineno, node.col_offset)
+        annotation_type = AnnotationType[annotation_type_name]
+        new_arg = cls(node.arg, node.lineno, node.col_offset, annotation_type)
 
         if node.annotation:
             new_arg.has_type_annotation = True
@@ -80,12 +62,14 @@ class Function:
         function_type: FunctionType = FunctionType.PUBLIC,
         is_class_method: bool = False,
         class_decorator_type: Union[ClassDecoratorType, None] = None,
+        is_return_annotated: bool = False,
     ):
         self.name = name
         self.is_class_method = is_class_method
         self.function_type = function_type
         self.class_decorator_type = class_decorator_type
-        self.args = {arg: None for arg in AST_ARG_TYPES}
+        self.args = None
+        self.is_return_annotated = is_return_annotated
 
     def __repr__(self):
         return f"{self.name}: {self.args}"
@@ -98,7 +82,16 @@ class Function:
             f"       Class method?: {self.is_class_method}\n"
             f"Class decorator type: {self.class_decorator_type}\n"
             f"                Args: {self.args}\n"
+            f"Is return annotated?: {self.is_return_annotated}\n"
         )
+
+    def is_fully_annotated(self) -> bool:
+        """Check that all of the function's inputs are type annotated."""
+        raise NotImplementedError
+
+    def get_missed_annotations(self) -> Dict:
+        """Provide a dictionary """
+        raise NotImplementedError
 
     @classmethod
     def from_function_node(cls, node: AST_FUNCTION_TYPES, **kwargs):
@@ -119,12 +112,16 @@ class Function:
         new_function = cls(node.name, **kwargs)
 
         # Iterate over arguments by type & add
+        new_function.args = []
         for arg_type in AST_ARG_TYPES:
             args = node.args.__getattribute__(arg_type)
             if args:
                 if not isinstance(args, list):
                     args = [args]
-                new_function.args[arg_type] = [Argument.from_arg_node(arg) for arg in args]
+
+                new_function.args.extend(
+                    [Argument.from_arg_node(arg, arg_type.upper()) for arg in args]
+                )
 
         return new_function
 
