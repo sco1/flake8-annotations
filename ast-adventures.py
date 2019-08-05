@@ -4,11 +4,18 @@ from typing import Union
 
 
 AST_ARG_TYPES = ("args", "vararg", "kwonlyargs", "kwarg")
-AST_NODE_TYPES = Union[ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef]
 AST_FUNCTION_TYPES = Union[ast.FunctionDef, ast.AsyncFunctionDef]
 
 
-class MethodType(Enum):
+class FunctionType(Enum):
+    """
+    Enum to represent Python's function types.
+
+    Note: while Python differentiates between a function and a method, for the purposes of this
+    tool, both will be referred to as functions outside of any class-specific context. This also
+    aligns with ast's naming convention.
+    """
+
     PUBLIC = auto()
     PROTECTED = auto()  # Leading single underscore
     PRIVATE = auto()  # Leading double underscore
@@ -16,11 +23,15 @@ class MethodType(Enum):
 
 
 class ClassDecoratorType(Enum):
+    """Enum to represent Python's built-in class method decorators."""
+
     CLASSMETHOD = auto()
     STATICMETHOD = auto()
 
 
 class Argument:
+    """An object for representing a function argument & its location in the source code."""
+
     def __init__(self, argname: str):
         self.argname = argname
         self.has_type_annotation = None
@@ -32,6 +43,7 @@ class Argument:
 
     @classmethod
     def from_arg_node(cls, node: ast.arguments):
+        """Create an Argument object from an ast.arguments node."""
         new_arg = cls(node.arg)
 
         if node.annotation:
@@ -43,10 +55,18 @@ class Argument:
 
 
 class Function:
+    """
+    An object for representing a function and its relevant attributes.
+
+    Note: while Python differentiates between a function and a method, for the purposes of this
+    tool, both will be referred to as functions outside of any class-specific context. This also
+    aligns with ast's naming convention.
+    """
+
     def __init__(
         self,
         name: str,
-        method_type: MethodType = MethodType.PUBLIC,
+        function_type: FunctionType = FunctionType.PUBLIC,
         is_nested: bool = False,
         is_class_method: bool = False,
         class_decorator_type: Union[ClassDecoratorType, None] = None,
@@ -54,7 +74,7 @@ class Function:
         self.name = name
         self.is_nested = is_nested
         self.is_class_method = is_class_method
-        self.method_type = method_type
+        self.function_type = function_type
         self.class_decorator_type = class_decorator_type
         self.args = {arg: None for arg in AST_ARG_TYPES}
 
@@ -65,7 +85,7 @@ class Function:
         # Debugging print
         return (
             f"{self.name}\n"
-            f"         Method type: {self.method_type}\n"
+            f"       Function type: {self.function_type}\n"
             f"          Is nested?: {self.is_nested}\n"
             f"       Class method?: {self.is_class_method}\n"
             f"Class decorator type: {self.class_decorator_type}\n"
@@ -73,9 +93,18 @@ class Function:
         )
 
     @classmethod
-    def from_function_node(cls, node: AST_NODE_TYPES, **kwargs):
+    def from_function_node(cls, node: AST_FUNCTION_TYPES, **kwargs):
+        """
+        Create an Function object from ast.FunctionDef or ast.AsyncFunctionDef nodes.
+
+        With exceptions, input kwargs are passed straight through to Function's __init__. The
+        following kwargs will be overridden:
+          * function_type
+          * class_decorator_type
+          * args
+        """
         # Extract function types from function name
-        kwargs["method_type"] = cls.get_function_type(node.name)
+        kwargs["function_type"] = cls.get_function_type(node.name)
         if kwargs.get("is_class_method", False):
             kwargs["class_decorator_type"] = cls.get_class_decorator_type(node)
 
@@ -92,18 +121,37 @@ class Function:
         return new_function
 
     @staticmethod
-    def get_function_type(function_name: str) -> MethodType:
+    def get_function_type(function_name: str) -> FunctionType:
+        """
+        Determine the function's FunctionType from its name.
+
+        MethodType is determined by the following priority:
+          1. Magic: function name prefixed & suffixed by "__"
+          2. Private: function name prefixed by "__"
+          3. Protected: function name prefixed by "_"
+          4. Public: everything else
+        """
         if function_name.startswith("__") and function_name.endswith("__"):
-            return MethodType.MAGIC
+            return FunctionType.MAGIC
         elif function_name.startswith("__"):
-            return MethodType.PRIVATE
+            return FunctionType.PRIVATE
         elif function_name.startswith("_"):
-            return MethodType.PROTECTED
+            return FunctionType.PROTECTED
         else:
-            return MethodType.PUBLIC
+            return FunctionType.PUBLIC
 
     @staticmethod
-    def get_class_decorator_type(function_node: AST_NODE_TYPES) -> Union[ClassDecoratorType, None]:
+    def get_class_decorator_type(
+        function_node: AST_FUNCTION_TYPES
+    ) -> Union[ClassDecoratorType, None]:
+        """
+        Get the class method's decorator type from its function node.
+
+        For the purposes of this tool, only @classmethod and @staticmethod decorators are
+        identified; all other decorators are ignored
+
+        If @classmethod or @staticmethod decorators are not present, this function will return None
+        """
         decorators = []
         for decorator in function_node.decorator_list:
             # @classmethod and @staticmethod will show up as ast.Name objects, where callable
@@ -120,16 +168,35 @@ class Function:
 
 
 class Visitor(ast.NodeVisitor):
+    """An ast.NodeVisitor instance for walking the AST and describing all contained functions."""
+
     def __init__(self):
         self.definitions = []
 
     def visit_FunctionDef(self, node: ast.FunctionDef) -> None:
+        """
+        Handle a visit to a function definition.
+
+        Note: This will not contain class methods, these are included in the body of ClassDef
+        statements
+        """
         self.definitions.append(Function.from_function_node(node))
 
     def visit_AsyncFunctionDef(self, node: ast.AsyncFunctionDef) -> None:
+        """
+        Handle a visit to a coroutine definition.
+
+        Note: This will not contain class methods, these are included in the body of ClassDef
+        statements
+        """
         self.definitions.append(Function.from_function_node(node))
 
     def visit_ClassDef(self, node: ast.ClassDef) -> None:
+        """
+        Handle a visit to a class definition.
+
+        Class methods will all be contained in the body of the node
+        """
         method_nodes = [
             child_node
             for child_node in node.body
