@@ -14,7 +14,7 @@ setup(
     url="https://github.com/python-discord/ast-adventures",
     packages=find_packages(),
     entry_points={
-        "flake8_extension": [
+        "flake8.extension": [
             'TYP = ast_adventures.checker:TypeHintChecker',
         ],
     },

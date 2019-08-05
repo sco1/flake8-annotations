@@ -3,6 +3,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Packaging
+*.egg-info/
+
 # Jupyter
 .ipynb_checkpoints
 *.ipynb
