@@ -4,11 +4,12 @@ from typing import Union
 
 
 AST_ARG_TYPES = ("args", "vararg", "kwonlyargs", "kwarg")
-AST_FUNCTION_TYPES = Union[ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef]
+AST_NODE_TYPES = Union[ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef]
+AST_FUNCTION_TYPES = Union[ast.FunctionDef, ast.AsyncFunctionDef]
 
 
 class MethodType(Enum):
-    REGULAR = auto()
+    PUBLIC = auto()
     PROTECTED = auto()  # Leading single underscore
     PRIVATE = auto()  # Leading double underscore
     MAGIC = auto()  # Leading & trailing double underscore
@@ -47,13 +48,13 @@ class Function:
         self,
         name: str,
         is_method: bool = False,
-        method_type: MethodType = MethodType.REGULAR,
+        method_type: MethodType = MethodType.PUBLIC,
         class_method_type: Union[ClassMethodType, None] = None,
         is_nested: bool = False,
     ):
         self.name = name
         self.args = {arg: None for arg in AST_ARG_TYPES}
-        self.is_method = is_method
+        self.is_class_method = is_method
         self.method_type = method_type
         self.class_method_type = class_method_type
         self.is_nested = is_nested
@@ -62,11 +63,17 @@ class Function:
         return f"{self.name}: {self.args}"
 
     @classmethod
-    def from_function_node(cls, node: AST_FUNCTION_TYPES, **kwargs):
+    def from_function_node(cls, node: AST_NODE_TYPES, **kwargs):
         print(f"{ast.dump(node)}\n")  # Debug
+
+        # Extract function types from function name
+        kwargs["method_type"] = cls.get_function_types(node.name)
+        if kwargs.get("is_class_method", False):
+            kwargs["class_method_type"] = cls.get_class_method_type(node)
+
         new_function = cls(node.name, **kwargs)
 
-        # Iterate over arguments by type
+        # Iterate over arguments by type & add
         for arg_type in AST_ARG_TYPES:
             args = node.args.__getattribute__(arg_type)
             if args:
@@ -75,6 +82,14 @@ class Function:
                 new_function.args[arg_type] = [Argument.from_arg_node(arg) for arg in args]
 
         return new_function
+
+    @staticmethod
+    def get_function_type(function_name: str) -> MethodType:
+        raise NotImplementedError
+
+    @staticmethod
+    def get_class_method_type(function_name: AST_NODE_TYPES) -> MethodType:
+        raise NotImplementedError
 
 
 class Visitor(ast.NodeVisitor):
