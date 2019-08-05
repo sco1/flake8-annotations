@@ -1,0 +1,25 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Scratchpad
+.ipynb_checkpoints
+.ipynb
+test.py
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# jetbrains
+.idea/
+.DS_Store
+
+# vscode
+.vscode

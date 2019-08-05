@@ -1,0 +1,24 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+"flake8" = "*"
+
+[dev-packages]
+"pydocstyle" = "<4.0"
+"flake8-bugbear" = "*"
+"flake8-import-order" = "*"
+"flake8-tidy-imports" = "*"
+"flake8-todo" = "*"
+"flake8-string-format" = "*"
+pre-commit = "*"
+flake8-docstrings = "*"
+
+[requires]
+python_version = "3.7"
+
+[scripts]
+lint = "flake8"
+precommit = "pre-commit install"
