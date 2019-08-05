@@ -59,12 +59,16 @@ class Function:
     def __init__(
         self,
         name: str,
+        line: int,
+        column: int,
         function_type: FunctionType = FunctionType.PUBLIC,
         is_class_method: bool = False,
         class_decorator_type: Union[ClassDecoratorType, None] = None,
         is_return_annotated: bool = False,
     ):
         self.name = name
+        self.line = line
+        self.column = column
         self.is_class_method = is_class_method
         self.function_type = function_type
         self.class_decorator_type = class_decorator_type
@@ -79,6 +83,8 @@ class Function:
         return (
             f"{self.name}\n"
             f"       Function type: {self.function_type}\n"
+            f"         Line Number: {self.line}\n"
+            f"       Column Number: {self.column}\n"
             f"       Class method?: {self.is_class_method}\n"
             f"Class decorator type: {self.class_decorator_type}\n"
             f"                Args: {self.args}\n"
@@ -109,7 +115,7 @@ class Function:
         if kwargs.get("is_class_method", False):
             kwargs["class_decorator_type"] = cls.get_class_decorator_type(node)
 
-        new_function = cls(node.name, **kwargs)
+        new_function = cls(node.name, node.lineno, node.col_offset, **kwargs)
 
         # Iterate over arguments by type & add
         new_function.args = []
