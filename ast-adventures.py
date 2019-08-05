@@ -104,7 +104,13 @@ class Function:
 
     @staticmethod
     def get_class_decorator_type(function_node: AST_NODE_TYPES) -> Union[ClassDecoratorType, None]:
-        decorators = [decorator.id for decorator in function_node.decorator_list]
+        decorators = []
+        for decorator in function_node.decorator_list:
+            # @classmethod and @staticmethod will show up as ast.Name objects, where callable
+            # decorators will show up as ast.Call, which we can ignore
+            if isinstance(decorator, ast.Name):
+                decorators.append(decorator.id)
+
         if "classmethod" in decorators:
             return ClassDecoratorType.CLASSMETHOD
         elif "staticmethod" in decorators:
@@ -142,4 +148,4 @@ with open("test.py", "r") as f:
 
 top_level = Visitor()
 top_level.visit(tree)
-[print(str(fun)) for fun in top_level.definitions]
+# [print(str(fun)) for fun in top_level.definitions]
