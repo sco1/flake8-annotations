@@ -34,11 +34,11 @@ class ClassDecoratorType(Enum):
 class Argument:
     """Represent a function argument & its metadata."""
 
-    def __init__(self, argname: str):
+    def __init__(self, argname: str, line: int, column: int):
         self.argname = argname
+        self.line = line
+        self.column = column
         self.has_type_annotation = None
-        self.line = None
-        self.column = None
 
     def __repr__(self):
         return f"{self.argname}: {self.has_type_annotation}"
@@ -47,15 +47,15 @@ class Argument:
         # Debugging print
         return (
             f"{self.argname}\n"
-            f"Has Type Annotation?: {self.has_type_annotation}\n"
             f"         Line Number: {self.line}\n"
             f"       Column Number: {self.column}\n"
+            f"Has Type Annotation?: {self.has_type_annotation}\n"
         )
 
     @classmethod
     def from_arg_node(cls, node: ast.arguments):
         """Create an Argument object from an ast.arguments node."""
-        new_arg = cls(node.arg)
+        new_arg = cls(node.arg, node.lineno, node.col_offset)
 
         if node.annotation:
             new_arg.has_type_annotation = True
