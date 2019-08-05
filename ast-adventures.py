@@ -15,8 +15,7 @@ class MethodType(Enum):
     MAGIC = auto()  # Leading & trailing double underscore
 
 
-class ClassMethodType(Enum):
-    REGULAR = auto()
+class ClassDecoratorType(Enum):
     CLASSMETHOD = auto()
     STATICMETHOD = auto()
 
@@ -50,13 +49,13 @@ class Function:
         method_type: MethodType = MethodType.PUBLIC,
         is_nested: bool = False,
         is_class_method: bool = False,
-        class_method_type: Union[ClassMethodType, None] = None,
+        class_decorator_type: Union[ClassDecoratorType, None] = None,
     ):
         self.name = name
         self.is_nested = is_nested
         self.is_class_method = is_class_method
         self.method_type = method_type
-        self.class_method_type = class_method_type
+        self.class_decorator_type = class_decorator_type
         self.args = {arg: None for arg in AST_ARG_TYPES}
 
     def __repr__(self):
@@ -66,11 +65,11 @@ class Function:
         # Debugging print
         return (
             f"{self.name}\n"
-            f"      Method type: {self.method_type}\n"
-            f"       Is nested?: {self.is_nested}\n"
-            f"    Class method?: {self.is_class_method}\n"
-            f"Class method type: {self.class_method_type}\n"
-            f"             Args: {self.args}\n"
+            f"         Method type: {self.method_type}\n"
+            f"          Is nested?: {self.is_nested}\n"
+            f"       Class method?: {self.is_class_method}\n"
+            f"Class decorator type: {self.class_decorator_type}\n"
+            f"                Args: {self.args}\n"
         )
 
     @classmethod
@@ -78,7 +77,7 @@ class Function:
         # Extract function types from function name
         kwargs["method_type"] = cls.get_function_type(node.name)
         if kwargs.get("is_class_method", False):
-            kwargs["class_method_type"] = cls.get_class_method_type(node)
+            kwargs["class_decorator_type"] = cls.get_class_decorator_type(node)
 
         new_function = cls(node.name, **kwargs)
 
@@ -104,14 +103,14 @@ class Function:
             return MethodType.PUBLIC
 
     @staticmethod
-    def get_class_method_type(function_node: AST_NODE_TYPES) -> ClassMethodType:
+    def get_class_decorator_type(function_node: AST_NODE_TYPES) -> Union[ClassDecoratorType, None]:
         decorators = [decorator.id for decorator in function_node.decorator_list]
         if "classmethod" in decorators:
-            return ClassMethodType.CLASSMETHOD
+            return ClassDecoratorType.CLASSMETHOD
         elif "staticmethod" in decorators:
-            return ClassMethodType.STATICMETHOD
+            return ClassDecoratorType.STATICMETHOD
         else:
-            return ClassMethodType.REGULAR
+            return None
 
 
 class Visitor(ast.NodeVisitor):
