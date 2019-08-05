@@ -21,6 +21,7 @@ class Argument:
         self.has_type_annotation = None
 
     def __repr__(self):
+        # Debugging repr
         return f"{self.argname}: {self.has_type_annotation}"
 
     def __str__(self):
@@ -76,6 +77,7 @@ class Function:
         self.is_return_annotated = is_return_annotated
 
     def __repr__(self):
+        # Debugging repr
         return f"{self.name}: {self.args}"
 
     def __str__(self):
@@ -128,6 +130,10 @@ class Function:
                 new_function.args.extend(
                     [Argument.from_arg_node(arg, arg_type.upper()) for arg in args]
                 )
+
+        # Check for existence of a return type annotation
+        if node.returns:
+            new_function.is_return_annotated = True
 
         return new_function
 
