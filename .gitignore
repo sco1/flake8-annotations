@@ -3,9 +3,11 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-# Scratchpad
+# Jupyter
 .ipynb_checkpoints
-.ipynb
+*.ipynb
+
+# Scratchpad
 test.py
 
 # Environments
