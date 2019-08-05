@@ -1,5 +1,5 @@
 import ast
-from typing import Dict, Union
+from typing import List, Union
 
 from ast_adventures.enums import AnnotationType, ClassDecoratorType, FunctionType
 
@@ -95,8 +95,8 @@ class Function:
         """Check that all of the function's inputs are type annotated."""
         raise NotImplementedError
 
-    def get_missed_annotations(self) -> Dict:
-        """Provide a dictionary """
+    def get_missed_annotations(self) -> List:
+        """Provide a list of arguments with missing type annotations."""
         raise NotImplementedError
 
     @classmethod
