@@ -43,6 +43,15 @@ class Argument:
     def __repr__(self):
         return f"{self.argname}: {self.has_type_annotation}"
 
+    def __str__(self):
+        # Debugging print
+        return (
+            f"{self.argname}\n"
+            f"Has Type Annotation?: {self.has_type_annotation}\n"
+            f"         Line Number: {self.line}\n"
+            f"       Column Number: {self.column}\n"
+        )
+
     @classmethod
     def from_arg_node(cls, node: ast.arguments):
         """Create an Argument object from an ast.arguments node."""
@@ -69,12 +78,10 @@ class Function:
         self,
         name: str,
         function_type: FunctionType = FunctionType.PUBLIC,
-        is_nested: bool = False,
         is_class_method: bool = False,
         class_decorator_type: Union[ClassDecoratorType, None] = None,
     ):
         self.name = name
-        self.is_nested = is_nested
         self.is_class_method = is_class_method
         self.function_type = function_type
         self.class_decorator_type = class_decorator_type
@@ -88,7 +95,6 @@ class Function:
         return (
             f"{self.name}\n"
             f"       Function type: {self.function_type}\n"
-            f"          Is nested?: {self.is_nested}\n"
             f"       Class method?: {self.is_class_method}\n"
             f"Class decorator type: {self.class_decorator_type}\n"
             f"                Args: {self.args}\n"
