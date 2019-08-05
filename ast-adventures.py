@@ -47,27 +47,36 @@ class Function:
     def __init__(
         self,
         name: str,
-        is_method: bool = False,
         method_type: MethodType = MethodType.PUBLIC,
-        class_method_type: Union[ClassMethodType, None] = None,
         is_nested: bool = False,
+        is_class_method: bool = False,
+        class_method_type: Union[ClassMethodType, None] = None,
     ):
         self.name = name
-        self.args = {arg: None for arg in AST_ARG_TYPES}
-        self.is_class_method = is_method
+        self.is_nested = is_nested
+        self.is_class_method = is_class_method
         self.method_type = method_type
         self.class_method_type = class_method_type
-        self.is_nested = is_nested
+        self.args = {arg: None for arg in AST_ARG_TYPES}
 
     def __repr__(self):
         return f"{self.name}: {self.args}"
 
+    def __str__(self):
+        # Debugging print
+        return (
+            f"{self.name}\n"
+            f"      Method type: {self.method_type}\n"
+            f"       Is nested?: {self.is_nested}\n"
+            f"    Class method?: {self.is_class_method}\n"
+            f"Class method type: {self.class_method_type}\n"
+            f"             Args: {self.args}\n"
+        )
+
     @classmethod
     def from_function_node(cls, node: AST_NODE_TYPES, **kwargs):
-        print(f"{ast.dump(node)}\n")  # Debug
-
         # Extract function types from function name
-        kwargs["method_type"] = cls.get_function_types(node.name)
+        kwargs["method_type"] = cls.get_function_type(node.name)
         if kwargs.get("is_class_method", False):
             kwargs["class_method_type"] = cls.get_class_method_type(node)
 
@@ -85,11 +94,24 @@ class Function:
 
     @staticmethod
     def get_function_type(function_name: str) -> MethodType:
-        raise NotImplementedError
+        if function_name.startswith("__") and function_name.endswith("__"):
+            return MethodType.MAGIC
+        elif function_name.startswith("__"):
+            return MethodType.PRIVATE
+        elif function_name.startswith("_"):
+            return MethodType.PROTECTED
+        else:
+            return MethodType.PUBLIC
 
     @staticmethod
-    def get_class_method_type(function_name: AST_NODE_TYPES) -> MethodType:
-        raise NotImplementedError
+    def get_class_method_type(function_node: AST_NODE_TYPES) -> ClassMethodType:
+        decorators = [decorator.id for decorator in function_node.decorator_list]
+        if "classmethod" in decorators:
+            return ClassMethodType.CLASSMETHOD
+        elif "staticmethod" in decorators:
+            return ClassMethodType.STATICMETHOD
+        else:
+            return ClassMethodType.REGULAR
 
 
 class Visitor(ast.NodeVisitor):
@@ -110,7 +132,7 @@ class Visitor(ast.NodeVisitor):
         ]
         self.definitions.extend(
             [
-                Function.from_function_node(method_node, is_method=True)
+                Function.from_function_node(method_node, is_class_method=True)
                 for method_node in method_nodes
             ]
         )
@@ -121,4 +143,4 @@ with open("test.py", "r") as f:
 
 top_level = Visitor()
 top_level.visit(tree)
-print(top_level.definitions)
+[print(str(fun)) for fun in top_level.definitions]
