@@ -18,7 +18,7 @@ class Argument:
         self.line = line
         self.column = column
         self.annotation_type = annotation_type
-        self.has_type_annotation = None
+        self.has_type_annotation = False
 
     def __repr__(self):
         # Debugging repr
@@ -91,15 +91,21 @@ class Function:
             f"Class decorator type: {self.class_decorator_type}\n"
             f"                Args: {self.args}\n"
             f"Is return annotated?: {self.is_return_annotated}\n"
+            f" Is fully annotated?: {self.is_fully_annotated()}\n"
+            f" Missing Annotations: {self.get_missed_annotations()}\n"
         )
 
     def is_fully_annotated(self) -> bool:
-        """Check that all of the function's inputs are type annotated."""
-        raise NotImplementedError
+        """
+        Check that all of the function's inputs are type annotated.
+        
+        Note that self.args will always include an Argument object for return
+        """
+        return all(arg.has_type_annotation for arg in self.args)
 
     def get_missed_annotations(self) -> List:
         """Provide a list of arguments with missing type annotations."""
-        raise NotImplementedError
+        return [arg for arg in self.args if not arg.has_type_annotation]
 
     @classmethod
     def from_function_node(cls, node: AST_FUNCTION_TYPES, **kwargs):
@@ -131,9 +137,13 @@ class Function:
                     [Argument.from_arg_node(arg, arg_type.upper()) for arg in args]
                 )
 
-        # Check for existence of a return type annotation
+        # Create an Argument object for the return hint
+        return_arg = Argument("return", node.lineno, node.col_offset, AnnotationType.RETURN)
         if node.returns:
+            return_arg.has_type_annotation = True
             new_function.is_return_annotated = True
+
+        new_function.args.append(return_arg)
 
         return new_function
 
