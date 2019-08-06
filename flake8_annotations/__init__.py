@@ -20,20 +20,6 @@ class Argument:
         self.annotation_type = annotation_type
         self.has_type_annotation = False
 
-    def __repr__(self):
-        # Debugging repr
-        return f"{self.argname}: {self.has_type_annotation}"
-
-    def __str__(self):
-        # Debugging print
-        return (
-            f"{self.argname}\n"
-            f"         Line Number: {self.lineno}\n"
-            f"       Column Number: {self.col_offset}\n"
-            f"     Annotation type: {self.annotation_type}\n"
-            f"Has Type Annotation?: {self.has_type_annotation}\n"
-        )
-
     @classmethod
     def from_arg_node(cls, node: ast.arguments, annotation_type_name: str):
         """Create an Argument object from an ast.arguments node."""
@@ -46,6 +32,16 @@ class Argument:
             new_arg.has_type_annotation = False
 
         return new_arg
+
+    def _debug_summary(self) -> str:
+        """Generate a table of Argument's attributes for debugging purposes"""
+        return (
+            f"{self.argname}\n"
+            f"         Line Number: {self.lineno}\n"
+            f"       Column Number: {self.col_offset}\n"
+            f"     Annotation type: {self.annotation_type}\n"
+            f"Has Type Annotation?: {self.has_type_annotation}\n"
+        )
 
 
 class Function:
@@ -75,25 +71,6 @@ class Function:
         self.class_decorator_type = class_decorator_type
         self.args = None
         self.is_return_annotated = is_return_annotated
-
-    def __repr__(self):
-        # Debugging repr
-        return f"{self.name}: {self.args}"
-
-    def __str__(self):
-        # Debugging print
-        return (
-            f"{self.name}\n"
-            f"       Function type: {self.function_type}\n"
-            f"         Line Number: {self.lineno}\n"
-            f"       Column Number: {self.col_offset}\n"
-            f"       Class method?: {self.is_class_method}\n"
-            f"Class decorator type: {self.class_decorator_type}\n"
-            f"                Args: {self.args}\n"
-            f"Is return annotated?: {self.is_return_annotated}\n"
-            f" Is fully annotated?: {self.is_fully_annotated()}\n"
-            f" Missing Annotations: {self.get_missed_annotations()}\n"
-        )
 
     def is_fully_annotated(self) -> bool:
         """
@@ -192,6 +169,21 @@ class Function:
             return ClassDecoratorType.STATICMETHOD
         else:
             return None
+
+    def _debug_summary(self) -> str:
+        """Generate a table of Function's attributes for debugging purposes"""
+        return (
+            f"{self.name}\n"
+            f"       Function type: {self.function_type}\n"
+            f"         Line Number: {self.lineno}\n"
+            f"       Column Number: {self.col_offset}\n"
+            f"       Class method?: {self.is_class_method}\n"
+            f"Class decorator type: {self.class_decorator_type}\n"
+            f"                Args: {self.args}\n"
+            f"Is return annotated?: {self.is_return_annotated}\n"
+            f" Is fully annotated?: {self.is_fully_annotated()}\n"
+            f" Missing Annotations: {self.get_missed_annotations()}\n"
+        )
 
 
 class FunctionVisitor(ast.NodeVisitor):

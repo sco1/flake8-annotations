@@ -23,8 +23,8 @@ class TypeHintChecker:
         visitor = FunctionVisitor()
         visitor.visit(self.tree)
 
-        # Iterate over the arguments with missing type hints, by function, and 
-        # yield linting errors to flake8
+        # Iterate over the arguments with missing type hints, by function, and yield linting errors
+        # to flake8
         #
         # Flake8 handles all noqa and error code ignore configurations after the error is yielded
         for function in visitor.function_definitions:
