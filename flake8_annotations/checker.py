@@ -8,7 +8,7 @@ from flake8_annotations import Argument, Function, FunctionVisitor, __version__,
 class TypeHintChecker:
     """Top level checker for linting the presence of type hints in function definitions."""
 
-    name = "type-hints"
+    name = "function-type-annotations"
     version = __version__
 
     def __init__(self, tree, lines: List[str]):
@@ -33,14 +33,7 @@ class TypeHintChecker:
                 if pycodestyle.noqa(self.lines[arg.lineno - 1]):  # lineno is 1-indexed
                     continue
 
-                error = classify_error(function, arg)
-                if self.should_warn(error):
-                    yield error.to_flake8()
-
-    @lru_cache()
-    def should_warn(self, error_id: str) -> bool:
-        """Determine whether a linting error should be yielded to flake8."""
-        return True  # Hardcode until configuration is supported
+                yield classify_error(function, arg).to_flake8()
 
 
 def classify_error(function: Function, arg: Argument) -> error_codes.Error:
