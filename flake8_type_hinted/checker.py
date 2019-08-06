@@ -1,3 +1,4 @@
+from functools import lru_cache
 from typing import List
 
 import pycodestyle
@@ -15,7 +16,12 @@ class TypeHintChecker:
         self.lines = lines
 
     def run(self):
-        """This method is called by flake8 to perform the actual check(s) on the source code."""
+        """
+        This method is called by flake8 to perform the actual check(s) on the source code.
+        
+        This should yield tuples with the following information:
+          (line number, column number, message, checker type)
+        """
         visitor = FunctionVisitor()
         visitor.visit(self.tree)
 
@@ -31,7 +37,8 @@ class TypeHintChecker:
                 if self.should_warn(error):
                     yield error.to_flake8()
 
-    def should_warn(self, error: error_codes.Error) -> bool:
+    @lru_cache()
+    def should_warn(self, error_id: str) -> bool:
         """Determine whether a linting error should be yielded to flake8."""
         return True  # Hardcode until configuration is supported
 
@@ -49,34 +56,34 @@ def classify_error(function: Function, arg: Argument) -> error_codes.Error:
         # Decorated class methods (@classmethod, @staticmethod) have a higher priority than the rest
         if function.is_class_method:
             if function.class_decorator_type == enums.ClassDecoratorType.CLASSMETHOD:
-                return error_codes.TYP206().from_argument(arg)
+                return error_codes.TYP206.from_argument(arg)
             elif function.class_decorator_type == enums.ClassDecoratorType.STATICMETHOD:
-                return error_codes.TYP205().from_argument(arg)
+                return error_codes.TYP205.from_argument(arg)
 
         if function.function_type == enums.FunctionType.MAGIC:
-            return error_codes.TYP204().from_argument(arg)
+            return error_codes.TYP204.from_argument(arg)
         elif function.function_type == enums.FunctionType.PRIVATE:
-            return error_codes.TYP203().from_argument(arg)
+            return error_codes.TYP203.from_argument(arg)
         elif function.function_type == enums.FunctionType.PROTECTED:
-            return error_codes.TYP202().from_argument(arg)
+            return error_codes.TYP202.from_argument(arg)
         else:
-            return error_codes.TYP201().from_argument(arg)
+            return error_codes.TYP201.from_argument(arg)
 
     # Check for regular class methods and @classmethod, @staticmethod is deferred to final check
     if function.is_class_method:
         # The first function argument here would be an instance of self or class
         if arg == function.args[0]:
             if function.class_decorator_type == enums.ClassDecoratorType.CLASSMETHOD:
-                return error_codes.TYP102().from_argument(arg)
+                return error_codes.TYP102.from_argument(arg)
             elif function.class_decorator_type != enums.ClassDecoratorType.STATICMETHOD:
                 # Regular class method
-                return error_codes.TYP101().from_argument(arg)
+                return error_codes.TYP101.from_argument(arg)
 
     # Check for remaining codes
     if arg.annotation_type == enums.AnnotationType.KWARG:
-        return error_codes.TYP003().from_argument(arg)
+        return error_codes.TYP003.from_argument(arg)
     elif arg.annotation_type == enums.AnnotationType.VARARG:
-        return error_codes.TYP002().from_argument(arg)
+        return error_codes.TYP002.from_argument(arg)
     else:
         # Combine ARG and KWONLYARGS
-        return error_codes.TYP001().from_argument(arg)
+        return error_codes.TYP001.from_argument(arg)
