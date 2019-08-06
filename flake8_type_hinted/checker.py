@@ -1,8 +1,7 @@
 from typing import List
 
 import pycodestyle
-from flake8_type_hinted import Argument, Function, FunctionVisitor, __version__, error_codes
-from flake8_type_hinted.enums import AnnotationType, ClassDecoratorType, FunctionType
+from flake8_type_hinted import Argument, Function, FunctionVisitor, __version__, error_codes, enums
 
 
 class TypeHintChecker:
@@ -46,19 +45,19 @@ def classify_error(function: Function, arg: Argument) -> error_codes.Error:
     """
     # Check for return type
     # All return "arguments" have an explicitly defined name "return"
-    if arg.name == "return":
+    if arg.argname == "return":
         # Decorated class methods (@classmethod, @staticmethod) have a higher priority than the rest
         if function.is_class_method:
-            if function.class_decorator_type == ClassDecoratorType.CLASSMETHOD:
+            if function.class_decorator_type == enums.ClassDecoratorType.CLASSMETHOD:
                 return error_codes.TYP206().from_argument(arg)
-            elif function.class_decorator_type == ClassDecoratorType.STATICMETHOD:
+            elif function.class_decorator_type == enums.ClassDecoratorType.STATICMETHOD:
                 return error_codes.TYP205().from_argument(arg)
 
-        if function.function_type == FunctionType.MAGIC:
+        if function.function_type == enums.FunctionType.MAGIC:
             return error_codes.TYP204().from_argument(arg)
-        elif function.function_type == FunctionType.PRIVATE:
+        elif function.function_type == enums.FunctionType.PRIVATE:
             return error_codes.TYP203().from_argument(arg)
-        elif function.function_type == FunctionType.PROTECTED:
+        elif function.function_type == enums.FunctionType.PROTECTED:
             return error_codes.TYP202().from_argument(arg)
         else:
             return error_codes.TYP201().from_argument(arg)
@@ -67,16 +66,16 @@ def classify_error(function: Function, arg: Argument) -> error_codes.Error:
     if function.is_class_method:
         # The first function argument here would be an instance of self or class
         if arg == function.args[0]:
-            if function.class_decorator_type == ClassDecoratorType.CLASSMETHOD:
+            if function.class_decorator_type == enums.ClassDecoratorType.CLASSMETHOD:
                 return error_codes.TYP102().from_argument(arg)
-            elif function.class_decorator_type != ClassDecoratorType.STATICMETHOD:
+            elif function.class_decorator_type != enums.ClassDecoratorType.STATICMETHOD:
                 # Regular class method
                 return error_codes.TYP101().from_argument(arg)
 
     # Check for remaining codes
-    if arg.annotation_type == AnnotationType.KWARG:
+    if arg.annotation_type == enums.AnnotationType.KWARG:
         return error_codes.TYP003().from_argument(arg)
-    elif arg.annotation_type == AnnotationType.VARARG:
+    elif arg.annotation_type == enums.AnnotationType.VARARG:
         return error_codes.TYP002().from_argument(arg)
     else:
         # Combine ARG and KWONLYARGS

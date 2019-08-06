@@ -1,7 +1,6 @@
 from typing import Tuple, Type
 
-from flake8_type_hinted import Argument
-from flake8_type_hinted.checker import TypeHintChecker
+from flake8_type_hinted import Argument, checker
 
 
 class Error:
@@ -29,7 +28,7 @@ class Error:
 
         * I'm not sure what the type is currently used for, and could potentially be omitted
         """
-        return (self.lineno, self.col_offset, self.message, TypeHintChecker)
+        return (self.lineno, self.col_offset, self.message, checker.TypeHintChecker)
 
 
 # Function Annotations
