@@ -1,6 +1,5 @@
 from typing import List
 
-import pycodestyle
 from flake8_annotations import Argument, Function, FunctionVisitor, __version__, enums, error_codes
 
 
@@ -24,14 +23,12 @@ class TypeHintChecker:
         visitor = FunctionVisitor()
         visitor.visit(self.tree)
 
-        # Iterate over the arguments with missing type hints, by function, and determine whether an
-        # error should be yielded to flake8
+        # Iterate over the arguments with missing type hints, by function, and 
+        # yield linting errors to flake8
+        #
+        # Flake8 handles all noqa and error code ignore configurations after the error is yielded
         for function in visitor.function_definitions:
             for arg in function.get_missed_annotations():
-                # Check for noqa first
-                if pycodestyle.noqa(self.lines[arg.lineno - 1]):  # lineno is 1-indexed
-                    continue
-
                 yield classify_error(function, arg).to_flake8()
 
 
