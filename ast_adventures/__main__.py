@@ -12,5 +12,5 @@ function_metadata.visit(tree)
 
 output_file = Path("./test_output.txt")
 with output_file.open("w") as f:
-    for fun in function_metadata.definitions:
+    for fun in function_metadata.function_definitions:
         f.write(f"{fun}\n")

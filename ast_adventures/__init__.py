@@ -198,7 +198,7 @@ class FunctionVisitor(ast.NodeVisitor):
     """An ast.NodeVisitor instance for walking the AST and describing all contained functions."""
 
     def __init__(self):
-        self.definitions = []
+        self.function_definitions = []
 
     def visit_FunctionDef(self, node: ast.FunctionDef) -> None:
         """
@@ -207,7 +207,7 @@ class FunctionVisitor(ast.NodeVisitor):
         Note: This will not contain class methods, these are included in the body of ClassDef
         statements
         """
-        self.definitions.append(Function.from_function_node(node))
+        self.function_definitions.append(Function.from_function_node(node))
         self.generic_visit(node)  # Walk through any nested functions
 
     def visit_AsyncFunctionDef(self, node: ast.AsyncFunctionDef) -> None:
@@ -217,7 +217,7 @@ class FunctionVisitor(ast.NodeVisitor):
         Note: This will not contain class methods, these are included in the body of ClassDef
         statements
         """
-        self.definitions.append(Function.from_function_node(node))
+        self.function_definitions.append(Function.from_function_node(node))
         self.generic_visit(node)  # Walk through any nested functions
 
     def visit_ClassDef(self, node: ast.ClassDef) -> None:
