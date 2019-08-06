@@ -6,8 +6,7 @@ from flake8_annotations import Argument, checker
 class Error:
     """Represent linting error codes & relevant metadata."""
 
-    def __init__(self, error_id: str, message: str):
-        self.error_id = error_id
+    def __init__(self, message: str):
         self.message = message
         self.argname: str
         self.lineno: int
@@ -31,7 +30,7 @@ class Error:
 # Function Annotations
 class TYP001(Error):
     def __init__(self, argname: str, lineno: int, col_offset: int):
-        super().__init__("TYP001", "TYP001 Missing type annotation for function argument '{}'")
+        super().__init__("TYP001 Missing type annotation for function argument '{}'")
         self.argname = argname
         self.lineno = lineno
         self.col_offset = col_offset
@@ -48,7 +47,7 @@ class TYP001(Error):
 
 class TYP002(Error):
     def __init__(self, argname: str, lineno: int, col_offset: int):
-        super().__init__("TYP002", "TYP002 Missing type annotation for *{}")
+        super().__init__("TYP002 Missing type annotation for *{}")
         self.argname = argname
         self.lineno = lineno
         self.col_offset = col_offset
@@ -65,7 +64,7 @@ class TYP002(Error):
 
 class TYP003(Error):
     def __init__(self, argname: str, lineno: int, col_offset: int):
-        super().__init__("TYP003", "TYP003 Missing type annotation for **{}")
+        super().__init__("TYP003 Missing type annotation for **{}")
         self.argname = argname
         self.lineno = lineno
         self.col_offset = col_offset
@@ -83,7 +82,7 @@ class TYP003(Error):
 # Method annotations
 class TYP101(Error):
     def __init__(self, argname: str, lineno: int, col_offset: int):
-        super().__init__("TYP101", "TYP101 Missing type annotation for self in class method")
+        super().__init__("TYP101 Missing type annotation for self in class method")
         self.argname = argname
         self.lineno = lineno
         self.col_offset = col_offset
@@ -91,7 +90,7 @@ class TYP101(Error):
 
 class TYP102(Error):
     def __init__(self, argname: str, lineno: int, col_offset: int):
-        super().__init__("TYP102", "TYP102 Missing type annotation for cls in classmethod")
+        super().__init__("TYP102 Missing type annotation for cls in classmethod")
         self.argname = argname
         self.lineno = lineno
         self.col_offset = col_offset
@@ -100,7 +99,7 @@ class TYP102(Error):
 # Return annotations
 class TYP201(Error):
     def __init__(self, argname: str, lineno: int, col_offset: int):
-        super().__init__("TYP201", "TYP201 Missing return type annotation for public function")
+        super().__init__("TYP201 Missing return type annotation for public function")
         self.argname = argname
         self.lineno = lineno
         self.col_offset = col_offset
@@ -108,7 +107,7 @@ class TYP201(Error):
 
 class TYP202(Error):
     def __init__(self, argname: str, lineno: int, col_offset: int):
-        super().__init__("TYP202", "TYP202 Missing return type annotation for protected function")
+        super().__init__("TYP202 Missing return type annotation for protected function")
         self.argname = argname
         self.lineno = lineno
         self.col_offset = col_offset
@@ -116,7 +115,7 @@ class TYP202(Error):
 
 class TYP203(Error):
     def __init__(self, argname: str, lineno: int, col_offset: int):
-        super().__init__("TYP203", "TYP203 Missing return type annotation for secret function")
+        super().__init__("TYP203 Missing return type annotation for secret function")
         self.argname = argname
         self.lineno = lineno
         self.col_offset = col_offset
@@ -124,7 +123,7 @@ class TYP203(Error):
 
 class TYP204(Error):
     def __init__(self, argname: str, lineno: int, col_offset: int):
-        super().__init__("TYP204", "TYP204 Missing return type annotation for magic function")
+        super().__init__("TYP204 Missing return type annotation for magic function")
         self.argname = argname
         self.lineno = lineno
         self.col_offset = col_offset
@@ -132,7 +131,7 @@ class TYP204(Error):
 
 class TYP205(Error):
     def __init__(self, argname: str, lineno: int, col_offset: int):
-        super().__init__("TYP205", "TYP205 Missing return type annotation for staticmethod")
+        super().__init__("TYP205 Missing return type annotation for staticmethod")
         self.argname = argname
         self.lineno = lineno
         self.col_offset = col_offset
@@ -140,7 +139,7 @@ class TYP205(Error):
 
 class TYP206(Error):
     def __init__(self, argname: str, lineno: int, col_offset: int):
-        super().__init__("TYP206", "TYP206 Missing return type annotation for classmethod")
+        super().__init__("TYP206 Missing return type annotation for classmethod")
         self.argname = argname
         self.lineno = lineno
         self.col_offset = col_offset
