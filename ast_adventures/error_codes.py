@@ -17,20 +17,101 @@ class Error:
         self.lineno = argument.lineno
         self.col_offset = argument.col_offset
 
+    def to_flake8(self) -> str:
+        """
+        Format the Error into what Flake8 is expecting.
+
+        I don't know what that is yet though...
+        """
+        raise NotImplementedError
+
 
 # Function Annotations
-TYP001 = Error("TYP001", "Missing type annotation for function argument")
-TYP002 = Error("TYP002", "Missing type annotation for *args")
-TYP003 = Error("TYP003", "Missing type annotation for **kwargs")
+class TYP001(Error):
+    def __init__(self, argname: str, lineno: int, col_offset: int):
+        super().__init__("TYP001", "Missing type annotation for function argument")
+        self.argname = argname
+        self.lineno = lineno
+        self.col_offset = col_offset
 
-# Method Annotations
-TYP101 = Error("TYP101", "Missing type annotation for self in class method")
-TYP102 = Error("TYP102", "Missing type annotation for cls in classmethod")
 
-# Return Annotations
-TYP201 = Error("TYP201", "Missing return type annotation for public function")
-TYP202 = Error("TYP202", "Missing return type annotation for protected function")
-TYP203 = Error("TYP203", "Missing return type annotation for secret function")
-TYP204 = Error("TYP204", "Missing return type annotation for magic function")
-TYP205 = Error("TYP205", "Missing return type annotation for staticmethod")
-TYP206 = Error("TYP206", "Missing return type annotation for classmethod")
+class TYP002(Error):
+    def __init__(self, argname: str, lineno: int, col_offset: int):
+        super().__init__("TYP002", "Missing type annotation for *args")
+        self.argname = argname
+        self.lineno = lineno
+        self.col_offset = col_offset
+
+
+class TYP003(Error):
+    def __init__(self, argname: str, lineno: int, col_offset: int):
+        super().__init__("TYP003", "Missing type annotation for **kwargs")
+        self.argname = argname
+        self.lineno = lineno
+        self.col_offset = col_offset
+
+
+# Method annotations
+class TYP101(Error):
+    def __init__(self, argname: str, lineno: int, col_offset: int):
+        super().__init__("TYP101", "Missing type annotation for self in class method")
+        self.argname = argname
+        self.lineno = lineno
+        self.col_offset = col_offset
+
+
+class TYP102(Error):
+    def __init__(self, argname: str, lineno: int, col_offset: int):
+        super().__init__("TYP102", "Missing type annotation for cls in classmethod")
+        self.argname = argname
+        self.lineno = lineno
+        self.col_offset = col_offset
+
+
+# Return annotations
+class TYP201(Error):
+    def __init__(self, argname: str, lineno: int, col_offset: int):
+        super().__init__("TYP201", "Missing return type annotation for public function")
+        self.argname = argname
+        self.lineno = lineno
+        self.col_offset = col_offset
+
+
+class TYP202(Error):
+    def __init__(self, argname: str, lineno: int, col_offset: int):
+        super().__init__("TYP202", "Missing return type annotation for protected function")
+        self.argname = argname
+        self.lineno = lineno
+        self.col_offset = col_offset
+
+
+class TYP203(Error):
+    def __init__(self, argname: str, lineno: int, col_offset: int):
+        super().__init__("TYP203", "Missing return type annotation for secret function")
+        self.argname = argname
+        self.lineno = lineno
+        self.col_offset = col_offset
+
+
+class TYP204(Error):
+    def __init__(self, argname: str, lineno: int, col_offset: int):
+        super().__init__("TYP204", "Missing return type annotation for magic function")
+        self.argname = argname
+        self.lineno = lineno
+        self.col_offset = col_offset
+
+
+class TYP205(Error):
+    def __init__(self, argname: str, lineno: int, col_offset: int):
+        super().__init__("TYP205", "Missing return type annotation for staticmethod")
+        self.argname = argname
+        self.lineno = lineno
+        self.col_offset = col_offset
+
+
+class TYP206(Error):
+    def __init__(self, argname: str, lineno: int, col_offset: int):
+        super().__init__("TYP206", "Missing return type annotation for classmethod")
+        self.argname = argname
+        self.lineno = lineno
+        self.col_offset = col_offset
