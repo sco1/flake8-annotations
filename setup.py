@@ -2,20 +2,20 @@ import sys
 
 from setuptools import find_packages, setup
 
-assert sys.version_info >= (3, 6, 0), "flake8_type_hinted requires Python 3.6+"
+assert sys.version_info >= (3, 6, 0), "flake8-annotations requires Python 3.6+"
 
 setup(
-    name="flake8_type_hinted",
+    name="flake8_annotations",
     license="MIT",
     version="2019.0",
-    description="Flake8 Type Hint Checks",
+    description="Flake8 Type Annotation Checks",
     author="Python Discord",
     author_email="staff@pythondiscord.com",
-    url="https://github.com/python-discord/flake8-type-hinted",
+    url="https://github.com/python-discord/flake8-annotations",
     packages=find_packages(),
     entry_points={
         "flake8.extension": [
-            'TYP = flake8_type_hinted.checker:TypeHintChecker',
+            'TYP = flake8_annotations.checker:TypeHintChecker',
         ],
     },
     classifiers=[

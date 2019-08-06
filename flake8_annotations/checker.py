@@ -2,7 +2,7 @@ from functools import lru_cache
 from typing import List
 
 import pycodestyle
-from flake8_type_hinted import Argument, Function, FunctionVisitor, __version__, enums, error_codes
+from flake8_annotations import Argument, Function, FunctionVisitor, __version__, enums, error_codes
 
 
 class TypeHintChecker:

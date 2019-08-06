@@ -1,6 +1,6 @@
 from typing import Tuple, Type
 
-from flake8_type_hinted import Argument, checker
+from flake8_annotations import Argument, checker
 
 
 class Error:

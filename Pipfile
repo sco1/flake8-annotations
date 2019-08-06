@@ -17,5 +17,5 @@ name = "pypi"
 "pre-commit" = "~=1.18"
 
 [scripts]
-lint = "flake8 flake8_type_hinted"
+lint = "flake8 flake8_annotations"
 precommit = "pre-commit install"
