@@ -1,7 +1,7 @@
 import ast
 from typing import List, Union
 
-from ast_adventures.enums import AnnotationType, ClassDecoratorType, FunctionType
+from flake8_type_hinted.enums import AnnotationType, ClassDecoratorType, FunctionType
 
 
 __version__ = "2019.0"

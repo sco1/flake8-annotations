@@ -1,7 +1,7 @@
 import ast
 from pathlib import Path
 
-from ast_adventures import FunctionVisitor
+from flake8_type_hinted import FunctionVisitor
 
 test_file = Path("./test.py")
 with test_file.open("r") as f:

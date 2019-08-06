@@ -1,4 +1,4 @@
-from ast_adventures import Argument
+from flake8_type_hinted import Argument
 
 
 class Error:

@@ -2,7 +2,7 @@ from typing import List
 
 import pycodestyle
 
-from ast_adventures import Argument, Function, FunctionVisitor, __version__, error_codes
+from flake8_type_hinted import Argument, Function, FunctionVisitor, __version__, error_codes
 
 
 class TypeHintChecker:

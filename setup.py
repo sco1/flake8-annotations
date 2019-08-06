@@ -2,20 +2,20 @@ import sys
 
 from setuptools import find_packages, setup
 
-assert sys.version_info >= (3, 6, 0), "ast-adventures requires Python 3.6+"
+assert sys.version_info >= (3, 6, 0), "flake8_type_hinted requires Python 3.6+"
 
 setup(
-    name="ast_adventures",
+    name="flake8_type_hinted",
     license="MIT",
     version="2019.0",
-    description="Experimental Framework for Flake8 Type Hint Enforcement",
+    description="Flake8 Type Hint Checks",
     author="Python Discord",
     author_email="staff@pythondiscord.com",
-    url="https://github.com/python-discord/ast-adventures",
+    url="https://github.com/python-discord/flake8-type-hinted",
     packages=find_packages(),
     entry_points={
         "flake8.extension": [
-            'TYP = ast_adventures.checker:TypeHintChecker',
+            'TYP = flake8_type_hinted.checker:TypeHintChecker',
         ],
     },
     classifiers=[
