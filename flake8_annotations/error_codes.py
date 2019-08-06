@@ -48,18 +48,36 @@ class TYP001(Error):
 
 class TYP002(Error):
     def __init__(self, argname: str, lineno: int, col_offset: int):
-        super().__init__("TYP002", "TYP002 Missing type annotation for *args")
+        super().__init__("TYP002", "TYP002 Missing type annotation for *{}")
         self.argname = argname
         self.lineno = lineno
         self.col_offset = col_offset
+
+    def to_flake8(self) -> Tuple[int, int, str, Type]:
+        """Overload super's formatter so we can include argname in the output"""
+        return (
+            self.lineno,
+            self.col_offset,
+            self.message.format(self.argname),
+            checker.TypeHintChecker,
+        )
 
 
 class TYP003(Error):
     def __init__(self, argname: str, lineno: int, col_offset: int):
-        super().__init__("TYP003", "TYP003 Missing type annotation for **kwargs")
+        super().__init__("TYP003", "TYP003 Missing type annotation for **{}")
         self.argname = argname
         self.lineno = lineno
         self.col_offset = col_offset
+
+    def to_flake8(self) -> Tuple[int, int, str, Type]:
+        """Overload super's formatter so we can include argname in the output"""
+        return (
+            self.lineno,
+            self.col_offset,
+            self.message.format(self.argname),
+            checker.TypeHintChecker,
+        )
 
 
 # Method annotations
