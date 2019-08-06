@@ -13,10 +13,10 @@ AST_FUNCTION_TYPES = Union[ast.FunctionDef, ast.AsyncFunctionDef]
 class Argument:
     """Represent a function argument & its metadata."""
 
-    def __init__(self, argname: str, line: int, column: int, annotation_type: AnnotationType):
+    def __init__(self, argname: str, lineno: int, col_offset: int, annotation_type: AnnotationType):
         self.argname = argname
-        self.line = line
-        self.column = column
+        self.lineno = lineno
+        self.col_offset = col_offset
         self.annotation_type = annotation_type
         self.has_type_annotation = False
 
@@ -28,8 +28,8 @@ class Argument:
         # Debugging print
         return (
             f"{self.argname}\n"
-            f"         Line Number: {self.line}\n"
-            f"       Column Number: {self.column}\n"
+            f"         Line Number: {self.lineno}\n"
+            f"       Column Number: {self.col_offset}\n"
             f"     Annotation type: {self.annotation_type}\n"
             f"Has Type Annotation?: {self.has_type_annotation}\n"
         )
@@ -60,16 +60,16 @@ class Function:
     def __init__(
         self,
         name: str,
-        line: int,
-        column: int,
+        lineno: int,
+        col_offset: int,
         function_type: FunctionType = FunctionType.PUBLIC,
         is_class_method: bool = False,
         class_decorator_type: Union[ClassDecoratorType, None] = None,
         is_return_annotated: bool = False,
     ):
         self.name = name
-        self.line = line
-        self.column = column
+        self.lineno = lineno
+        self.col_offset = col_offset
         self.is_class_method = is_class_method
         self.function_type = function_type
         self.class_decorator_type = class_decorator_type
@@ -85,8 +85,8 @@ class Function:
         return (
             f"{self.name}\n"
             f"       Function type: {self.function_type}\n"
-            f"         Line Number: {self.line}\n"
-            f"       Column Number: {self.column}\n"
+            f"         Line Number: {self.lineno}\n"
+            f"       Column Number: {self.col_offset}\n"
             f"       Class method?: {self.is_class_method}\n"
             f"Class decorator type: {self.class_decorator_type}\n"
             f"                Args: {self.args}\n"
@@ -98,7 +98,7 @@ class Function:
     def is_fully_annotated(self) -> bool:
         """
         Check that all of the function's inputs are type annotated.
-        
+
         Note that self.args will always include an Argument object for return
         """
         return all(arg.has_type_annotation for arg in self.args)
