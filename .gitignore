@@ -5,6 +5,8 @@ __pycache__/
 
 # Packaging
 *.egg-info/
+build/
+dist/
 
 # Jupyter
 .ipynb_checkpoints
@@ -28,7 +30,3 @@ venv.bak/
 
 # logs
 *.log
-
-# Scratchpad (to be deleted later)
-test.py
-test_output.txt

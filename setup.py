@@ -9,6 +9,8 @@ setup(
     license="MIT",
     version="2019.0",
     description="Flake8 Type Annotation Checks",
+    long_description=open("README.md").read(),
+    long_description_content_type="text/markdown",
     author="Python Discord",
     author_email="staff@pythondiscord.com",
     url="https://github.com/python-discord/flake8-annotations",
