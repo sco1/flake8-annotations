@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "d1805f01feaaa3b789856f8556439e03486932d7a3ded5f73fbfc7b2506d5ba3"
+            "sha256": "dfb002debae550aabb65a1b0378ce2be5dfd1ca3614723cb6814a6b42dbe8895"
         },
         "pipfile-spec": 6,
         "requires": {},
@@ -28,6 +28,10 @@
             ],
             "index": "pypi",
             "version": "==3.7.8"
+        },
+        "flake8-annotations": {
+            "editable": true,
+            "path": "."
         },
         "mccabe": {
             "hashes": [

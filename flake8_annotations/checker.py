@@ -1,4 +1,5 @@
-from typing import List
+import ast
+from typing import Generator, List
 
 from flake8_annotations import Argument, Function, FunctionVisitor, __version__, enums, error_codes
 
@@ -9,11 +10,11 @@ class TypeHintChecker:
     name = "function-type-annotations"
     version = __version__
 
-    def __init__(self, tree, lines: List[str]):
+    def __init__(self, tree: ast.Module, lines: List[str]):
         self.tree = tree
         self.lines = lines
 
-    def run(self):
+    def run(self) -> Generator[error_codes.Error, None, None]:
         """
         This method is called by flake8 to perform the actual check(s) on the source code.
 

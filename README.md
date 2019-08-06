@@ -4,7 +4,7 @@
 [![Discord](https://discordapp.com/api/guilds/267624335836053506/embed.png)](https://discord.gg/2B963hn)
 
 
-`flake8-annotations` is a plugin for Flake8 for detecting when variables and/or return annotations are missing type annotations in function and method definitions.
+`flake8-annotations` is a plugin for Flake8 for detecting when variables and/or return type annotations are missing in function and method definitions.
 
 What this won't do: Check for variable type annotations.
 
