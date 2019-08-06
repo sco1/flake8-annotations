@@ -1,4 +1,7 @@
+from typing import Tuple, Type
+
 from flake8_type_hinted import Argument
+from flake8_type_hinted.checker import TypeHintChecker
 
 
 class Error:
@@ -17,22 +20,29 @@ class Error:
         self.lineno = argument.lineno
         self.col_offset = argument.col_offset
 
-    def to_flake8(self) -> str:
+    def to_flake8(self) -> Tuple[int, int, str, Type]:
         """
         Format the Error into what Flake8 is expecting.
 
-        I don't know what that is yet though...
+        Expected output is a tuple with the following information:
+          (line number, column number, message, type*)
+
+        * I'm not sure what the type is currently used for, and could potentially be omitted
         """
-        raise NotImplementedError
+        return (self.lineno, self.col_offset, self.message, TypeHintChecker)
 
 
 # Function Annotations
 class TYP001(Error):
     def __init__(self, argname: str, lineno: int, col_offset: int):
-        super().__init__("TYP001", "Missing type annotation for function argument")
+        super().__init__("TYP001", "Missing type annotation for function argument '{}'")
         self.argname = argname
         self.lineno = lineno
         self.col_offset = col_offset
+
+    def to_flake8(self) -> Tuple[int, int, str, Type]:
+        """Overload super's formatter so we can include argname in the output"""
+        return (self.lineno, self.col_offset, self.message.format(self.argname), TypeHintChecker)
 
 
 class TYP002(Error):
