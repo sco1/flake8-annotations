@@ -8,8 +8,6 @@ What this won't do: Check for variable type annotations.
 ## Alpha Warning
 This package is currently in an alpha state, it's *highly* recommended that this be installed in a virtual environment.
 
-Per-warning ignore configuration via CLI, `.flake8`, or similar is currently unsupported.
-
 ## Installation
 
 With the repository cloned and inside an activated virtual environment:
