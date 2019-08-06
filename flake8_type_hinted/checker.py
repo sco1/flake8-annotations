@@ -2,7 +2,7 @@ from functools import lru_cache
 from typing import List
 
 import pycodestyle
-from flake8_type_hinted import Argument, Function, FunctionVisitor, __version__, error_codes, enums
+from flake8_type_hinted import Argument, Function, FunctionVisitor, __version__, enums, error_codes
 
 
 class TypeHintChecker:
@@ -18,7 +18,7 @@ class TypeHintChecker:
     def run(self):
         """
         This method is called by flake8 to perform the actual check(s) on the source code.
-        
+
         This should yield tuples with the following information:
           (line number, column number, message, checker type)
         """
