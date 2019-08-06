@@ -1,8 +1,8 @@
 from typing import List
 
 import pycodestyle
-
 from flake8_type_hinted import Argument, Function, FunctionVisitor, __version__, error_codes
+from flake8_type_hinted.enums import AnnotationType, ClassDecoratorType, FunctionType
 
 
 class TypeHintChecker:
@@ -28,31 +28,56 @@ class TypeHintChecker:
                 if pycodestyle.noqa(self.lines[arg.lineno - 1]):  # lineno is 1-indexed
                     continue
 
-                error = self.classify_error(function, arg)
+                error = classify_error(function, arg)
                 if self.should_warn(error):
                     yield error.to_flake8()
 
     def should_warn(self, error: error_codes.Error) -> bool:
         """Determine whether a linting error should be yielded to flake8."""
-        raise NotImplementedError
+        return True  # Hardcode until configuration is supported
 
-    @staticmethod
-    def classify_error(function: Function, arg: Argument) -> error_codes.Error:
-        """
-        Classify the missing type annotation based on the Function & Argument metadata.
 
-        For the currently defined rules, the assumption can be made that an argument can only match
-        a single linting error
-        """
-        # Check for return type
-        # All return "arguments" have an explicitly defined name "return"
-        if arg.name == "return":
-            raise NotImplementedError
+def classify_error(function: Function, arg: Argument) -> error_codes.Error:
+    """
+    Classify the missing type annotation based on the Function & Argument metadata.
 
-        # Check for @classmethod and @staticmethod
-        # The first argument here would be an instance of self or class, which have explicit codes
+    For the currently defined rules & program flow, the assumption can be made that an argument
+    passed to this method will match a linting error, and will only match a single linting error
+    """
+    # Check for return type
+    # All return "arguments" have an explicitly defined name "return"
+    if arg.name == "return":
+        # Decorated class methods (@classmethod, @staticmethod) have a higher priority than the rest
         if function.is_class_method:
-            raise NotImplementedError
+            if function.class_decorator_type == ClassDecoratorType.CLASSMETHOD:
+                return error_codes.TYP206().from_argument(arg)
+            elif function.class_decorator_type == ClassDecoratorType.STATICMETHOD:
+                return error_codes.TYP205().from_argument(arg)
 
-        # Check for remaining codes
-        raise NotImplementedError
+        if function.function_type == FunctionType.MAGIC:
+            return error_codes.TYP204().from_argument(arg)
+        elif function.function_type == FunctionType.PRIVATE:
+            return error_codes.TYP203().from_argument(arg)
+        elif function.function_type == FunctionType.PROTECTED:
+            return error_codes.TYP202().from_argument(arg)
+        else:
+            return error_codes.TYP201().from_argument(arg)
+
+    # Check for regular class methods and @classmethod, @staticmethod is deferred to final check
+    if function.is_class_method:
+        # The first function argument here would be an instance of self or class
+        if arg == function.args[0]:
+            if function.class_decorator_type == ClassDecoratorType.CLASSMETHOD:
+                return error_codes.TYP102().from_argument(arg)
+            elif function.class_decorator_type != ClassDecoratorType.STATICMETHOD:
+                # Regular class method
+                return error_codes.TYP101().from_argument(arg)
+
+    # Check for remaining codes
+    if arg.annotation_type == AnnotationType.KWARG:
+        return error_codes.TYP003().from_argument(arg)
+    elif arg.annotation_type == AnnotationType.VARARG:
+        return error_codes.TYP002().from_argument(arg)
+    else:
+        # Combine ARG and KWONLYARGS
+        return error_codes.TYP001().from_argument(arg)
