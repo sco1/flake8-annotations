@@ -33,7 +33,8 @@ setup(
         "Topic :: Software Development :: Quality Assurance",
     ],
     install_requires=[
-        "flake8~=3.7.8"
+        "flake8~=3.7.8",
+        "pycodestyle~=2.5"
     ],
     extras_require={
         "dev": [
