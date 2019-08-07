@@ -1,4 +1,5 @@
 import ast
+from functools import lru_cache
 from typing import Generator, List
 
 from flake8_annotations import Argument, Function, FunctionVisitor, __version__, enums, error_codes
@@ -39,41 +40,76 @@ def classify_error(function: Function, arg: Argument) -> error_codes.Error:
 
     For the currently defined rules & program flow, the assumption can be made that an argument
     passed to this method will match a linting error, and will only match a single linting error
+
+    This function provides an initial classificaton, then passes relevant attributes to cached
+    helper function(s).
     """
     # Check for return type
     # All return "arguments" have an explicitly defined name "return"
     if arg.argname == "return":
-        # Decorated class methods (@classmethod, @staticmethod) have a higher priority than the rest
-        if function.is_class_method:
-            if function.class_decorator_type == enums.ClassDecoratorType.CLASSMETHOD:
-                return error_codes.TYP206.from_argument(arg)
-            elif function.class_decorator_type == enums.ClassDecoratorType.STATICMETHOD:
-                return error_codes.TYP205.from_argument(arg)
+        error_code = _return_error_classifier(
+            function.is_class_method, function.class_decorator_type, function.function_type
+        )
+    else:
+        # Otherwise, classify function argument error
+        is_first_arg = arg == function.args[0]
+        error_code = _argument_error_classifier(
+            function.is_class_method,
+            is_first_arg,
+            function.class_decorator_type,
+            arg.annotation_type,
+        )
 
-        if function.function_type == enums.FunctionType.MAGIC:
-            return error_codes.TYP204.from_argument(arg)
-        elif function.function_type == enums.FunctionType.PRIVATE:
-            return error_codes.TYP203.from_argument(arg)
-        elif function.function_type == enums.FunctionType.PROTECTED:
-            return error_codes.TYP202.from_argument(arg)
-        else:
-            return error_codes.TYP201.from_argument(arg)
+    return error_code.from_argument(arg)
 
+
+@lru_cache()
+def _return_error_classifier(
+    is_class_method: bool,
+    class_decorator_type: enums.ClassDecoratorType,
+    function_type: enums.FunctionType,
+) -> error_codes.Error:
+    """Classify return type annotation error."""
+    # Decorated class methods (@classmethod, @staticmethod) have a higher priority than the rest
+    if is_class_method:
+        if class_decorator_type == enums.ClassDecoratorType.CLASSMETHOD:
+            return error_codes.TYP206
+        elif class_decorator_type == enums.ClassDecoratorType.STATICMETHOD:
+            return error_codes.TYP205
+
+    if function_type == enums.FunctionType.MAGIC:
+        return error_codes.TYP204
+    elif function_type == enums.FunctionType.PRIVATE:
+        return error_codes.TYP203
+    elif function_type == enums.FunctionType.PROTECTED:
+        return error_codes.TYP202
+    else:
+        return error_codes.TYP201
+
+
+@lru_cache()
+def _argument_error_classifier(
+    is_class_method: bool,
+    is_first_arg: bool,
+    class_decorator_type: enums.ClassDecoratorType,
+    annotation_type: enums.AnnotationType,
+) -> error_codes.Error:
+    """Classify argument type annotation error."""
     # Check for regular class methods and @classmethod, @staticmethod is deferred to final check
-    if function.is_class_method:
+    if is_class_method:
         # The first function argument here would be an instance of self or class
-        if arg == function.args[0]:
-            if function.class_decorator_type == enums.ClassDecoratorType.CLASSMETHOD:
-                return error_codes.TYP102.from_argument(arg)
-            elif function.class_decorator_type != enums.ClassDecoratorType.STATICMETHOD:
+        if is_first_arg:
+            if class_decorator_type == enums.ClassDecoratorType.CLASSMETHOD:
+                return error_codes.TYP102
+            elif class_decorator_type != enums.ClassDecoratorType.STATICMETHOD:
                 # Regular class method
-                return error_codes.TYP101.from_argument(arg)
+                return error_codes.TYP101
 
     # Check for remaining codes
-    if arg.annotation_type == enums.AnnotationType.KWARG:
-        return error_codes.TYP003.from_argument(arg)
-    elif arg.annotation_type == enums.AnnotationType.VARARG:
-        return error_codes.TYP002.from_argument(arg)
+    if annotation_type == enums.AnnotationType.KWARG:
+        return error_codes.TYP003
+    elif annotation_type == enums.AnnotationType.VARARG:
+        return error_codes.TYP002
     else:
         # Combine ARG and KWONLYARGS
-        return error_codes.TYP001.from_argument(arg)
+        return error_codes.TYP001
