@@ -120,7 +120,11 @@ class Function:
                 )
 
         # Create an Argument object for the return hint
-        return_arg = Argument("return", node.lineno, node.col_offset, AnnotationType.RETURN)
+        # Get the line number from the line before where the body of the function starts to account
+        # for the presence of decorators
+        def_end_lineno = node.body[0].lineno - 1
+
+        return_arg = Argument("return", def_end_lineno, node.col_offset, AnnotationType.RETURN)
         if node.returns:
             return_arg.has_type_annotation = True
             new_function.is_return_annotated = True
