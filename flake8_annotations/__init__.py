@@ -8,7 +8,11 @@ __version__ = "2019.0"
 
 AST_ARG_TYPES = ("args", "vararg", "kwonlyargs", "kwarg")
 AST_FUNCTION_TYPES = Union[ast.FunctionDef, ast.AsyncFunctionDef]
-PROPERTY_METHODS = ("setter", "deleter")  # Valid methods for property decorators
+
+# Valid methods for property decorators
+# .getter is included for completeness, even though it overrides the @property decorated method if
+# you use them together
+PROPERTY_METHODS = ("getter", "setter", "deleter")
 
 
 class Argument:

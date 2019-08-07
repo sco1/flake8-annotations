@@ -74,7 +74,7 @@ def _return_error_classifier(
     # the rest
     if is_class_method:
         if class_decorator_type == enums.ClassDecoratorType.PROPERTY:
-            # Property decorators (property, .setter, .deleter)
+            # Property decorators (property, .getter, .setter, .deleter)
             return error_codes.TYP207
         elif class_decorator_type == enums.ClassDecoratorType.CLASSMETHOD:
             return error_codes.TYP206
@@ -100,7 +100,7 @@ def _argument_error_classifier(
     annotation_type: enums.AnnotationType,
 ) -> error_codes.Error:
     """Classify argument type annotation error."""
-    # Check for regular class methods, @property (includes setter, deleter), & @classmethod
+    # Check for regular class methods, @property (includes getter, setter, deleter), & @classmethod
     if is_class_method:
         # The first function argument here would be an instance of self or class
         if is_first_arg:
