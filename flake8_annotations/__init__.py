@@ -4,7 +4,7 @@ from typing import List, Union
 from flake8_annotations.enums import AnnotationType, ClassDecoratorType, FunctionType
 
 
-__version__ = "2019.0"
+__version__ = "2019.1"
 
 AST_ARG_TYPES = ("args", "vararg", "kwonlyargs", "kwarg")
 AST_FUNCTION_TYPES = Union[ast.FunctionDef, ast.AsyncFunctionDef]
