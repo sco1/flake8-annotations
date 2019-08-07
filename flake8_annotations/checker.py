@@ -70,9 +70,13 @@ def _return_error_classifier(
     function_type: enums.FunctionType,
 ) -> error_codes.Error:
     """Classify return type annotation error."""
-    # Decorated class methods (@classmethod, @staticmethod) have a higher priority than the rest
+    # Decorated class methods (@classmethod, @staticmethod, @property) have a higher priority than
+    # the rest
     if is_class_method:
-        if class_decorator_type == enums.ClassDecoratorType.CLASSMETHOD:
+        if class_decorator_type == enums.ClassDecoratorType.PROPERTY:
+            # Property decorators (property, .getter, .setter, .deleter)
+            return error_codes.TYP207
+        elif class_decorator_type == enums.ClassDecoratorType.CLASSMETHOD:
             return error_codes.TYP206
         elif class_decorator_type == enums.ClassDecoratorType.STATICMETHOD:
             return error_codes.TYP205
@@ -84,6 +88,7 @@ def _return_error_classifier(
     elif function_type == enums.FunctionType.PROTECTED:
         return error_codes.TYP202
     else:
+        # "Regular" function declaration
         return error_codes.TYP201
 
 
@@ -95,11 +100,13 @@ def _argument_error_classifier(
     annotation_type: enums.AnnotationType,
 ) -> error_codes.Error:
     """Classify argument type annotation error."""
-    # Check for regular class methods and @classmethod, @staticmethod is deferred to final check
+    # Check for regular class methods, @property (includes getter, setter, deleter), & @classmethod
     if is_class_method:
         # The first function argument here would be an instance of self or class
         if is_first_arg:
             if class_decorator_type == enums.ClassDecoratorType.CLASSMETHOD:
+                return error_codes.TYP103
+            elif class_decorator_type == enums.ClassDecoratorType.PROPERTY:
                 return error_codes.TYP102
             elif class_decorator_type != enums.ClassDecoratorType.STATICMETHOD:
                 # Regular class method
