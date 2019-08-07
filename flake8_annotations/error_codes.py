@@ -36,7 +36,7 @@ class TYP001(Error):
         self.col_offset = col_offset
 
     def to_flake8(self) -> Tuple[int, int, str, Type]:
-        """Overload super's formatter so we can include argname in the output"""
+        """Overload super's formatter so we can include argname in the output."""
         return (
             self.lineno,
             self.col_offset,
@@ -53,7 +53,7 @@ class TYP002(Error):
         self.col_offset = col_offset
 
     def to_flake8(self) -> Tuple[int, int, str, Type]:
-        """Overload super's formatter so we can include argname in the output"""
+        """Overload super's formatter so we can include argname in the output."""
         return (
             self.lineno,
             self.col_offset,
@@ -90,7 +90,15 @@ class TYP101(Error):
 
 class TYP102(Error):
     def __init__(self, argname: str, lineno: int, col_offset: int):
-        super().__init__("TYP102 Missing type annotation for cls in classmethod")
+        super().__init__("TYP102 Missing type annotation for self in property method")
+        self.argname = argname
+        self.lineno = lineno
+        self.col_offset = col_offset
+
+
+class TYP103(Error):
+    def __init__(self, argname: str, lineno: int, col_offset: int):
+        super().__init__("TYP103 Missing type annotation for cls in classmethod")
         self.argname = argname
         self.lineno = lineno
         self.col_offset = col_offset
@@ -140,6 +148,14 @@ class TYP205(Error):
 class TYP206(Error):
     def __init__(self, argname: str, lineno: int, col_offset: int):
         super().__init__("TYP206 Missing return type annotation for classmethod")
+        self.argname = argname
+        self.lineno = lineno
+        self.col_offset = col_offset
+
+
+class TYP207(Error):
+    def __init__(self, argname: str, lineno: int, col_offset: int):
+        super().__init__("TYP207 Missing return type annotation for class property")
         self.argname = argname
         self.lineno = lineno
         self.col_offset = col_offset

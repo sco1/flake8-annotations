@@ -34,17 +34,19 @@ $ pip install -e .
 | `TYP003` | Missing type annotation for `**kwargs`        |
 
 ### Method Annotations
-| ID       | Description                                        |
-|----------|----------------------------------------------------|
-| `TYP101` | Missing type annotation for `self` in class method |
-| `TYP102` | Missing type annotation for `cls` in classmethod   |
+| ID       | Description                                           |
+|----------|-------------------------------------------------------|
+| `TYP101` | Missing type annotation for `self` in class method    |
+| `TYP102` | Missing type annotation for `self` in property method |
+| `TYP103` | Missing type annotation for `cls` in classmethod      |
 
 ### Return Annotations
-| ID       | Description                                         |
-|----------|-----------------------------------------------------|
-| `TYP201` | Missing return type annotation for public method    |
-| `TYP202` | Missing return type annotation for protected method |
-| `TYP203` | Missing return type annotation for secret method    |
-| `TYP204` | Missing return type annotation for magic method     |
-| `TYP205` | Missing return type annotation for staticmethod     |
-| `TYP206` | Missing return type annotation for classmethod      |
+| ID       | Description                                           |
+|----------|-------------------------------------------------------|
+| `TYP201` | Missing return type annotation for public function    |
+| `TYP202` | Missing return type annotation for protected function |
+| `TYP203` | Missing return type annotation for secret function    |
+| `TYP204` | Missing return type annotation for magic function     |
+| `TYP205` | Missing return type annotation for staticmethod       |
+| `TYP206` | Missing return type annotation for classmethod        |
+| `TYP207` | Missing return type annotation for class property     |

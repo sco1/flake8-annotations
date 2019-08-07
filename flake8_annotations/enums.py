@@ -21,6 +21,7 @@ class ClassDecoratorType(Enum):
 
     CLASSMETHOD = auto()
     STATICMETHOD = auto()
+    PROPERTY = auto()  # Includes @property, .getter, .setter, and .deleter
 
 
 class AnnotationType(Enum):
