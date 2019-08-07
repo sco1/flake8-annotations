@@ -22,7 +22,7 @@ class TypeHintChecker:
         This should yield tuples with the following information:
           (line number, column number, message, checker type)
         """
-        visitor = FunctionVisitor()
+        visitor = FunctionVisitor(self.lines)
         visitor.visit(self.tree)
 
         # Iterate over the arguments with missing type hints, by function, and yield linting errors

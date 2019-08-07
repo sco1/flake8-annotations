@@ -90,9 +90,12 @@ class Function:
         return [arg for arg in self.args if not arg.has_type_annotation]
 
     @classmethod
-    def from_function_node(cls, node: AST_FUNCTION_TYPES, **kwargs):
+    def from_function_node(cls, node: AST_FUNCTION_TYPES, lines: List[str], **kwargs):
         """
         Create an Function object from ast.FunctionDef or ast.AsyncFunctionDef nodes.
+
+        Accept the source code, as a list of strings, in order to get the column where the function
+        definition ends.
 
         With exceptions, input kwargs are passed straight through to Function's __init__. The
         following kwargs will be overridden:
@@ -123,8 +126,14 @@ class Function:
         # Get the line number from the line before where the body of the function starts to account
         # for the presence of decorators
         def_end_lineno = node.body[0].lineno - 1
+        # Calculate the column offset of the end of the function definition by finding where : is
+        # Lineno is 1-indexed, the line string is 0-indexed
+        def_end_col_offset = lines[def_end_lineno - 1].find(":") + 1
+        if def_end_col_offset == -1:
+            # Fallback if we've messed up our line indexing
+            def_end_col_offset = node.col_offset
 
-        return_arg = Argument("return", def_end_lineno, node.col_offset, AnnotationType.RETURN)
+        return_arg = Argument("return", def_end_lineno, def_end_col_offset, AnnotationType.RETURN)
         if node.returns:
             return_arg.has_type_annotation = True
             new_function.is_return_annotated = True
@@ -212,7 +221,8 @@ class Function:
 class FunctionVisitor(ast.NodeVisitor):
     """An ast.NodeVisitor instance for walking the AST and describing all contained functions."""
 
-    def __init__(self):
+    def __init__(self, lines: List[str]):
+        self.lines = lines
         self.function_definitions = []
 
     def visit_FunctionDef(self, node: ast.FunctionDef) -> None:
@@ -222,7 +232,7 @@ class FunctionVisitor(ast.NodeVisitor):
         Note: This will not contain class methods, these are included in the body of ClassDef
         statements
         """
-        self.function_definitions.append(Function.from_function_node(node))
+        self.function_definitions.append(Function.from_function_node(node, self.lines))
         self.generic_visit(node)  # Walk through any nested functions
 
     def visit_AsyncFunctionDef(self, node: ast.AsyncFunctionDef) -> None:
@@ -232,7 +242,7 @@ class FunctionVisitor(ast.NodeVisitor):
         Note: This will not contain class methods, these are included in the body of ClassDef
         statements
         """
-        self.function_definitions.append(Function.from_function_node(node))
+        self.function_definitions.append(Function.from_function_node(node, self.lines))
         self.generic_visit(node)  # Walk through any nested functions
 
     def visit_ClassDef(self, node: ast.ClassDef) -> None:
@@ -250,7 +260,7 @@ class FunctionVisitor(ast.NodeVisitor):
         ]
         self.function_definitions.extend(
             [
-                Function.from_function_node(method_node, is_class_method=True)
+                Function.from_function_node(method_node, self.lines, is_class_method=True)
                 for method_node in method_nodes
             ]
         )
