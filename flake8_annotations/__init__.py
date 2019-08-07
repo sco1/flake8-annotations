@@ -8,6 +8,7 @@ __version__ = "2019.0"
 
 AST_ARG_TYPES = ("args", "vararg", "kwonlyargs", "kwarg")
 AST_FUNCTION_TYPES = Union[ast.FunctionDef, ast.AsyncFunctionDef]
+PROPERTY_METHODS = ("setter", "deleter")  # Valid methods for property decorators
 
 
 class Argument:
@@ -121,7 +122,6 @@ class Function:
             new_function.is_return_annotated = True
 
         new_function.args.append(return_arg)
-
         return new_function
 
     @staticmethod
@@ -157,16 +157,22 @@ class Function:
         If @classmethod or @staticmethod decorators are not present, this function will return None
         """
         decorators = []
+        decorator_attributes = []
         for decorator in function_node.decorator_list:
-            # @classmethod and @staticmethod will show up as ast.Name objects, where callable
-            # decorators will show up as ast.Call, which we can ignore
+            # @property, @classmethod, and @staticmethod will be ast.Name objects
+            # property.setter, and property.deleter will be ast.Attribute objects
+            # Other callable decorators will be ast.Call objects, which we're ignoring
             if isinstance(decorator, ast.Name):
                 decorators.append(decorator.id)
+            elif isinstance(decorator, ast.Attribute):
+                decorator_attributes.append(decorator.attr)
 
         if "classmethod" in decorators:
             return ClassDecoratorType.CLASSMETHOD
         elif "staticmethod" in decorators:
             return ClassDecoratorType.STATICMETHOD
+        elif "property" in decorators or Function._is_property_method(decorator_attributes):
+            return ClassDecoratorType.PROPERTY
         else:
             return None
 
@@ -184,6 +190,15 @@ class Function:
             f" Is fully annotated?: {self.is_fully_annotated()}\n"
             f" Missing Annotations: {self.get_missed_annotations()}\n"
         )
+
+    @staticmethod
+    def _is_property_method(attribute_decorators: List[ast.Attribute]) -> bool:
+        """Check the list of decorator attribute names for .setter and .deleter methods."""
+        # Short circuit
+        if not attribute_decorators:
+            return False
+
+        return any(property_method in attribute_decorators for property_method in PROPERTY_METHODS)
 
 
 class FunctionVisitor(ast.NodeVisitor):
