@@ -130,13 +130,13 @@ class Function:
         Determine the function's FunctionType from its name.
 
         MethodType is determined by the following priority:
-          1. Magic: function name prefixed & suffixed by "__"
+          1. Special: function name prefixed & suffixed by "__"
           2. Private: function name prefixed by "__"
           3. Protected: function name prefixed by "_"
           4. Public: everything else
         """
         if function_name.startswith("__") and function_name.endswith("__"):
-            return FunctionType.MAGIC
+            return FunctionType.SPECIAL
         elif function_name.startswith("__"):
             return FunctionType.PRIVATE
         elif function_name.startswith("_"):

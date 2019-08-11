@@ -77,7 +77,7 @@ def _return_error_classifier(
         elif class_decorator_type == enums.ClassDecoratorType.STATICMETHOD:
             return error_codes.TYP205
 
-    if function_type == enums.FunctionType.MAGIC:
+    if function_type == enums.FunctionType.SPECIAL:
         return error_codes.TYP204
     elif function_type == enums.FunctionType.PRIVATE:
         return error_codes.TYP203
