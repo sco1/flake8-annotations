@@ -36,7 +36,7 @@ $ pip install -e .
 ### Method Annotations
 | ID       | Description                                           |
 |----------|-------------------------------------------------------|
-| `TYP101` | Missing type annotation for `self` in class method    |
+| `TYP101` | Missing type annotation for `self` in method          |
 | `TYP102` | Missing type annotation for `self` in property method |
 | `TYP103` | Missing type annotation for `cls` in classmethod      |
 
