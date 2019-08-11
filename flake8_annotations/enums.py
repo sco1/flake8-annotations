@@ -13,7 +13,7 @@ class FunctionType(Enum):
     PUBLIC = auto()
     PROTECTED = auto()  # Leading single underscore
     PRIVATE = auto()  # Leading double underscore
-    MAGIC = auto()  # Leading & trailing double underscore
+    SPECIAL = auto()  # Leading & trailing double underscore
 
 
 class ClassDecoratorType(Enum):

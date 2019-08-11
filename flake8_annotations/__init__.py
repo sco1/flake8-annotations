@@ -147,13 +147,13 @@ class Function:
         Determine the function's FunctionType from its name.
 
         MethodType is determined by the following priority:
-          1. Magic: function name prefixed & suffixed by "__"
+          1. Special: function name prefixed & suffixed by "__"
           2. Private: function name prefixed by "__"
           3. Protected: function name prefixed by "_"
           4. Public: everything else
         """
         if function_name.startswith("__") and function_name.endswith("__"):
-            return FunctionType.MAGIC
+            return FunctionType.SPECIAL
         elif function_name.startswith("__"):
             return FunctionType.PRIVATE
         elif function_name.startswith("_"):
@@ -177,7 +177,7 @@ class Function:
         decorator_attributes = []
         for decorator in function_node.decorator_list:
             # @property, @classmethod, and @staticmethod will be ast.Name objects
-            # property.setter, and property.deleter will be ast.Attribute objects
+            # property.getter, property.setter, and property.deleter will be ast.Attribute objects
             # Other callable decorators will be ast.Call objects, which we're ignoring
             if isinstance(decorator, ast.Name):
                 decorators.append(decorator.id)

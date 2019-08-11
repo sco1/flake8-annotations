@@ -46,7 +46,7 @@ $ pip install -e .
 | `TYP201` | Missing return type annotation for public function    |
 | `TYP202` | Missing return type annotation for protected function |
 | `TYP203` | Missing return type annotation for secret function    |
-| `TYP204` | Missing return type annotation for magic function     |
+| `TYP204` | Missing return type annotation for special method     |
 | `TYP205` | Missing return type annotation for staticmethod       |
 | `TYP206` | Missing return type annotation for classmethod        |
 | `TYP207` | Missing return type annotation for class property     |
