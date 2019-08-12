@@ -1,0 +1,39 @@
+jobs:
+- job: lint
+  displayName: 'Linting with flake8'
+
+  pool:
+    vmImage: 'Ubuntu 16.04'
+  
+  strategy:
+    matrix:
+      Python36:
+        python.version: '3.6'
+      Python37:
+        python.version: '3.7'
+
+  variables:
+    PIP_CACHE_DIR: ".cache/pip"
+    PIP_SRC: ".cache/src"
+
+  steps:
+  - task: UsePythonVersion@0
+    displayName: 'Set Python version'
+    inputs:
+      versionSpec: '$(python.version)'
+      addToPath: true
+
+  - script: python3 -m pip install setuptools
+    displayName: 'Install base dependencies'
+
+  - script: python3 -m pip install pipenv && pipenv install --dev --system && python3 -m pip install flake8-formatter-junit-xml
+    displayName: 'Install Project Environment'
+
+  - script: python3 -m flake8 --format junit-xml --output-file test-lint.xml
+    displayName: 'Lint flake8-annotations'
+
+  - task: PublishTestResults@2
+    condition: succeededOrFailed()
+    inputs:
+      testResultsFiles: '**/test-*.xml'
+      testRunTitle: 'flake8-annotations Lint Results'
