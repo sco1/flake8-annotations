@@ -36,7 +36,7 @@ class TYP001(Error):
         self.col_offset = col_offset
 
     def to_flake8(self) -> Tuple[int, int, str, Type]:
-        """Overload super's formatter so we can include argname in the output"""
+        """Overload super's formatter so we can include argname in the output."""
         return (
             self.lineno,
             self.col_offset,
@@ -53,7 +53,7 @@ class TYP002(Error):
         self.col_offset = col_offset
 
     def to_flake8(self) -> Tuple[int, int, str, Type]:
-        """Overload super's formatter so we can include argname in the output"""
+        """Overload super's formatter so we can include argname in the output."""
         return (
             self.lineno,
             self.col_offset,
@@ -70,7 +70,7 @@ class TYP003(Error):
         self.col_offset = col_offset
 
     def to_flake8(self) -> Tuple[int, int, str, Type]:
-        """Overload super's formatter so we can include argname in the output"""
+        """Overload super's formatter so we can include argname in the output."""
         return (
             self.lineno,
             self.col_offset,
@@ -82,7 +82,7 @@ class TYP003(Error):
 # Method annotations
 class TYP101(Error):
     def __init__(self, argname: str, lineno: int, col_offset: int):
-        super().__init__("TYP101 Missing type annotation for self in class method")
+        super().__init__("TYP101 Missing type annotation for self in method")
         self.argname = argname
         self.lineno = lineno
         self.col_offset = col_offset
@@ -123,7 +123,7 @@ class TYP203(Error):
 
 class TYP204(Error):
     def __init__(self, argname: str, lineno: int, col_offset: int):
-        super().__init__("TYP204 Missing return type annotation for magic function")
+        super().__init__("TYP204 Missing return type annotation for special method")
         self.argname = argname
         self.lineno = lineno
         self.col_offset = col_offset
