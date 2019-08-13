@@ -205,7 +205,7 @@ class FunctionVisitor(ast.NodeVisitor):
         self.lines = lines
         self.function_definitions = []
 
-    def visit_FunctionDef(self, node: ast.FunctionDef,) -> None:
+    def visit_FunctionDef(self, node: ast.FunctionDef) -> None:
         """
         Handle a visit to a function definition.
 
