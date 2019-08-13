@@ -1,28 +1,29 @@
 # flake8-annotations
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/flake8-annotations)
 ![PyPI](https://img.shields.io/pypi/v/flake8-annotations)
+[![Build Status](https://dev.azure.com/python-discord/Python%20Discord/_apis/build/status/python-discord.flake8-annotations?branchName=master)](https://dev.azure.com/python-discord/Python%20Discord/_build/latest?definitionId=16&branchName=master)
 [![Discord](https://discordapp.com/api/guilds/267624335836053506/embed.png)](https://discord.gg/2B963hn)
 
 
-`flake8-annotations` is a plugin for Flake8 for detecting when variables and/or return type annotations are missing in function and method definitions.
+`flake8-annotations` is a plugin for [Flake8](http://flake8.pycqa.org/en/latest/) that detects when arguments and/or return [type annotations](https://www.python.org/dev/peps/pep-0484/) are missing in function and method definitions.
 
-What this won't do: Check for variable type annotations.
-
-## Alpha Warning
-This package is currently in an alpha state, it's *highly* recommended that this be installed in a virtual environment.
+What this won't do: Check variable annotations, compile-time type checking (see: [mypy](http://mypy-lang.org/))
 
 ## Installation
 
-Install directly from PyPi inside an activated virtual environment with your favorite `pip` invocation:
+Install from PyPi with your favorite `pip` invocation:
 
 ```bash
 $ pip install flake8-annotations
 ```
 
-For development, you can also install from source as editable inside an activated virtual environment:
+It will then be run automatically as part of Flake8.
+
+You can verify it's being picked up by invoking the following in your shell:
 
 ```bash
-$ pip install -e .
+$ flake8 --version
+3.7.8 (flake8-annotations: 1.0.0, mccabe: 0.6.1, pycodestyle: 2.5.0, pyflakes: 2.1.1) CPython 3.7.4 on Darwin
 ```
 
 ## Table of Warnings
@@ -48,3 +49,18 @@ $ pip install -e .
 | `TYP204` | Missing return type annotation for special method     |
 | `TYP205` | Missing return type annotation for staticmethod       |
 | `TYP206` | Missing return type annotation for classmethod        |
+
+## Contributing
+Please take some time to read through our [contributing guidelines](CONTRIBUTING.md) before helping us with this project.
+
+This project uses [Pipenv](https://docs.pipenv.org/en/latest/) to manage dependencies. With your fork cloned to your local machine, you can create a developer environment using:
+
+```bash
+$ pipenv sync --dev
+```
+
+A [pre-commit](https://pre-commit.com) installation script and configuration is also provided to create a pre-commit hook so linting errors aren't committed:
+
+```bash
+$ pipenv run precommit
+```
