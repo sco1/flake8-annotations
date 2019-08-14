@@ -12,12 +12,12 @@ TEST_FILE = Path("./testing/code/column_line_numbers.py")
 # Line numbers are 1-indexed
 # Column offsets are 0-indexed when yielded by our checker; flake8 adds 1 when emitted
 SHOULD_ERROR = ((16, 8), (16, 11), (24, 4), (25, 4), (26, 2))
-ERROR_CODE_TYPE = Tuple[int, int, str, checker.TypeHintChecker]
+ERROR_CODE = Tuple[int, int, str, checker.TypeHintChecker]
 
 
 @pytest.fixture
-def parsed_errors(src_filepath: Path = TEST_FILE) -> List[ERROR_CODE_TYPE]:
-    """Create a fixture for our the error codes emitted by our testing code."""
+def parsed_errors(src_filepath: Path = TEST_FILE) -> List[ERROR_CODE]:
+    """Create a fixture for the error codes emitted by our testing code."""
     with src_filepath.open("r") as f:
         src = f.read()
 
@@ -27,7 +27,7 @@ def parsed_errors(src_filepath: Path = TEST_FILE) -> List[ERROR_CODE_TYPE]:
     return list(checker.TypeHintChecker(tree, lines).run())
 
 
-def test_lineno(parsed_errors: List[ERROR_CODE_TYPE]) -> None:
+def test_lineno(parsed_errors: List[ERROR_CODE]) -> None:
     """
     Check for correct line number values.
 
@@ -42,7 +42,7 @@ def test_lineno(parsed_errors: List[ERROR_CODE_TYPE]) -> None:
     assert should_error_lines == raised_error_lines
 
 
-def test_column_offset(parsed_errors: List[ERROR_CODE_TYPE]) -> None:
+def test_column_offset(parsed_errors: List[ERROR_CODE]) -> None:
     """
     Check for correct column number values.
 
