@@ -1,7 +1,7 @@
 """
 Check for column offset & line number correctness.
 
-Should Yield:
+Should yield:
 
 16:9: TYP001 Missing type annotation for function argument 'x'
 16:12: TYP201 Missing return type annotation for public function

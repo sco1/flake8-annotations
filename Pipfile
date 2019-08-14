@@ -5,7 +5,7 @@ name = "pypi"
 
 [packages]
 "flake8" = "~=3.7.8"
-"flake8-annotations" = {path = ".",editable = true}
+flake8-annotations = {path = ".",editable = true}
 
 [dev-packages]
 "flake8-bugbear" = "~=19.3"
@@ -16,6 +16,7 @@ name = "pypi"
 "flake8-todo" = "~=0.7"
 "pre-commit" = "~=1.18"
 "pytest" = "~=5.0"
+"pytest-check" = "~=0.3"
 
 [scripts]
 lint = "flake8 flake8_annotations"
