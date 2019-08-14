@@ -15,7 +15,9 @@ name = "pypi"
 "flake8-tidy-imports" = "~=2.0"
 "flake8-todo" = "~=0.7"
 "pre-commit" = "~=1.18"
+"pytest" = "~=5.0"
 
 [scripts]
 lint = "flake8 flake8_annotations"
 precommit = "pre-commit install"
+test = "pytest"

@@ -15,6 +15,6 @@ ignore=
 exclude=
     __pycache__,.cache,
     venv,.venv,
-    tests,
+    testing/code/,
     error_codes.py
 import-order-style=pycharm
