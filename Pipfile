@@ -19,6 +19,6 @@ flake8-annotations = {path = ".",editable = true}
 "pytest-check" = "~=0.3"
 
 [scripts]
-lint = "flake8 flake8_annotations"
+lint = "flake8"
 precommit = "pre-commit install"
 test = "pytest"
