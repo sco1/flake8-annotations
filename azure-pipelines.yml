@@ -1,6 +1,6 @@
 jobs:
-- job: lint
-  displayName: 'Linting with flake8'
+- job: lint-and-test
+  displayName: 'Lint with flake8 & test with pytest'
 
   pool:
     vmImage: 'Ubuntu 16.04'
@@ -32,8 +32,11 @@ jobs:
   - script: python3 -m flake8 --format junit-xml --output-file test-lint.xml
     displayName: 'Lint flake8-annotations'
 
+  - script: python3 -m pytest --junitxml test-pytest.xml
+    displayName: 'Test flake8-annotations'
+
   - task: PublishTestResults@2
     condition: succeededOrFailed()
     inputs:
       testResultsFiles: '**/test-*.xml'
-      testRunTitle: 'flake8-annotations Lint Results'
+      testRunTitle: 'flake8-annotations Lint & Test Results'
