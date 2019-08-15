@@ -9,7 +9,7 @@ from testing import object_attributes
 
 
 class TestReturnClassifier:
-    """Test return error classifications."""
+    """Test missing return annotation error classifications."""
 
     dummy_arg = Argument("return", 0, 0, AnnotationType.RETURN)
 
@@ -18,14 +18,53 @@ class TestReturnClassifier:
         """
         Build a Function object from the fixtured parameters.
 
-        `object_attributes.return_classification` is a dictionary of possible function combinations
-        and the resultant error code:
-          * Keys are tuples of the form (function type, is class method?, class decorator type)
+        `object_attributes.return_classifications` is a dictionary of possible function combinations
+        along with the resultant error code:
+          * Keys are tuples of the form:
+              (function type, is class method?, class decorator type)
           * Values are the error object that should be returned by the error classifier
         """
         error_object = object_attributes.return_classifications[request.param]
         return Function("ReturnTest", 0, 0, *request.param), error_object
 
-    def test_return(self, function_builder: Tuple[Function, Error]) -> None:  # noqa
+    def test_return(self, function_builder: Tuple[Function, Error]) -> None:
+        """Test missing return annotation error codes."""
         test_function, error_object = function_builder
         assert isinstance(classify_error(test_function, self.dummy_arg), error_object)
+
+
+class TestArgumentClassifier:
+    """Test missing argument annotation error classifications."""
+
+    # Build a dummy argument to substitute for self/cls in class methods if we're looking at the
+    # other arguments
+    dummy_arg = Argument("DummyArg", 0, 0, None)
+
+    @pytest.fixture(params=object_attributes.argument_classifications.keys())
+    def function_builder(self, request) -> Tuple[Function, Argument, Error]:  # noqa
+        """
+        Build function and argument objects from the fixtured parameters.
+
+        `object_attributes.argument_classifications` is a dictionary of possible argument and
+        function combinations along with the resultant error code:
+          * Keys are tuples of the form:
+              (is_class_method, is_first_arg, decorator_type, annotation_type)
+          * Values are the error object that should be returned by the error classifier
+        """
+        error_object = object_attributes.argument_classifications[request.param]
+        function_object = Function("ArgumentTest", 0, 0, None, request.param[0], request.param[2])
+        argument_object = Argument("TestArgument", 0, 0, request.param[3])
+
+        # Build dummy function object arguments
+        if request.param[1]:
+            function_object.args = [argument_object]
+        else:
+            # If we're not the first argument, add in the dummy
+            function_object.args = [self.dummy_arg, argument_object]
+
+        return function_object, argument_object, error_object
+
+    def test_argument(self, function_builder: Tuple[Function, Argument, Error]) -> None:
+        """Test missing argument annotation error codes."""
+        test_function, test_argument, error_object = function_builder
+        assert isinstance(classify_error(test_function, test_argument), error_object)
