@@ -53,6 +53,7 @@ $ flake8 --version
 ## Contributing
 Please take some time to read through our [contributing guidelines](CONTRIBUTING.md) before helping us with this project.
 
+### Development Environment
 This project uses [Pipenv](https://docs.pipenv.org/en/latest/) to manage dependencies. With your fork cloned to your local machine, you can create a developer environment using:
 
 ```bash
@@ -63,4 +64,11 @@ A [pre-commit](https://pre-commit.com) installation script and configuration is 
 
 ```bash
 $ pipenv run precommit
+```
+
+### Testing
+A [pytest](https://docs.pytest.org/en/latest/) suite is provided for testing:
+
+```bash
+$ pipenv run test
 ```
