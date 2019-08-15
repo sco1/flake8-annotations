@@ -148,10 +148,10 @@
         },
         "identify": {
             "hashes": [
-                "sha256:0a11379b46d06529795442742a043dc2fa14cd8c995ae81d1febbc5f1c014c87",
-                "sha256:43a5d24ffdb07bc7e21faf68b08e9f526a1f41f0056073f480291539ef961dfd"
+                "sha256:9aba2d08a82aa8e6f58810d4887ed3cf103a1befeb1eaf632d9c6fd2d6642542",
+                "sha256:b50ffad180b3a93b33a58b42597ef22493240d406ba07cc5058daf70f44b8d7c"
             ],
-            "version": "==1.4.5"
+            "version": "==1.4.6"
         },
         "importlib-metadata": {
             "hashes": [
@@ -175,11 +175,11 @@
         },
         "pre-commit": {
             "hashes": [
-                "sha256:704d9c48d7efb5bd36dcf8e8c3529fa95689b4f8b5c80b3fceab235ee2394ba1",
-                "sha256:8615bff705a56684462f9f0e8e1a22f3476bcdda0f204e77f70fbddb330ffeb4"
+                "sha256:21ce389ea3a480170804208baff8ceaac815ecf6b9bd6c6797de5584ad69cff8",
+                "sha256:3b0e901f442b966444833f1924e9bf9a7c10c79741b21520f68bc87639220f5e"
             ],
             "index": "pypi",
-            "version": "==1.18.0"
+            "version": "==1.18.2"
         },
         "pycodestyle": {
             "hashes": [
@@ -190,9 +190,10 @@
         },
         "pydocstyle": {
             "hashes": [
-                "sha256:58c421dd605eec0bce65df8b8e5371bb7ae421582cdf0ba8d9435ac5b0ffc36a"
+                "sha256:04c84e034ebb56eb6396c820442b8c4499ac5eb94a3bda88951ac3dc519b6058",
+                "sha256:66aff87ffe34b1e49bff2dd03a88ce6843be2f3346b0c9814410d34987fbab59"
             ],
-            "version": "==4.0.0"
+            "version": "==4.0.1"
         },
         "pyflakes": {
             "hashes": [
