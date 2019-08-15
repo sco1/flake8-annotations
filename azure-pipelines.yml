@@ -1,5 +1,5 @@
 jobs:
-- job: lint-and-test
+- job: lint_and_test
   displayName: 'Lint with flake8 & test with pytest'
 
   pool:
