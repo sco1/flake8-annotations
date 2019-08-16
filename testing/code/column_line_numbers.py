@@ -10,6 +10,8 @@ Should yield:
 26:3: TYP201 Missing return type annotation for public function
 
 Note: Column offsets are 0-indexed when yielded by our checker; flake8 adds 1 when emitted
+Note: Column offsets and line numbers are hard-coded in the testing suite, ensure these are updated
+      appropriately (location & order) if any changes are made to this source code.
 """
 
 
