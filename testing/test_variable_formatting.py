@@ -1,5 +1,6 @@
 import ast
 import re
+from collections import defaultdict
 from pathlib import Path
 from typing import List, Tuple
 
@@ -41,10 +42,9 @@ class TestArgumentFormatting:
     tree = ast.parse(src)
     lines = src.splitlines()
 
-    error_codes = [_simplify_error(error) for error in checker.TypeHintChecker(tree, lines).run()]
-
-    batched_error_codes = {error_type: [] for error_type in TEST_ARG_NAMES.keys()}
-    for code, arg_name in error_codes:
+    batched_error_codes = defaultdict(list)
+    for error in checker.TypeHintChecker(tree, lines).run():
+        code, arg_name = _simplify_error(error)
         batched_error_codes[code].append(arg_name)
 
     @pytest.fixture(params=TEST_ARG_NAMES.keys())
