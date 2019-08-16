@@ -18,7 +18,7 @@ ERROR_CODE = Tuple[int, int, str, checker.TypeHintChecker]
 @pytest.fixture
 def parsed_errors(src_filepath: Path = TEST_FILE) -> List[ERROR_CODE]:
     """Create a fixture for the error codes emitted by our testing code."""
-    with src_filepath.open("r") as f:
+    with src_filepath.open("r", encoding="utf-8") as f:
         src = f.read()
 
     tree = ast.parse(src)
