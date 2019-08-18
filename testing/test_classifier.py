@@ -11,7 +11,9 @@ from testing import object_attributes
 class TestReturnClassifier:
     """Test missing return annotation error classifications."""
 
-    dummy_arg = Argument("return", 0, 0, AnnotationType.RETURN)
+    dummy_arg = Argument(
+        argname="return", lineno=0, col_offset=0, annotation_type=AnnotationType.RETURN
+    )
 
     @pytest.fixture(params=object_attributes.return_classifications.keys())
     def function_builder(self, request) -> Tuple[Function, Error]:  # noqa
@@ -20,12 +22,20 @@ class TestReturnClassifier:
 
         `object_attributes.return_classifications` is a dictionary of possible function combinations
         along with the resultant error code:
-          * Keys are tuples of the form:
-              (function type, is class method?, class decorator type)
+          * Keys are named tuples of the form:
+              (function_type, is_class_method, class_decorator_type)
           * Values are the error object that should be returned by the error classifier
         """
         error_object = object_attributes.return_classifications[request.param]
-        return Function("ReturnTest", 0, 0, *request.param), error_object
+        function_object = Function(
+            name="ReturnTest",
+            lineno=0,
+            col_offset=0,
+            function_type=request.param.function_type,
+            is_class_method=request.param.is_class_method,
+            class_decorator_type=request.param.class_decorator_type,
+        )
+        return function_object, error_object
 
     def test_return(self, function_builder: Tuple[Function, Error]) -> None:
         """Test missing return annotation error codes."""
@@ -38,7 +48,7 @@ class TestArgumentClassifier:
 
     # Build a dummy argument to substitute for self/cls in class methods if we're looking at the
     # other arguments
-    dummy_arg = Argument("DummyArg", 0, 0, None)
+    dummy_arg = Argument(argname="DummyArg", lineno=0, col_offset=0, annotation_type=None)
 
     @pytest.fixture(params=object_attributes.argument_classifications.keys())
     def function_builder(self, request) -> Tuple[Function, Argument, Error]:  # noqa
@@ -52,11 +62,23 @@ class TestArgumentClassifier:
           * Values are the error object that should be returned by the error classifier
         """
         error_object = object_attributes.argument_classifications[request.param]
-        function_object = Function("ArgumentTest", 0, 0, None, request.param[0], request.param[2])
-        argument_object = Argument("TestArgument", 0, 0, request.param[3])
+        function_object = Function(
+            name="ArgumentTest",
+            lineno=0,
+            col_offset=0,
+            function_type=None,
+            is_class_method=request.param.is_class_method,
+            class_decorator_type=request.param.class_decorator_type,
+        )
+        argument_object = Argument(
+            argname="TestArgument",
+            lineno=0,
+            col_offset=0,
+            annotation_type=request.param.annotation_type,
+        )
 
         # Build dummy function object arguments
-        if request.param[1]:
+        if request.param.is_first_arg:
             function_object.args = [argument_object]
         else:
             # If we're not the first argument, add in the dummy
