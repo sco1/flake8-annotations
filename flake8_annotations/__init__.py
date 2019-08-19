@@ -13,12 +13,19 @@ AST_FUNCTION_TYPES = Union[ast.FunctionDef, ast.AsyncFunctionDef]
 class Argument:
     """Represent a function argument & its metadata."""
 
-    def __init__(self, argname: str, lineno: int, col_offset: int, annotation_type: AnnotationType):
+    def __init__(
+        self,
+        argname: str,
+        lineno: int,
+        col_offset: int,
+        annotation_type: AnnotationType,
+        has_type_annotation: bool = False,
+    ):
         self.argname = argname
         self.lineno = lineno
         self.col_offset = col_offset
         self.annotation_type = annotation_type
-        self.has_type_annotation = False
+        self.has_type_annotation = has_type_annotation
 
     @classmethod
     def from_arg_node(cls, node: ast.arguments, annotation_type_name: str):
