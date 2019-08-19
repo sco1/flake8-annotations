@@ -5,7 +5,7 @@ from flake8_annotations import Argument, Function
 from flake8_annotations.checker import classify_error
 from flake8_annotations.enums import AnnotationType
 from flake8_annotations.error_codes import Error
-from testing import object_attributes
+from testing import classifier_object_attributes
 
 
 class TestReturnClassifier:
@@ -15,18 +15,18 @@ class TestReturnClassifier:
         argname="return", lineno=0, col_offset=0, annotation_type=AnnotationType.RETURN
     )
 
-    @pytest.fixture(params=object_attributes.return_classifications.keys())
+    @pytest.fixture(params=classifier_object_attributes.return_classifications.keys())
     def function_builder(self, request) -> Tuple[Function, Error]:  # noqa
         """
         Build a Function object from the fixtured parameters.
 
-        `object_attributes.return_classifications` is a dictionary of possible function combinations
-        along with the resultant error code:
+        `classifier_object_attributes.return_classifications` is a dictionary of possible function
+        combinations along with the resultant error code:
           * Keys are named tuples of the form:
               (function_type, is_class_method, class_decorator_type)
           * Values are the error object that should be returned by the error classifier
         """
-        error_object = object_attributes.return_classifications[request.param]
+        error_object = classifier_object_attributes.return_classifications[request.param]
         function_object = Function(
             name="ReturnTest",
             lineno=0,
@@ -50,18 +50,18 @@ class TestArgumentClassifier:
     # other arguments
     dummy_arg = Argument(argname="DummyArg", lineno=0, col_offset=0, annotation_type=None)
 
-    @pytest.fixture(params=object_attributes.argument_classifications.keys())
+    @pytest.fixture(params=classifier_object_attributes.argument_classifications.keys())
     def function_builder(self, request) -> Tuple[Function, Argument, Error]:  # noqa
         """
         Build function and argument objects from the fixtured parameters.
 
-        `object_attributes.argument_classifications` is a dictionary of possible argument and
-        function combinations along with the resultant error code:
+        `classifier_object_attributes.argument_classifications` is a dictionary of possible argument
+        and function combinations along with the resultant error code:
           * Keys are tuples of the form:
-              (is_class_method, is_first_arg, decorator_type, annotation_type)
+              (is_class_method, is_first_arg, classs_decorator_type, annotation_type)
           * Values are the error object that should be returned by the error classifier
         """
-        error_object = object_attributes.argument_classifications[request.param]
+        error_object = classifier_object_attributes.argument_classifications[request.param]
         function_object = Function(
             name="ArgumentTest",
             lineno=0,

@@ -30,7 +30,7 @@ def error_objects(request) -> Tuple[Tuple, error_codes.Error]:  # noqa
       (line number: int, column number: int, message: str, checker type: TypeHintChecker object)
     """
     # Initialize error object
-    error_object = request.param("test_arg", 0, 0)
+    error_object = request.param(argname="test_arg", lineno=0, col_offset=0)
     return error_object.to_flake8(), error_object
 
 
