@@ -76,15 +76,16 @@ class Function:
         is_class_method: bool = False,
         class_decorator_type: Union[ClassDecoratorType, None] = None,
         is_return_annotated: bool = False,
+        args: List[Argument] = None,
     ):
         self.name = name
         self.lineno = lineno
         self.col_offset = col_offset
-        self.is_class_method = is_class_method
         self.function_type = function_type
+        self.is_class_method = is_class_method
         self.class_decorator_type = class_decorator_type
-        self.args = None
         self.is_return_annotated = is_return_annotated
+        self.args = args
 
     def is_fully_annotated(self) -> bool:
         """
@@ -105,11 +106,9 @@ class Function:
         The output string will be formatted as:
           '<Function: <name>, Args: <args>>'
         """
-        # If we have a list of args, format it ourselves so we can get str instead of repr
-        if self.args:
-            str_args = f"[{', '.join([str(arg) for arg in self.args])}]"
-        else:
-            str_args = str(self.args)
+        # Manually join the list so we get Argument's __str__ instead of __repr__
+        # Function will always have a list of at least one Argument ("return" is always added)
+        str_args = f"[{', '.join([str(arg) for arg in self.args])}]"
 
         return f"<Function: {self.name}, Args: {str_args}>"
 
