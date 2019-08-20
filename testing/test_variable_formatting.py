@@ -36,11 +36,7 @@ def _simplify_error(error_code: ERROR_CODE_TYPE) -> SIMPLE_ERROR_CODE:
 class TestArgumentFormatting:
     """Testing class for containerizing parsed error codes & running the fixtured tests."""
 
-    with TEST_FILE.open("r", encoding="utf-8") as f:
-        src = f.read()
-
-    tree = ast.parse(src)
-    lines = src.splitlines()
+    tree, lines = checker.TypeHintChecker.load_file(TEST_FILE)
 
     batched_error_codes = defaultdict(list)
     for error in checker.TypeHintChecker(tree, lines).run():

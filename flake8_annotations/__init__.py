@@ -1,4 +1,5 @@
 import ast
+from pathlib import Path
 from typing import List, Union
 
 from flake8_annotations.enums import AnnotationType, ClassDecoratorType, FunctionType
@@ -251,3 +252,17 @@ class FunctionVisitor(ast.NodeVisitor):
                 for method_node in method_nodes
             ]
         )
+
+    @classmethod
+    def parse_file(cls, src_filepath: Path) -> "FunctionVisitor":  # Need to quote for 3.6 compat
+        """Return a parsed AST for the provided Python source file."""
+        with src_filepath.open("r", encoding="utf-8") as f:
+            src = f.read()
+
+        tree = ast.parse(src)
+        lines = src.splitlines()
+
+        visitor = cls(lines)
+        visitor.visit(tree)
+
+        return visitor

@@ -1,6 +1,7 @@
 import ast
 from functools import lru_cache
-from typing import Generator, List
+from pathlib import Path
+from typing import Generator, List, Tuple
 
 from flake8_annotations import Argument, Function, FunctionVisitor, __version__, enums, error_codes
 
@@ -32,6 +33,17 @@ class TypeHintChecker:
         for function in visitor.function_definitions:
             for arg in function.get_missed_annotations():
                 yield classify_error(function, arg).to_flake8()
+
+    @staticmethod
+    def load_file(src_filepath: Path) -> Tuple[ast.Module, List[str]]:
+        """Parse the provided Python file and return an (AST, source) tuple."""
+        with src_filepath.open("r", encoding="utf-8") as f:
+            src = f.read()
+
+        tree = ast.parse(src)
+        lines = src.splitlines()
+
+        return tree, lines
 
 
 def classify_error(function: Function, arg: Argument) -> error_codes.Error:

@@ -13,13 +13,7 @@ class TestArgumentParsing:
     """Test for proper argument parsing from source."""
 
     src_filepath = Path("./testing/code/all_args.py")
-    with src_filepath.open("r", encoding="utf-8") as f:
-        src = f.read()
-
-    tree = ast.parse(src)
-    lines = src.splitlines()
-    visitor = FunctionVisitor(lines)
-    visitor.visit(tree)
+    visitor = FunctionVisitor.parse_file(src_filepath)
 
     @pytest.fixture(params=parser_object_attributes.parsed_arguments.keys())
     def argument_lists(self, request) -> Tuple[List[Argument], List[Argument], str]:  # noqa
@@ -91,13 +85,7 @@ class TestFunctionParsing:
     """Test for proper function parsing from source."""
 
     src_filepath = Path("./testing/code/all_functions.py")
-    with src_filepath.open("r", encoding="utf-8") as f:
-        src = f.read()
-
-    tree = ast.parse(src)
-    lines = src.splitlines()
-    visitor = FunctionVisitor(lines)
-    visitor.visit(tree)
+    visitor = FunctionVisitor.parse_file(src_filepath)
 
     @pytest.fixture(params=parser_object_attributes.parsed_functions.keys())
     def functions(self, request) -> Tuple[Function, Function]:  # noqa
