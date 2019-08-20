@@ -30,3 +30,10 @@ venv.bak/
 
 # logs
 *.log
+
+# Unit test / coverage reports
+.coverage
+.tox
+.coverage.*
+coverage.xml
+htmlcov
