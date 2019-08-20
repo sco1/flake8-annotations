@@ -44,6 +44,21 @@ parsed_functions = {
     "_protected_fun": nonclass_func(name="_protected_fun", function_type=FunctionType.PROTECTED),
     "__private_fun": nonclass_func(name="__private_fun", function_type=FunctionType.PRIVATE),
     "__special_fun__": nonclass_func(name="__special_fun__", function_type=FunctionType.SPECIAL),
+    "async_public_fun": nonclass_func(name="async_public_fun", function_type=FunctionType.PUBLIC),
+    "async_public_fun_return_annotated": nonclass_func(
+        name="async_public_fun_return_annotated",
+        function_type=FunctionType.PUBLIC,
+        is_return_annotated=True,
+    ),
+    "_async_protected_fun": nonclass_func(
+        name="_async_protected_fun", function_type=FunctionType.PROTECTED
+    ),
+    "__async_private_fun": nonclass_func(
+        name="__async_private_fun", function_type=FunctionType.PRIVATE
+    ),
+    "__async_special_fun__": nonclass_func(
+        name="__async_special_fun__", function_type=FunctionType.SPECIAL
+    ),
     "decorated_noncallable_method": class_func(
         name="decorated_noncallable_method",
         function_type=FunctionType.PUBLIC,
@@ -54,6 +69,16 @@ parsed_functions = {
         function_type=FunctionType.PUBLIC,
         class_decorator_type=None,
     ),
+    "decorated_noncallable_async_method": class_func(
+        name="decorated_noncallable_async_method",
+        function_type=FunctionType.PUBLIC,
+        class_decorator_type=None,
+    ),
+    "decorated_callable_async_method": class_func(
+        name="decorated_callable_async_method",
+        function_type=FunctionType.PUBLIC,
+        class_decorator_type=None,
+    ),
     "decorated_classmethod": class_func(
         name="decorated_classmethod",
         function_type=FunctionType.PUBLIC,
@@ -61,6 +86,16 @@ parsed_functions = {
     ),
     "decorated_staticmethod": class_func(
         name="decorated_staticmethod",
+        function_type=FunctionType.PUBLIC,
+        class_decorator_type=ClassDecoratorType.STATICMETHOD,
+    ),
+    "decorated_async_classmethod": class_func(
+        name="decorated_async_classmethod",
+        function_type=FunctionType.PUBLIC,
+        class_decorator_type=ClassDecoratorType.CLASSMETHOD,
+    ),
+    "decorated_async_staticmethod": class_func(
+        name="decorated_async_staticmethod",
         function_type=FunctionType.PUBLIC,
         class_decorator_type=ClassDecoratorType.STATICMETHOD,
     ),
@@ -81,6 +116,26 @@ parsed_functions = {
     ),
     "decorated_callable_staticmethod": class_func(
         name="decorated_callable_staticmethod",
+        function_type=FunctionType.PUBLIC,
+        class_decorator_type=ClassDecoratorType.STATICMETHOD,
+    ),
+    "decorated_noncallable_async_classmethod": class_func(
+        name="decorated_noncallable_async_classmethod",
+        function_type=FunctionType.PUBLIC,
+        class_decorator_type=ClassDecoratorType.CLASSMETHOD,
+    ),
+    "decorated_callable_async_classmethod": class_func(
+        name="decorated_callable_async_classmethod",
+        function_type=FunctionType.PUBLIC,
+        class_decorator_type=ClassDecoratorType.CLASSMETHOD,
+    ),
+    "decorated_noncallable_async_staticmethod": class_func(
+        name="decorated_noncallable_async_staticmethod",
+        function_type=FunctionType.PUBLIC,
+        class_decorator_type=ClassDecoratorType.STATICMETHOD,
+    ),
+    "decorated_callable_async_staticmethod": class_func(
+        name="decorated_callable_async_staticmethod",
         function_type=FunctionType.PUBLIC,
         class_decorator_type=ClassDecoratorType.STATICMETHOD,
     ),
