@@ -7,6 +7,9 @@ import pytest_check as check
 from flake8_annotations import Argument, Function, FunctionVisitor
 from testing import parser_object_attributes
 
+ARG_FIXTURE_TYPE = Tuple[List[Argument], List[Argument], str]
+FUNC_FIXTURE_TYPE = Tuple[Function, Function]
+
 
 class TestArgumentParsing:
     """Test for proper argument parsing from source."""
@@ -15,7 +18,7 @@ class TestArgumentParsing:
     visitor = FunctionVisitor.parse_file(src_filepath)
 
     @pytest.fixture(params=parser_object_attributes.parsed_arguments.keys())
-    def argument_lists(self, request) -> Tuple[List[Argument], List[Argument], str]:  # noqa
+    def argument_lists(self, request) -> ARG_FIXTURE_TYPE:  # noqa
         """
         Build a pair of lists of arguments to compare and return as a (truth, parsed) tuple.
 
@@ -43,9 +46,7 @@ class TestArgumentParsing:
 
         return truth_arguments, parsed_arguments, request.param
 
-    def test_argument_parsing(
-        self, argument_lists: Tuple[List[Argument], List[Argument], str]
-    ) -> None:
+    def test_argument_parsing(self, argument_lists: ARG_FIXTURE_TYPE) -> None:
         """
         Test argument parsing of the testing source code.
 
@@ -85,7 +86,7 @@ class TestFunctionParsing:
     visitor = FunctionVisitor.parse_file(src_filepath)
 
     @pytest.fixture(params=parser_object_attributes.parsed_functions.keys())
-    def functions(self, request) -> Tuple[Function, Function]:  # noqa
+    def functions(self, request) -> FUNC_FIXTURE_TYPE:  # noqa
         """
         Build a pair of Function objects to compare and return as a (truth, parsed) tuple.
 
@@ -102,7 +103,7 @@ class TestFunctionParsing:
 
         return truth_function, parsed_function
 
-    def test_function_parsing(self, functions: Tuple[Function, Function]) -> None:
+    def test_function_parsing(self, functions: FUNC_FIXTURE_TYPE) -> None:
         """
         Test function parsing of the testing source code.
 
@@ -136,14 +137,12 @@ class TestFunctionParsing:
         )
 
 
-def _find_matching_function(
-    function_list: List[Function], match_name: str
-) -> Union[Function, None]:
+def _find_matching_function(func_list: List[Function], match_name: str) -> Union[Function, None]:
     """
     Iterate over a list of Function objects & find the matching named function.
 
     If no function is found, this returns None
     """
-    for function in function_list:
+    for function in func_list:
         if function.name == match_name:
             return function
