@@ -52,7 +52,7 @@ class TestArgumentParsing:
 
         Argument objects are provided as a tuple of (truth, source) lists
         """
-        for truth_arg, parsed_arg in zip_longest(argument_lists[0], argument_lists[1]):
+        for truth_arg, parsed_arg in zip_longest(*argument_lists[:2]):
             failure_msg = (
                 f"Comparison check failed for arg '{parsed_arg.argname}' in '{argument_lists[2]}'"
             )
