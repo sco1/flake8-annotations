@@ -1,7 +1,6 @@
-import ast
 from itertools import zip_longest
 from pathlib import Path
-from typing import List, Tuple
+from typing import List, Tuple, Union
 
 import pytest
 import pytest_check as check
@@ -35,13 +34,11 @@ class TestArgumentParsing:
         """
         truth_arguments = parser_object_attributes.parsed_arguments[request.param]
 
-        # Find the function in our source parser & get the list of Argument objects
-        for function in self.visitor.function_definitions:
-            if function.name == request.param:
-                parsed_arguments = function.args
-                break
+        matching_func = _find_matching_function(self.visitor.function_definitions, request.param)
+        if matching_func:
+            parsed_arguments = matching_func.args
         else:
-            # We shouldn't ever get here, but add a catch-all just in case
+            # We shouldn't ever get here, but add as a catch-all
             parsed_arguments = None
 
         return truth_arguments, parsed_arguments, request.param
@@ -99,14 +96,9 @@ class TestFunctionParsing:
         """
         truth_function = parser_object_attributes.parsed_functions[request.param]
 
-        # Find the function in our source parser
-        for function in self.visitor.function_definitions:
-            if function.name == request.param:
-                parsed_function = function
-                break
-        else:
-            # We shouldn't ever get here, but add a catch-all just in case
-            parsed_function = None
+        # This should return the Function object. It may return None if no matching function name
+        # is found, due to misconfigured test parameters
+        parsed_function = _find_matching_function(self.visitor.function_definitions, request.param)
 
         return truth_function, parsed_function
 
@@ -142,3 +134,16 @@ class TestFunctionParsing:
                 func_a.is_return_annotated == func_b.is_return_annotated,
             )
         )
+
+
+def _find_matching_function(
+    function_list: List[Function], match_name: str
+) -> Union[Function, None]:
+    """
+    Iterate over a list of Function objects & find the matching named function.
+
+    If no function is found, this returns None
+    """
+    for function in function_list:
+        if function.name == match_name:
+            return function

@@ -10,6 +10,7 @@ class RT(NamedTuple):
     is_class_method: bool
     class_decorator_type: ClassDecoratorType
 
+
 return_classifications = {
     # TYP206 Missing return type annotation for classmethod
     RT(FunctionType.PUBLIC, True, ClassDecoratorType.CLASSMETHOD): error_codes.TYP206,
@@ -43,6 +44,7 @@ class AT(NamedTuple):
     is_first_arg: bool
     class_decorator_type: ClassDecoratorType
     annotation_type: AnnotationType
+
 
 argument_classifications = {
     # TYP102 Missing type annotation for cls in classmethod
