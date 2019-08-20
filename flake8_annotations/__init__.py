@@ -28,6 +28,22 @@ class Argument:
         self.annotation_type = annotation_type
         self.has_type_annotation = has_type_annotation
 
+    def __str__(self) -> str:
+        """
+        Format the Argument object into a readable representation.
+
+        The output string will be formatted as:
+          '<Argument: <argname>, Annotated: <has_type_annotation>>'
+        """
+        return f"<Argument: {self.argname}, Annotated: {self.has_type_annotation}>"
+
+    def __repr__(self) -> str:
+        """Format the Argument object into its "official" representation."""
+        return (
+            "Argument"
+            f"({self.argname!r}, {self.lineno}, {self.col_offset}, {self.annotation_type}, {self.has_type_annotation})"  # noqa
+        )
+
     @classmethod
     def from_arg_node(cls, node: ast.arguments, annotation_type_name: str):
         """Create an Argument object from an ast.arguments node."""
@@ -40,16 +56,6 @@ class Argument:
             new_arg.has_type_annotation = False
 
         return new_arg
-
-    def _debug_summary(self) -> str:
-        """Generate a table of Argument's attributes for debugging purposes"""
-        return (
-            f"{self.argname}\n"
-            f"         Line Number: {self.lineno}\n"
-            f"       Column Number: {self.col_offset}\n"
-            f"     Annotation type: {self.annotation_type}\n"
-            f"Has Type Annotation?: {self.has_type_annotation}\n"
-        )
 
 
 class Function:
@@ -91,6 +97,28 @@ class Function:
     def get_missed_annotations(self) -> List:
         """Provide a list of arguments with missing type annotations."""
         return [arg for arg in self.args if not arg.has_type_annotation]
+
+    def __str__(self) -> str:
+        """
+        Format the Function object into a readable representation.
+
+        The output string will be formatted as:
+          '<Function: <name>, Args: <args>>'
+        """
+        # If we have a list of args, format it ourselves so we can get str instead of repr
+        if self.args:
+            str_args = f"[{', '.join([str(arg) for arg in self.args])}]"
+        else:
+            str_args = str(self.args)
+
+        return f"<Function: {self.name}, Args: {str_args}>"
+
+    def __repr__(self) -> str:
+        """Format the Function object into its "official" representation."""
+        return (
+            f"Function({self.name!r}, {self.lineno}, {self.col_offset}, {self.is_class_method}, "
+            f"{self.function_type}, {self.class_decorator_type}, {self.args}, {self.is_return_annotated})"  # noqa
+        )
 
     @classmethod
     def from_function_node(cls, node: AST_FUNCTION_TYPES, lines: List[str], **kwargs):
@@ -189,21 +217,6 @@ class Function:
             return ClassDecoratorType.STATICMETHOD
         else:
             return None
-
-    def _debug_summary(self) -> str:
-        """Generate a table of Function's attributes for debugging purposes"""
-        return (
-            f"{self.name}\n"
-            f"       Function type: {self.function_type}\n"
-            f"         Line Number: {self.lineno}\n"
-            f"       Column Number: {self.col_offset}\n"
-            f"       Class method?: {self.is_class_method}\n"
-            f"Class decorator type: {self.class_decorator_type}\n"
-            f"                Args: {self.args}\n"
-            f"Is return annotated?: {self.is_return_annotated}\n"
-            f" Is fully annotated?: {self.is_fully_annotated()}\n"
-            f" Missing Annotations: {self.get_missed_annotations()}\n"
-        )
 
 
 class FunctionVisitor(ast.NodeVisitor):
