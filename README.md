@@ -72,3 +72,24 @@ A [pytest](https://docs.pytest.org/en/latest/) suite is provided for testing:
 ```bash
 $ pipenv run test
 ```
+
+### Coverage
+Test coverage is provided by [pytest-cov](https://github.com/pytest-dev/pytest-cov) via a pipenv script:
+
+```bash
+$ pipenv run coverage
+```
+
+When running via pipenv, details on missing coverage is provided in the report to allow the user to generate additional tests for full coverage:
+
+```
+----------- coverage: platform win32, python 3.7.4-final-0 -----------
+Name                                Stmts   Miss  Cover   Missing
+-----------------------------------------------------------------
+flake8_annotations\__init__.py        110      1    99%   164
+flake8_annotations\checker.py          57      0   100%
+flake8_annotations\enums.py            15      0   100%
+flake8_annotations\error_codes.py      85      0   100%
+-----------------------------------------------------------------
+TOTAL                                 267      1    99%
+```
