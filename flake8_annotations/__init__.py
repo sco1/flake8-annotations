@@ -159,9 +159,6 @@ class Function:
         # Calculate the column offset of the end of the function definition by finding where : is
         # Lineno is 1-indexed, the line string is 0-indexed
         def_end_col_offset = lines[def_end_lineno - 1].find(":") + 1
-        if def_end_col_offset == -1:
-            # Fallback if we've messed up our line indexing
-            def_end_col_offset = node.col_offset
 
         return_arg = Argument("return", def_end_lineno, def_end_col_offset, AnnotationType.RETURN)
         if node.returns:
