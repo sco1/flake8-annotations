@@ -40,3 +40,13 @@ jobs:
     inputs:
       testResultsFiles: '**/test-*.xml'
       testRunTitle: 'flake8-annotations Lint & Test Results'
+
+  - script: python3 -m pytest --cov-report xml:cov.xml --cov=flake8_annotations testing/
+    displayName: 'Generate Coverage Report'
+
+  - task: PublishCodeCoverageResults@1
+    displayName: 'Publish Coverage Results'
+    condition: succeededOrFailed()
+    inputs:
+      codeCoverageTool: Cobertura
+      summaryFileLocation: '**/cov.xml'
