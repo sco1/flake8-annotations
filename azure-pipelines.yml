@@ -1,6 +1,6 @@
 jobs:
 - job: lint_and_test
-  displayName: 'Lint with flake8 & test with pytest'
+  displayName: 'Lint & Test'
 
   pool:
     vmImage: 'Ubuntu 16.04'
