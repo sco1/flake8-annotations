@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "8268c62125e0967a052afb9192a8b0cec89ba79674b5a6254625cc9bac39e443"
+            "sha256": "195bc514dfecfd4bcfca41781e2ddcff7d5a1f235304fc8df6ae1d7cb938f1ef"
         },
         "pipfile-spec": 6,
         "requires": {},
@@ -160,6 +160,14 @@
             "index": "pypi",
             "version": "==1.4.0"
         },
+        "flake8-formatter-junit-xml": {
+            "hashes": [
+                "sha256:1ddd9356bb30ba736c3f14c769c837cfacf4f79c3d383ab963ef9d38eea05a9c",
+                "sha256:6358a44ecafdf0f9c8ee5314859b8d6f553dc2e55e946a24c538185e1eba7ce6"
+            ],
+            "index": "pypi",
+            "version": "==0.0.6"
+        },
         "flake8-import-order": {
             "hashes": [
                 "sha256:90a80e46886259b9c396b578d75c749801a41ee969a235e163cfe1be7afd2543",
@@ -205,6 +213,12 @@
             ],
             "markers": "python_version < '3.8'",
             "version": "==0.20"
+        },
+        "junit-xml": {
+            "hashes": [
+                "sha256:602f1c480a19d64edb452bf7632f76b5f2cb92c1938c6e071dcda8ff9541dc21"
+            ],
+            "version": "==1.8"
         },
         "mccabe": {
             "hashes": [
