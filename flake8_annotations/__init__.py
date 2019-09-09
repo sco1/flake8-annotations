@@ -255,8 +255,6 @@ class FunctionVisitor(ast.NodeVisitor):
 
         Class methods will all be contained in the body of the node
         """
-        # Use ast.NodeVisitor.generic_visit to punt class method processing to the other function
-        # visitors
         method_nodes = [
             child_node
             for child_node in node.body
@@ -268,6 +266,10 @@ class FunctionVisitor(ast.NodeVisitor):
                 for method_node in method_nodes
             ]
         )
+
+        # Use ast.NodeVisitor.generic_visit to start down the nested method chain
+        for sub_node in node.body:
+            self.generic_visit(sub_node)
 
     @classmethod
     def parse_file(cls, src_filepath: Path) -> "FunctionVisitor":  # Need to quote for 3.6 compat
