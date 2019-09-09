@@ -156,9 +156,16 @@ class Function:
         # Get the line number from the line before where the body of the function starts to account
         # for the presence of decorators
         def_end_lineno = node.body[0].lineno - 1
-        # Calculate the column offset of the end of the function definition by finding where : is
-        # Lineno is 1-indexed, the line string is 0-indexed
-        def_end_col_offset = lines[def_end_lineno - 1].find(":") + 1
+        while True:
+            # To account for multiline docstrings, rewind through the lines until we find the line
+            # containing the :
+            colon_loc = lines[def_end_lineno - 1].find(":")
+            if colon_loc == -1:
+                def_end_lineno -= 1
+            else:
+                # Lineno is 1-indexed, the line string is 0-indexed
+                def_end_col_offset = colon_loc + 1
+                break
 
         return_arg = Argument("return", def_end_lineno, def_end_col_offset, AnnotationType.RETURN)
         if node.returns:

@@ -13,7 +13,7 @@ TEST_FILE = Path("./testing/code/column_line_numbers.py")
 # (line, column) tuples where we should get linting errors in the test file
 # Line numbers are 1-indexed
 # Column offsets are 0-indexed when yielded by our checker; flake8 adds 1 when emitted
-SHOULD_ERROR = ((18, 8), (18, 11), (26, 4), (27, 4), (28, 2))
+SHOULD_ERROR = ((20, 8), (20, 11), (28, 4), (29, 4), (30, 2), (34, 10), (39, 11))
 ERROR_CODE = Tuple[int, int, str, checker.TypeHintChecker]
 
 
