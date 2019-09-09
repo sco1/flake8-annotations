@@ -5,9 +5,9 @@
 [![Discord](https://discordapp.com/api/guilds/267624335836053506/embed.png)](https://discord.gg/2B963hn)
 
 
-`flake8-annotations` is a plugin for [Flake8](http://flake8.pycqa.org/en/latest/) that detects when arguments and/or return [type annotations](https://www.python.org/dev/peps/pep-0484/) are missing in function and method definitions.
+`flake8-annotations` is a plugin for [Flake8](http://flake8.pycqa.org/en/latest/) that detects the absence of [PEP 3107-style](https://www.python.org/dev/peps/pep-3107/) function annotations.
 
-What this won't do: Check variable annotations, compile-time type checking (see: [mypy](http://mypy-lang.org/))
+What this won't do: Check variable annotations (see: [PEP 526](https://www.python.org/dev/peps/pep-0526/)), check type comments (see: [PEP 484](https://www.python.org/dev/peps/pep-0484/#type-comments)), or replace [mypy's](http://mypy-lang.org/) compile-time type checking.
 
 ## Installation
 
@@ -53,14 +53,47 @@ $ flake8 --version
 ## Contributing
 Please take some time to read through our [contributing guidelines](CONTRIBUTING.md) before helping us with this project.
 
+### Development Environment
 This project uses [Pipenv](https://docs.pipenv.org/en/latest/) to manage dependencies. With your fork cloned to your local machine, you can create a developer environment using:
 
 ```bash
 $ pipenv sync --dev
 ```
 
+Note: flake8-annotations is included in the Pipfile as an editable dependency so it will be included when flake8 is invoked in your developer environment.
+
 A [pre-commit](https://pre-commit.com) installation script and configuration is also provided to create a pre-commit hook so linting errors aren't committed:
 
 ```bash
 $ pipenv run precommit
+```
+
+### Testing
+A [pytest](https://docs.pytest.org/en/latest/) suite is provided for testing:
+
+```bash
+$ pipenv run test
+```
+
+### Coverage
+Test coverage is provided by [pytest-cov](https://github.com/pytest-dev/pytest-cov) via a pipenv script:
+
+```bash
+$ pipenv run coverage
+```
+
+When running via pipenv, details on missing coverage is provided in the report to allow the user to generate additional tests for full coverage.
+
+e.g.
+
+```
+----------- coverage: platform win32, python 3.7.4-final-0 -----------
+Name                                Stmts   Miss  Cover   Missing
+-----------------------------------------------------------------
+flake8_annotations\__init__.py        110      1    99%   164
+flake8_annotations\checker.py          57      0   100%
+flake8_annotations\enums.py            15      0   100%
+flake8_annotations\error_codes.py      85      0   100%
+-----------------------------------------------------------------
+TOTAL                                 267      1    99%
 ```

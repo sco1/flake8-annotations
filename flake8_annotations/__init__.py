@@ -1,4 +1,5 @@
 import ast
+from pathlib import Path
 from typing import List, Union
 
 from flake8_annotations.enums import AnnotationType, ClassDecoratorType, FunctionType
@@ -13,12 +14,35 @@ AST_FUNCTION_TYPES = Union[ast.FunctionDef, ast.AsyncFunctionDef]
 class Argument:
     """Represent a function argument & its metadata."""
 
-    def __init__(self, argname: str, lineno: int, col_offset: int, annotation_type: AnnotationType):
+    def __init__(
+        self,
+        argname: str,
+        lineno: int,
+        col_offset: int,
+        annotation_type: AnnotationType,
+        has_type_annotation: bool = False,
+    ):
         self.argname = argname
         self.lineno = lineno
         self.col_offset = col_offset
         self.annotation_type = annotation_type
-        self.has_type_annotation = False
+        self.has_type_annotation = has_type_annotation
+
+    def __str__(self) -> str:
+        """
+        Format the Argument object into a readable representation.
+
+        The output string will be formatted as:
+          '<Argument: <argname>, Annotated: <has_type_annotation>>'
+        """
+        return f"<Argument: {self.argname}, Annotated: {self.has_type_annotation}>"
+
+    def __repr__(self) -> str:
+        """Format the Argument object into its "official" representation."""
+        return (
+            "Argument"
+            f"({self.argname!r}, {self.lineno}, {self.col_offset}, {self.annotation_type}, {self.has_type_annotation})"  # noqa
+        )
 
     @classmethod
     def from_arg_node(cls, node: ast.arguments, annotation_type_name: str):
@@ -32,16 +56,6 @@ class Argument:
             new_arg.has_type_annotation = False
 
         return new_arg
-
-    def _debug_summary(self) -> str:
-        """Generate a table of Argument's attributes for debugging purposes"""
-        return (
-            f"{self.argname}\n"
-            f"         Line Number: {self.lineno}\n"
-            f"       Column Number: {self.col_offset}\n"
-            f"     Annotation type: {self.annotation_type}\n"
-            f"Has Type Annotation?: {self.has_type_annotation}\n"
-        )
 
 
 class Function:
@@ -62,15 +76,16 @@ class Function:
         is_class_method: bool = False,
         class_decorator_type: Union[ClassDecoratorType, None] = None,
         is_return_annotated: bool = False,
+        args: List[Argument] = None,
     ):
         self.name = name
         self.lineno = lineno
         self.col_offset = col_offset
-        self.is_class_method = is_class_method
         self.function_type = function_type
+        self.is_class_method = is_class_method
         self.class_decorator_type = class_decorator_type
-        self.args = None
         self.is_return_annotated = is_return_annotated
+        self.args = args
 
     def is_fully_annotated(self) -> bool:
         """
@@ -83,6 +98,26 @@ class Function:
     def get_missed_annotations(self) -> List:
         """Provide a list of arguments with missing type annotations."""
         return [arg for arg in self.args if not arg.has_type_annotation]
+
+    def __str__(self) -> str:
+        """
+        Format the Function object into a readable representation.
+
+        The output string will be formatted as:
+          '<Function: <name>, Args: <args>>'
+        """
+        # Manually join the list so we get Argument's __str__ instead of __repr__
+        # Function will always have a list of at least one Argument ("return" is always added)
+        str_args = f"[{', '.join([str(arg) for arg in self.args])}]"
+
+        return f"<Function: {self.name}, Args: {str_args}>"
+
+    def __repr__(self) -> str:
+        """Format the Function object into its "official" representation."""
+        return (
+            f"Function({self.name!r}, {self.lineno}, {self.col_offset}, {self.is_class_method}, "
+            f"{self.function_type}, {self.class_decorator_type}, {self.args}, {self.is_return_annotated})"  # noqa
+        )
 
     @classmethod
     def from_function_node(cls, node: AST_FUNCTION_TYPES, lines: List[str], **kwargs):
@@ -124,9 +159,6 @@ class Function:
         # Calculate the column offset of the end of the function definition by finding where : is
         # Lineno is 1-indexed, the line string is 0-indexed
         def_end_col_offset = lines[def_end_lineno - 1].find(":") + 1
-        if def_end_col_offset == -1:
-            # Fallback if we've messed up our line indexing
-            def_end_col_offset = node.col_offset
 
         return_arg = Argument("return", def_end_lineno, def_end_col_offset, AnnotationType.RETURN)
         if node.returns:
@@ -182,21 +214,6 @@ class Function:
         else:
             return None
 
-    def _debug_summary(self) -> str:
-        """Generate a table of Function's attributes for debugging purposes"""
-        return (
-            f"{self.name}\n"
-            f"       Function type: {self.function_type}\n"
-            f"         Line Number: {self.lineno}\n"
-            f"       Column Number: {self.col_offset}\n"
-            f"       Class method?: {self.is_class_method}\n"
-            f"Class decorator type: {self.class_decorator_type}\n"
-            f"                Args: {self.args}\n"
-            f"Is return annotated?: {self.is_return_annotated}\n"
-            f" Is fully annotated?: {self.is_fully_annotated()}\n"
-            f" Missing Annotations: {self.get_missed_annotations()}\n"
-        )
-
 
 class FunctionVisitor(ast.NodeVisitor):
     """An ast.NodeVisitor instance for walking the AST and describing all contained functions."""
@@ -244,3 +261,17 @@ class FunctionVisitor(ast.NodeVisitor):
                 for method_node in method_nodes
             ]
         )
+
+    @classmethod
+    def parse_file(cls, src_filepath: Path) -> "FunctionVisitor":  # Need to quote for 3.6 compat
+        """Return a parsed AST for the provided Python source file."""
+        with src_filepath.open("r", encoding="utf-8") as f:
+            src = f.read()
+
+        tree = ast.parse(src)
+        lines = src.splitlines()
+
+        visitor = cls(lines)
+        visitor.visit(tree)
+
+        return visitor

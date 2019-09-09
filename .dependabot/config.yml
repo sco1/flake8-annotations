@@ -1,0 +1,15 @@
+version: 1
+
+update_configs:
+  - package_manager: "python"
+    directory: "/"
+    update_schedule: "weekly"
+    ignored_updates:
+      # Ignore dev dependencies, these are pinned fairly liberally so they don't need to be
+      # rigorously tracked for updates
+      - match:
+          dependency_name: "flake8-*"
+      - match:
+          dependency_name: "pre-commit"
+      - match:
+          dependency_name: "pytest*"
