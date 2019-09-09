@@ -7,7 +7,7 @@ assert sys.version_info >= (3, 6, 0), "flake8-annotations requires Python 3.6+"
 setup(
     name="flake8_annotations",
     license="MIT",
-    version="1.0.0",
+    version="1.0.1",
     description="Flake8 Type Annotation Checks",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
@@ -39,12 +39,17 @@ setup(
     ],
     extras_require={
         "dev": [
-            "flake8-bugbear~=19.3",
-            "flake8-docstrings~=1.3",
+            "flake8-bugbear~=19.8",
+            "flake8-docstrings~=1.4",
+            "flake8-formatter-junit-xml~=0.0",
             "flake8-import-order~=0.18",
             "flake8-string-format~=0.2",
             "flake8-tidy-imports~=2.0",
             "flake8-todo~=0.7",
+            "pre-commit~=1.18",
+            "pytest~=5.1",
+            "pytest-check~=0.3",
+            "pytest-cov~=2.7",
         ]
     }
 )

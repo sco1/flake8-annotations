@@ -23,7 +23,7 @@ You can verify it's being picked up by invoking the following in your shell:
 
 ```bash
 $ flake8 --version
-3.7.8 (flake8-annotations: 1.0.0, mccabe: 0.6.1, pycodestyle: 2.5.0, pyflakes: 2.1.1) CPython 3.7.4 on Darwin
+3.7.8 (flake8-annotations: 1.0.1, mccabe: 0.6.1, pycodestyle: 2.5.0, pyflakes: 2.1.1) CPython 3.7.4 on Darwin
 ```
 
 ## Table of Warnings
@@ -88,12 +88,12 @@ e.g.
 
 ```
 ----------- coverage: platform win32, python 3.7.4-final-0 -----------
-Name                                Stmts   Miss  Cover   Missing
------------------------------------------------------------------
-flake8_annotations\__init__.py        110      1    99%   164
-flake8_annotations\checker.py          57      0   100%
-flake8_annotations\enums.py            15      0   100%
-flake8_annotations\error_codes.py      85      0   100%
------------------------------------------------------------------
-TOTAL                                 267      1    99%
+Name                                Stmts   Miss Branch BrPart  Cover   Missing
+-------------------------------------------------------------------------------
+flake8_annotations\__init__.py        108      0     38      0    99%   164
+flake8_annotations\checker.py          57      0     30      0   100%
+flake8_annotations\enums.py            15      0      0      0   100%
+flake8_annotations\error_codes.py      85      0      0      0   100%
+-------------------------------------------------------------------------------
+TOTAL                                 265      0     68      0    99%
 ```
