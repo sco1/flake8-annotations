@@ -91,14 +91,14 @@ def foo(arg1, arg2):
     # type: (bool) -> bool
     pass
 ```
-Will show `arg` as missing a type hint.
+Will show `arg2` as missing a type hint.
 
 ```py
 def foo(arg1, arg2):
     # type: (..., bool) -> bool
     pass
 ```
-Will show `arg` as missing a type hint.
+Will show `arg1` as missing a type hint.
 
 ## Contributing
 Please take some time to read through our [contributing guidelines](CONTRIBUTING.md) before helping us with this project.

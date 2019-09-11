@@ -189,7 +189,7 @@ class Function:
         If a function is type commented it is assumed to have a return annotation, otherwise Python
         will fail to parse the hint
         """
-        hint_tree = ast.parse(node.type_comment, '<func_type>', 'func_type')
+        hint_tree = ast.parse(node.type_comment, "<func_type>", "func_type")
 
         for arg, hint_comment in zip_longest(func_obj.args, hint_tree.argtypes):
             if isinstance(hint_comment, _ast3.Ellipsis):
