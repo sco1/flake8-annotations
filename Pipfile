@@ -22,6 +22,7 @@ pytest-cov = "~=2.7"
 
 [scripts]
 lint = "flake8"
+check = "python setup.py --quiet check --metadata --strict"
 precommit = "pre-commit install"
 test = "pytest"
 coverage = "pytest --cov=flake8_annotations testing/ --cov-branch --cov-report term-missing"
