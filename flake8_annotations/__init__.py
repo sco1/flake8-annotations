@@ -1,9 +1,9 @@
+from itertools import zip_longest
 from pathlib import Path
 from typing import List, Union
 
 from flake8_annotations.enums import AnnotationType, ClassDecoratorType, FunctionType
-from typed_ast import ast3 as ast
-
+from typed_ast import _ast3, ast3 as ast
 
 __version__ = "1.0.1"
 
@@ -50,7 +50,7 @@ class Argument:
         annotation_type = AnnotationType[annotation_type_name]
         new_arg = cls(node.arg, node.lineno, node.col_offset, annotation_type)
 
-        if node.annotation:
+        if node.annotation or node.type_comment:
             new_arg.has_type_annotation = True
         else:
             new_arg.has_type_annotation = False
@@ -173,7 +173,35 @@ class Function:
             new_function.is_return_annotated = True
 
         new_function.args.append(return_arg)
+
+        # Type comments in-line with input arguments are handled by the Argument class
+        # If a function-level type comment is present, attempt to parse for any missed type hints
+        if node.type_comment:
+            new_function = cls.try_type_comment(new_function, node)
+
         return new_function
+
+    @staticmethod
+    def try_type_comment(func_obj: "Function", node: AST_FUNCTION_TYPES) -> "Function":
+        """
+        Attempt to infer type hints from a function-level type comment.
+
+        If a function is type commented it is assumed to have a return annotation, otherwise Python
+        will fail to parse the hint
+        """
+        hint_tree = ast.parse(node.type_comment, '<func_type>', 'func_type')
+
+        for arg, hint_comment in zip_longest(func_obj.args, hint_tree.argtypes):
+            if isinstance(hint_comment, _ast3.Ellipsis):
+                continue
+
+            if arg and hint_comment:
+                arg.has_type_annotation = True
+
+        func_obj.args[-1].has_type_annotation = True  # Return arg is always last
+        func_obj.is_return_annotated = True
+
+        return func_obj
 
     @staticmethod
     def get_function_type(function_name: str) -> FunctionType:
