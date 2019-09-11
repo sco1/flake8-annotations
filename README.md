@@ -5,9 +5,9 @@
 [![Discord](https://discordapp.com/api/guilds/267624335836053506/embed.png)](https://discord.gg/2B963hn)
 
 
-`flake8-annotations` is a plugin for [Flake8](http://flake8.pycqa.org/en/latest/) that detects the absence of [PEP 3107-style](https://www.python.org/dev/peps/pep-3107/) function annotations.
+`flake8-annotations` is a plugin for [Flake8](http://flake8.pycqa.org/en/latest/) that detects the absence of [PEP 3107-style](https://www.python.org/dev/peps/pep-3107/) function annotations and [PEP 484-style](https://www.python.org/dev/peps/pep-0484/#type-comments) type comments  (see: [Caveats](#Caveats-for-PEP-484-style-Type-Comments)).
 
-What this won't do: Check variable annotations (see: [PEP 526](https://www.python.org/dev/peps/pep-0526/)), check type comments (see: [PEP 484](https://www.python.org/dev/peps/pep-0484/#type-comments)), or replace [mypy's](http://mypy-lang.org/) compile-time type checking.
+What this won't do: Check variable annotations (see: [PEP 526](https://www.python.org/dev/peps/pep-0526/)), respect stub files, or replace [mypy's](http://mypy-lang.org/) compile-time type checking.
 
 ## Installation
 
@@ -49,6 +49,56 @@ $ flake8 --version
 | `TYP204` | Missing return type annotation for special method     |
 | `TYP205` | Missing return type annotation for staticmethod       |
 | `TYP206` | Missing return type annotation for classmethod        |
+
+## Caveats for PEP 484-style Type Comments
+### Function type comments
+Function type comments are assumed to contain both argument and return type hints
+
+Yes:
+```py
+# type: (int, int) -> bool
+```
+
+No:
+```py
+# type: (int, int)
+```
+
+Python cannot parse the latter and will raise `SyntaxError: unexpected EOF while parsing`
+
+### Mixing argument type comments and function type comments
+Support is provided for mixing argument and function type comments, provided that the function type comment use an Ellipsis for the arguments.
+
+```py
+def foo(
+    arg1,  # type: bool
+    arg2,  # type: bool
+):  # type: (...) -> bool
+    pass
+```
+
+Ellipes are ignored by `flake8-annotations` parser.
+
+**Note:** If present, function type comments will override any argument type comments.
+
+### Partial type comments
+Partially type hinted functions are supported
+
+For example:
+
+```py
+def foo(arg1, arg2):
+    # type: (bool) -> bool
+    pass
+```
+Will show `arg` as missing a type hint.
+
+```py
+def foo(arg1, arg2):
+    # type: (..., bool) -> bool
+    pass
+```
+Will show `arg` as missing a type hint.
 
 ## Contributing
 Please take some time to read through our [contributing guidelines](CONTRIBUTING.md) before helping us with this project.
