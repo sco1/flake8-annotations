@@ -1,4 +1,3 @@
-import ast
 import re
 from collections import defaultdict
 from pathlib import Path
@@ -6,6 +5,7 @@ from typing import List, Tuple
 
 import pytest
 from flake8_annotations import checker
+from typed_ast import ast3 as ast
 
 TEST_FILE = Path("./testing/code/variable_formatting.py")
 ERROR_CODE_TYPE = Tuple[int, int, str, checker.TypeHintChecker]
@@ -36,10 +36,10 @@ def _simplify_error(error_code: ERROR_CODE_TYPE) -> SIMPLE_ERROR_CODE:
 class TestArgumentFormatting:
     """Testing class for containerizing parsed error codes & running the fixtured tests."""
 
-    tree, lines = checker.TypeHintChecker.load_file(TEST_FILE)
+    tree= checker.TypeHintChecker.load_file(TEST_FILE)
 
     batched_error_codes = defaultdict(list)
-    for error in checker.TypeHintChecker(tree, lines).run():
+    for error in checker.TypeHintChecker(tree, TEST_FILE).run():
         code, arg_name = _simplify_error(error)
         batched_error_codes[code].append(arg_name)
 

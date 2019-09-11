@@ -1,9 +1,9 @@
-import ast
 from functools import lru_cache
 from pathlib import Path
 from typing import Generator, List, Tuple
 
 from flake8_annotations import Argument, Function, FunctionVisitor, __version__, enums, error_codes
+from typed_ast import ast3 as ast
 
 
 class TypeHintChecker:
@@ -12,9 +12,11 @@ class TypeHintChecker:
     name = "function-type-annotations"
     version = __version__
 
-    def __init__(self, tree: ast.Module, lines: List[str]):
-        self.tree = tree
-        self.lines = lines
+    def __init__(self, tree: ast.Module, filename: str):
+        # Unfortunately no way that I can find around requesting the ast-parsed tree from flake8
+        # Removing tree unregisters the plugin, and per the documentation the alternative is
+        # requesting per-line information
+        self.tree, self.lines = self.load_file(Path(filename))
 
     def run(self) -> Generator[error_codes.Error, None, None]:
         """
@@ -36,7 +38,7 @@ class TypeHintChecker:
 
     @staticmethod
     def load_file(src_filepath: Path) -> Tuple[ast.Module, List[str]]:
-        """Parse the provided Python file and return an (AST, source) tuple."""
+        """Parse the provided Python file and return an (typed AST, source) tuple."""
         with src_filepath.open("r", encoding="utf-8") as f:
             src = f.read()
 
