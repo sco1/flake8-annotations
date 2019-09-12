@@ -50,6 +50,11 @@ $ flake8 --version
 | `TYP205` | Missing return type annotation for staticmethod       |
 | `TYP206` | Missing return type annotation for classmethod        |
 
+### Type Comments
+| ID       | Description                                               |
+|----------|-----------------------------------------------------------|
+| `TYP301` | PEP 484 disallows both type annotations and type comments |
+
 ## Caveats for PEP 484-style Type Comments
 ### Function type comments
 Function type comments are assumed to contain both argument and return type hints

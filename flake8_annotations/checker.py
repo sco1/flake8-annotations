@@ -34,6 +34,10 @@ class TypeHintChecker:
         # Flake8 handles all noqa and error code ignore configurations after the error is yielded
         for function in visitor.function_definitions:
             for arg in function.get_missed_annotations():
+                # Short-circuit check for mixing of type comments & 3107-style annotations
+                if arg.has_type_annotation and arg.has_3107_annotation:
+                    yield error_codes.TYP301.from_function(function).to_flake8()
+
                 yield classify_error(function, arg).to_flake8()
 
     @staticmethod

@@ -1,6 +1,6 @@
 from typing import Tuple, Type
 
-from flake8_annotations import Argument, checker
+from flake8_annotations import Argument, Function, checker
 
 
 class Error:
@@ -16,6 +16,10 @@ class Error:
     def from_argument(cls, argument: Argument):
         """Set error metadata from the input Argument object."""
         return cls(argument.argname, argument.lineno, argument.col_offset)
+
+    def from_function(cls, function: Function):
+        """Set error metadata from the input Function object."""
+        return cls(function.name, function.lineno, function.col_offset)
 
     def to_flake8(self) -> Tuple[int, int, str, Type]:
         """
@@ -140,6 +144,15 @@ class TYP205(Error):
 class TYP206(Error):
     def __init__(self, argname: str, lineno: int, col_offset: int):
         super().__init__("TYP206 Missing return type annotation for classmethod")
+        self.argname = argname
+        self.lineno = lineno
+        self.col_offset = col_offset
+
+
+# Type comments
+class TYP301(Error):
+    def __init__(self, argname: str, lineno: int, col_offset: int):
+        super().__init__("TYP301 PEP 484 disallows both type annotations and type comments")
         self.argname = argname
         self.lineno = lineno
         self.col_offset = col_offset

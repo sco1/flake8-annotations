@@ -21,12 +21,16 @@ class Argument:
         col_offset: int,
         annotation_type: AnnotationType,
         has_type_annotation: bool = False,
+        has_3107_annotation: bool = False,
+        has_type_comment: bool = False,
     ):
         self.argname = argname
         self.lineno = lineno
         self.col_offset = col_offset
         self.annotation_type = annotation_type
         self.has_type_annotation = has_type_annotation
+        self.has_3107_annotation = has_3107_annotation
+        self.has_type_comment = has_type_comment
 
     def __str__(self) -> str:
         """
@@ -50,8 +54,12 @@ class Argument:
         annotation_type = AnnotationType[annotation_type_name]
         new_arg = cls(node.arg, node.lineno, node.col_offset, annotation_type)
 
-        if node.annotation or node.type_comment:
+        if node.annotation:
             new_arg.has_type_annotation = True
+            new_arg.has_3107_annotation = True
+        elif node.type_comment:
+            new_arg.has_type_annotation = True
+            new_arg.has_type_comment = True
         else:
             new_arg.has_type_annotation = False
 
@@ -76,6 +84,7 @@ class Function:
         is_class_method: bool = False,
         class_decorator_type: Union[ClassDecoratorType, None] = None,
         is_return_annotated: bool = False,
+        has_type_comment: bool = False,
         args: List[Argument] = None,
     ):
         self.name = name
@@ -85,6 +94,7 @@ class Function:
         self.is_class_method = is_class_method
         self.class_decorator_type = class_decorator_type
         self.is_return_annotated = is_return_annotated
+        self.has_type_comment = has_type_comment
         self.args = args
 
     def is_fully_annotated(self) -> bool:
@@ -177,6 +187,7 @@ class Function:
         # Type comments in-line with input arguments are handled by the Argument class
         # If a function-level type comment is present, attempt to parse for any missed type hints
         if node.type_comment:
+            new_function.has_type_comment = True
             new_function = cls.try_type_comment(new_function, node)
 
         return new_function
@@ -197,8 +208,11 @@ class Function:
 
             if arg and hint_comment:
                 arg.has_type_annotation = True
+                arg.has_type_comment = True
 
-        func_obj.args[-1].has_type_annotation = True  # Return arg is always last
+        # Return arg is always last
+        func_obj.args[-1].has_type_annotation = True
+        func_obj.args[-1].has_type_comment = True
         func_obj.is_return_annotated = True
 
         return func_obj

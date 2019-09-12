@@ -5,6 +5,8 @@ Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (`<ma
 ### Added
 * #35: Issue templates
 * #36: Support for PEP 484-style type comments
+* #36: Add `TYP301` for presence of type comment & type annotation for same entity
+* #36: Add `error_code.from_function` class method to generate argument for an entire function
 * #18: PyPI release via GitHub Action
 * #38: Improve `setup.py` metadata
 
