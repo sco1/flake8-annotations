@@ -31,9 +31,6 @@ class TestArgumentParsing:
 
         The function name is also returned in order to provide a more verbose message for a failed
         assertion
-
-        Note: For testing purposes, Argument lineno and col_offset are ignored so these are set to
-        dummy values in the truth dictionary
         """
         truth_arguments = type_comment_parser_object_attributes.parsed_arguments[request.param]
 
@@ -56,24 +53,25 @@ class TestArgumentParsing:
             failure_msg = (
                 f"Comparison check failed for arg '{parsed_arg.argname}' in '{argument_lists[2]}'"
             )
-            check.is_true(self._is_same_arg(truth_arg, parsed_arg), msg=failure_msg)
+            check.is_true(self._is_same_arg(truth_arg, parsed_arg), msg=f"{repr(truth_arg)}\n{repr(parsed_arg)}")
 
     @staticmethod
     def _is_same_arg(arg_a: Argument, arg_b: Argument) -> bool:
         """
         Compare two Argument objects for "equality."
 
-        Because we are testing column/line number parsing in another test, we can make this
-        comparison less fragile by ignoring line & column indices and instead comparing only the
-        following:
+        Because we are testing argument parsing in another test, we can make this comparison less
+        fragile by ignoring line & column indices and instead comparing only the following:
           * argname
-          * annotation_type
           * has_type_annotation
+          * has_3107_annotation
+          * has_type_comment
         """
         return all(
             (
                 arg_a.argname == arg_b.argname,
-                arg_a.annotation_type == arg_b.annotation_type,
                 arg_a.has_type_annotation == arg_b.has_type_annotation,
+                arg_a.has_3107_annotation == arg_b.has_3107_annotation,
+                arg_a.has_type_comment == arg_b.has_type_comment
             )
         )

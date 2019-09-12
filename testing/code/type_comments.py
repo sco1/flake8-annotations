@@ -28,3 +28,31 @@ def argument_comments_no_function_comment(
     arg2,  # type: int
 ):
     pass
+
+
+def mixed_argument_hint_types(
+    arg1,  # type: int
+    arg2: int,
+):
+    pass
+
+
+def duplicate_argument_hint_types(
+    arg1,  # type: int
+    arg2: int,  # type: int
+):
+    pass
+
+
+def arg_comment_return_annotation_hint_types(
+    arg1,  # type: int
+    arg2,  # type: int
+) -> int:
+    pass
+
+
+def arg_annotation_return_comment_hint_types(
+    arg1: int,
+    arg2: int,
+):  # type: (...) -> int
+    pass

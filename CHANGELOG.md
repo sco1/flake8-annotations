@@ -14,6 +14,7 @@ Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (`<ma
 * #32: Incorrect line number for return values in the presence of multiline docstrings
 * #33: Improper handling of nested functions in class methods
 * `setup.py` dev dependencies out of sync with Pipfile
+* Incorrect order of arguments in `Argument` and `Function` `__repr__` methods
 
 ## [v1.0.0] - 2019-09-09
 Initial release
