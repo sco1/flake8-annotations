@@ -44,8 +44,8 @@ class Argument:
     def __repr__(self) -> str:
         """Format the Argument object into its "official" representation."""
         return (
-            "Argument"
-            f"({self.argname!r}, {self.lineno}, {self.col_offset}, {self.annotation_type}, {self.has_type_annotation})"  # noqa
+            f"Argument({self.argname!r}, {self.lineno}, {self.col_offset}, {self.annotation_type}, "
+            f"{self.has_type_annotation}, {self.has_3107_annotation}, {self.has_type_comment})"
         )
 
     @classmethod
@@ -54,14 +54,14 @@ class Argument:
         annotation_type = AnnotationType[annotation_type_name]
         new_arg = cls(node.arg, node.lineno, node.col_offset, annotation_type)
 
+        new_arg.has_type_annotation = False
         if node.annotation:
             new_arg.has_type_annotation = True
             new_arg.has_3107_annotation = True
-        elif node.type_comment:
+
+        if node.type_comment:
             new_arg.has_type_annotation = True
             new_arg.has_type_comment = True
-        else:
-            new_arg.has_type_annotation = False
 
         return new_arg
 
@@ -125,8 +125,9 @@ class Function:
     def __repr__(self) -> str:
         """Format the Function object into its "official" representation."""
         return (
-            f"Function({self.name!r}, {self.lineno}, {self.col_offset}, {self.is_class_method}, "
-            f"{self.function_type}, {self.class_decorator_type}, {self.args}, {self.is_return_annotated})"  # noqa
+            f"Function({self.name!r}, {self.lineno}, {self.col_offset}, {self.function_type}, "
+            f"{self.is_class_method}, {self.class_decorator_type}, {self.is_return_annotated}, "
+            f"{self.has_type_comment}, {self.args})"
         )
 
     @classmethod
@@ -180,6 +181,7 @@ class Function:
         return_arg = Argument("return", def_end_lineno, def_end_col_offset, AnnotationType.RETURN)
         if node.returns:
             return_arg.has_type_annotation = True
+            return_arg.has_3107_annotation = True
             new_function.is_return_annotated = True
 
         new_function.args.append(return_arg)
