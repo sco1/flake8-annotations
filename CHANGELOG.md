@@ -1,7 +1,7 @@
 # Changelog
 Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (`<major>`.`<minor>`.`<patch>`)
 
-## [Unreleased]
+## [v1.1.0]
 ### Added
 * #35: Issue templates
 * #36: Support for PEP 484-style type comments
