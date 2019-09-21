@@ -17,6 +17,7 @@ class Error:
         """Set error metadata from the input Argument object."""
         return cls(argument.argname, argument.lineno, argument.col_offset)
 
+    @classmethod
     def from_function(cls, function: Function):
         """Set error metadata from the input Function object."""
         return cls(function.name, function.lineno, function.col_offset)

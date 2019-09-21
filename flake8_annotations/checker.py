@@ -39,14 +39,19 @@ class TypeHintChecker:
             else:
                 has_type_comment = False
 
-            for arg in function.get_missed_annotations():
+            # Iterate over annotated args to detect mixing of type annotations and type comments
+            # Emit this only once per function definition
+            for arg in function.get_annotated_arguments():
                 if arg.has_type_comment:
                     has_type_comment = True
 
                 if has_type_comment and arg.has_3107_annotation:
                     # Short-circuit check for mixing of type comments & 3107-style annotations
                     yield error_codes.TYP301.from_function(function).to_flake8()
+                    break
 
+            # Yield explicit errors for arguments that are missing annotations
+            for arg in function.get_missed_annotations():
                 yield classify_error(function, arg).to_flake8()
 
     @staticmethod

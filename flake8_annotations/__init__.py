@@ -109,6 +109,10 @@ class Function:
         """Provide a list of arguments with missing type annotations."""
         return [arg for arg in self.args if not arg.has_type_annotation]
 
+    def get_annotated_arguments(self) -> List:
+        """Provide a list of arguments with type annotations."""
+        return [arg for arg in self.args if arg.has_type_annotation]
+
     def __str__(self) -> str:
         """
         Format the Function object into a readable representation.
