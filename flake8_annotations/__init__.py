@@ -1,9 +1,9 @@
-import ast
+from itertools import zip_longest
 from pathlib import Path
 from typing import List, Union
 
 from flake8_annotations.enums import AnnotationType, ClassDecoratorType, FunctionType
-
+from typed_ast import _ast3, ast3 as ast
 
 __version__ = "1.0.1"
 
@@ -21,12 +21,16 @@ class Argument:
         col_offset: int,
         annotation_type: AnnotationType,
         has_type_annotation: bool = False,
+        has_3107_annotation: bool = False,
+        has_type_comment: bool = False,
     ):
         self.argname = argname
         self.lineno = lineno
         self.col_offset = col_offset
         self.annotation_type = annotation_type
         self.has_type_annotation = has_type_annotation
+        self.has_3107_annotation = has_3107_annotation
+        self.has_type_comment = has_type_comment
 
     def __str__(self) -> str:
         """
@@ -40,8 +44,8 @@ class Argument:
     def __repr__(self) -> str:
         """Format the Argument object into its "official" representation."""
         return (
-            "Argument"
-            f"({self.argname!r}, {self.lineno}, {self.col_offset}, {self.annotation_type}, {self.has_type_annotation})"  # noqa
+            f"Argument({self.argname!r}, {self.lineno}, {self.col_offset}, {self.annotation_type}, "
+            f"{self.has_type_annotation}, {self.has_3107_annotation}, {self.has_type_comment})"
         )
 
     @classmethod
@@ -50,10 +54,14 @@ class Argument:
         annotation_type = AnnotationType[annotation_type_name]
         new_arg = cls(node.arg, node.lineno, node.col_offset, annotation_type)
 
+        new_arg.has_type_annotation = False
         if node.annotation:
             new_arg.has_type_annotation = True
-        else:
-            new_arg.has_type_annotation = False
+            new_arg.has_3107_annotation = True
+
+        if node.type_comment:
+            new_arg.has_type_annotation = True
+            new_arg.has_type_comment = True
 
         return new_arg
 
@@ -76,6 +84,7 @@ class Function:
         is_class_method: bool = False,
         class_decorator_type: Union[ClassDecoratorType, None] = None,
         is_return_annotated: bool = False,
+        has_type_comment: bool = False,
         args: List[Argument] = None,
     ):
         self.name = name
@@ -85,6 +94,7 @@ class Function:
         self.is_class_method = is_class_method
         self.class_decorator_type = class_decorator_type
         self.is_return_annotated = is_return_annotated
+        self.has_type_comment = has_type_comment
         self.args = args
 
     def is_fully_annotated(self) -> bool:
@@ -98,6 +108,10 @@ class Function:
     def get_missed_annotations(self) -> List:
         """Provide a list of arguments with missing type annotations."""
         return [arg for arg in self.args if not arg.has_type_annotation]
+
+    def get_annotated_arguments(self) -> List:
+        """Provide a list of arguments with type annotations."""
+        return [arg for arg in self.args if arg.has_type_annotation]
 
     def __str__(self) -> str:
         """
@@ -115,8 +129,9 @@ class Function:
     def __repr__(self) -> str:
         """Format the Function object into its "official" representation."""
         return (
-            f"Function({self.name!r}, {self.lineno}, {self.col_offset}, {self.is_class_method}, "
-            f"{self.function_type}, {self.class_decorator_type}, {self.args}, {self.is_return_annotated})"  # noqa
+            f"Function({self.name!r}, {self.lineno}, {self.col_offset}, {self.function_type}, "
+            f"{self.is_class_method}, {self.class_decorator_type}, {self.is_return_annotated}, "
+            f"{self.has_type_comment}, {self.args})"
         )
 
     @classmethod
@@ -170,10 +185,43 @@ class Function:
         return_arg = Argument("return", def_end_lineno, def_end_col_offset, AnnotationType.RETURN)
         if node.returns:
             return_arg.has_type_annotation = True
+            return_arg.has_3107_annotation = True
             new_function.is_return_annotated = True
 
         new_function.args.append(return_arg)
+
+        # Type comments in-line with input arguments are handled by the Argument class
+        # If a function-level type comment is present, attempt to parse for any missed type hints
+        if node.type_comment:
+            new_function.has_type_comment = True
+            new_function = cls.try_type_comment(new_function, node)
+
         return new_function
+
+    @staticmethod
+    def try_type_comment(func_obj: "Function", node: AST_FUNCTION_TYPES) -> "Function":
+        """
+        Attempt to infer type hints from a function-level type comment.
+
+        If a function is type commented it is assumed to have a return annotation, otherwise Python
+        will fail to parse the hint
+        """
+        hint_tree = ast.parse(node.type_comment, "<func_type>", "func_type")
+
+        for arg, hint_comment in zip_longest(func_obj.args, hint_tree.argtypes):
+            if isinstance(hint_comment, _ast3.Ellipsis):
+                continue
+
+            if arg and hint_comment:
+                arg.has_type_annotation = True
+                arg.has_type_comment = True
+
+        # Return arg is always last
+        func_obj.args[-1].has_type_annotation = True
+        func_obj.args[-1].has_type_comment = True
+        func_obj.is_return_annotated = True
+
+        return func_obj
 
     @staticmethod
     def get_function_type(function_name: str) -> FunctionType:
@@ -246,6 +294,7 @@ class FunctionVisitor(ast.NodeVisitor):
         Note: This will not contain class methods, these are included in the body of ClassDef
         statements
         """
+        print(ast.dump(node))
         self.function_definitions.append(Function.from_function_node(node, self.lines))
         self.generic_visit(node)  # Walk through any nested functions
 

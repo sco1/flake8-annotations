@@ -18,6 +18,7 @@ ALL_ERROR_CODES = (
     error_codes.TYP204,
     error_codes.TYP205,
     error_codes.TYP206,
+    error_codes.TYP301,
 )
 
 

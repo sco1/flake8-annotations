@@ -85,3 +85,21 @@ argument_classifications = {
     AT(False, True, None, AnnotationType.KWONLYARGS): error_codes.TYP001,
     AT(False, False, None, AnnotationType.KWONLYARGS): error_codes.TYP001,
 }
+
+# Build a dictionary for the type comment testing code defs & whether a TYP301 error is expected
+class TypeHintFun(NamedTuple):
+    name: str
+    emits_TYP301: bool
+
+
+mixed_type_comment_classifications = {
+    4: TypeHintFun("full_function_comment", False),
+    9: TypeHintFun("partial_function_comment_no_ellipsis", False),
+    14: TypeHintFun("partial_function_comment_with_ellipsis", False),
+    19: TypeHintFun("argument_comments_ellipsis_function_comment", False),
+    26: TypeHintFun("argument_comments_no_function_comment", False),
+    33: TypeHintFun("mixed_argument_hint_types", True),
+    40: TypeHintFun("duplicate_argument_hint_types", True),
+    47: TypeHintFun("arg_comment_return_annotation_hint_types", True),
+    54: TypeHintFun("arg_annotation_return_comment_hint_types", True),
+}

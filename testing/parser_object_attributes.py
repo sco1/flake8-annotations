@@ -8,7 +8,9 @@ from flake8_annotations.enums import AnnotationType, ClassDecoratorType, Functio
 # Note: For testing purposes, lineno and col_offset are ignored so these are set to dummy values
 # using partial objects
 untyped_arg = partial(Argument, lineno=0, col_offset=0, has_type_annotation=False)
-typed_arg = partial(Argument, lineno=0, col_offset=0, has_type_annotation=True)
+typed_arg = partial(
+    Argument, lineno=0, col_offset=0, has_type_annotation=True, has_3107_annotation=True
+)
 parsed_arguments = {
     "all_args_untyped": [
         untyped_arg(argname="arg", annotation_type=AnnotationType.ARGS),
