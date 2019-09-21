@@ -9,7 +9,7 @@ from typed_ast import ast3 as ast
 class TypeHintChecker:
     """Top level checker for linting the presence of type hints in function definitions."""
 
-    name = "function-type-annotations"
+    name = "flake8-annotations"
     version = __version__
 
     def __init__(self, tree: ast.Module, filename: str):
