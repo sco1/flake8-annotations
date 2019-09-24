@@ -294,7 +294,6 @@ class FunctionVisitor(ast.NodeVisitor):
         Note: This will not contain class methods, these are included in the body of ClassDef
         statements
         """
-        print(ast.dump(node))
         self.function_definitions.append(Function.from_function_node(node, self.lines))
         self.generic_visit(node)  # Walk through any nested functions
 
