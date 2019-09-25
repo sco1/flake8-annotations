@@ -29,6 +29,9 @@ jobs:
   - script: python3 -m pip install pipenv && pipenv install --dev --deploy --system
     displayName: 'Install Project Environment'
 
+  - script: pipenv-setup check
+    displayName: 'Check dependency synchronization'
+
   - script: python3 -m flake8
     displayName: 'Lint flake8-annotations'
 

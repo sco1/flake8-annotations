@@ -11,11 +11,9 @@ setup(
     author="Python Discord",
     author_email="staff@pythondiscord.com",
     url="https://github.com/python-discord/flake8-annotations",
-    packages=['flake8_annotations'],
+    packages=["flake8_annotations"],
     entry_points={
-        "flake8.extension": [
-            'TYP = flake8_annotations.checker:TypeHintChecker',
-        ],
+        "flake8.extension": ["TYP = flake8_annotations.checker:TypeHintChecker"]
     },
     python_requires=">=3.6",
     zip_safe=True,
@@ -34,12 +32,12 @@ setup(
         "Topic :: Software Development :: Quality Assurance",
     ],
     project_urls={
-        'Issue tracker': 'https://github.com/python-discord/flake8-annotations/issues',
-        'Discord server': 'https://discord.gg/python',
+        "Issue tracker": "https://github.com/python-discord/flake8-annotations/issues",
+        "Discord server": "https://discord.gg/python",
     },
     install_requires=[
-        "flake8~=3.7.8",
-        "typed-ast~=1.4"
+        "flake8==3.7.8",
+        "typed-ast>=1.4,<2.0",
     ],
     extras_require={
         "dev": [
@@ -50,10 +48,12 @@ setup(
             "flake8-string-format~=0.2",
             "flake8-tidy-imports~=2.0",
             "flake8-todo~=0.7",
+            "pipenv-setup~=2.1",
             "pre-commit~=1.18",
             "pytest~=5.1",
             "pytest-check~=0.3",
             "pytest-cov~=2.7",
         ]
-    }
+    },
+    dependency_links=[],
 )
