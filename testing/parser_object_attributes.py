@@ -8,7 +8,9 @@ from flake8_annotations.enums import AnnotationType, ClassDecoratorType, Functio
 # Note: For testing purposes, lineno and col_offset are ignored so these are set to dummy values
 # using partial objects
 untyped_arg = partial(Argument, lineno=0, col_offset=0, has_type_annotation=False)
-typed_arg = partial(Argument, lineno=0, col_offset=0, has_type_annotation=True)
+typed_arg = partial(
+    Argument, lineno=0, col_offset=0, has_type_annotation=True, has_3107_annotation=True
+)
 parsed_arguments = {
     "all_args_untyped": [
         untyped_arg(argname="arg", annotation_type=AnnotationType.ARGS),
@@ -45,6 +47,20 @@ parsed_functions = {
     "__private_fun": nonclass_func(name="__private_fun", function_type=FunctionType.PRIVATE),
     "__special_fun__": nonclass_func(name="__special_fun__", function_type=FunctionType.SPECIAL),
     "async_public_fun": nonclass_func(name="async_public_fun", function_type=FunctionType.PUBLIC),
+    "nested_public_fun": nonclass_func(name="nested_public_fun", function_type=FunctionType.PUBLIC),
+    "double_nested_public_fun": nonclass_func(
+        name="double_nested_public_fun", function_type=FunctionType.PUBLIC
+    ),
+    "nested_public_fun_return_annotated": nonclass_func(
+        name="nested_public_fun_return_annotated",
+        function_type=FunctionType.PUBLIC,
+        is_return_annotated=True,
+    ),
+    "double_nested_public_fun_return_annotated": nonclass_func(
+        name="double_nested_public_fun_return_annotated",
+        function_type=FunctionType.PUBLIC,
+        is_return_annotated=True,
+    ),
     "async_public_fun_return_annotated": nonclass_func(
         name="async_public_fun_return_annotated",
         function_type=FunctionType.PUBLIC,
@@ -58,6 +74,22 @@ parsed_functions = {
     ),
     "__async_special_fun__": nonclass_func(
         name="__async_special_fun__", function_type=FunctionType.SPECIAL
+    ),
+    "nested_async_public_fun": nonclass_func(
+        name="nested_async_public_fun", function_type=FunctionType.PUBLIC
+    ),
+    "double_nested_async_public_fun": nonclass_func(
+        name="double_nested_async_public_fun", function_type=FunctionType.PUBLIC
+    ),
+    "nested_async_public_fun_return_annotated": nonclass_func(
+        name="nested_async_public_fun_return_annotated",
+        function_type=FunctionType.PUBLIC,
+        is_return_annotated=True,
+    ),
+    "double_nested_async_public_fun_return_annotated": nonclass_func(
+        name="double_nested_async_public_fun_return_annotated",
+        function_type=FunctionType.PUBLIC,
+        is_return_annotated=True,
     ),
     "decorated_noncallable_method": class_func(
         name="decorated_noncallable_method",
@@ -138,5 +170,15 @@ parsed_functions = {
         name="decorated_callable_async_staticmethod",
         function_type=FunctionType.PUBLIC,
         class_decorator_type=ClassDecoratorType.STATICMETHOD,
+    ),
+    "nested_method": nonclass_func(name="nested_method", function_type=FunctionType.PUBLIC),
+    "double_nested_method": nonclass_func(
+        name="double_nested_method", function_type=FunctionType.PUBLIC
+    ),
+    "nested_async_method": nonclass_func(
+        name="nested_async_method", function_type=FunctionType.PUBLIC
+    ),
+    "double_nested_async_method": nonclass_func(
+        name="double_nested_async_method", function_type=FunctionType.PUBLIC
     ),
 }

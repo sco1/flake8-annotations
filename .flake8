@@ -17,6 +17,6 @@ exclude=
     __pycache__,.cache,
     venv,.venv,
     build, dist,
-    testing,
+    testing/*,
     error_codes.py
 import-order-style=pycharm

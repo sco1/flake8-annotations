@@ -21,6 +21,18 @@ def __special_fun__():
     pass
 
 
+def foo() -> None:
+    def nested_public_fun():
+        def double_nested_public_fun():
+            pass
+
+
+def foo() -> None:
+    def nested_public_fun_return_annotated() -> None:
+        def double_nested_public_fun_return_annotated() -> None:
+            pass
+
+
 async def async_public_fun():
     pass
 
@@ -39,6 +51,18 @@ async def __async_private_fun():
 
 async def __async_special_fun__():
     pass
+
+
+async def foo() -> None:
+    async def nested_async_public_fun():
+        async def double_nested_async_public_fun():
+            pass
+
+
+async def foo() -> None:
+    async def nested_async_public_fun_return_annotated() -> None:
+        async def double_nested_async_public_fun_return_annotated() -> None:
+            pass
 
 
 class Foo:
@@ -113,3 +137,13 @@ class Foo:
     @staticmethod
     async def decorated_callable_async_staticmethod():
         pass
+
+    def foo() -> None:
+        def nested_method():
+            def double_nested_method():
+                pass
+
+    async def foo() -> None:
+        async def nested_async_method():
+            async def double_nested_async_method():
+                pass

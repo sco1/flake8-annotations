@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 flake8 = "~=3.7.8"
 flake8-annotations = {path = ".",editable = true}
+typed-ast = "~=1.4"
 
 [dev-packages]
 flake8-bugbear = "~=19.8"
@@ -22,6 +23,7 @@ pytest-cov = "~=2.7"
 
 [scripts]
 lint = "flake8"
+check_metadata = "python setup.py --quiet check --metadata --strict"
 precommit = "pre-commit install"
 test = "pytest"
 coverage = "pytest --cov=flake8_annotations testing/ --cov-branch --cov-report term-missing"

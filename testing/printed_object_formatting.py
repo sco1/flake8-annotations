@@ -24,23 +24,23 @@ formatting_test_cases = {
     "arg": FormatTestCase(
         arg(argname="test_arg"),
         "<Argument: test_arg, Annotated: False>",
-        "Argument('test_arg', 0, 0, AnnotationType.ARGS, False)",
+        "Argument('test_arg', 0, 0, AnnotationType.ARGS, False, False, False)",
     ),
     "func_no_args": FormatTestCase(
         func(args=[arg(argname="return")]),
         "<Function: test_func, Args: [<Argument: return, Annotated: False>]>",
         (
-            "Function('test_func', 0, 0, False, FunctionType.PUBLIC, None, "
-            "[Argument('return', 0, 0, AnnotationType.ARGS, False)], False)"
+            "Function('test_func', 0, 0, FunctionType.PUBLIC, False, None, False, False, "
+            "[Argument('return', 0, 0, AnnotationType.ARGS, False, False, False)])"
         ),
     ),
     "func_has_arg": FormatTestCase(
         func(args=[arg(argname="foo"), arg(argname="return")]),
         "<Function: test_func, Args: [<Argument: foo, Annotated: False>, <Argument: return, Annotated: False>]>",  # noqa
         (
-            "Function('test_func', 0, 0, False, FunctionType.PUBLIC, None, "
-            "[Argument('foo', 0, 0, AnnotationType.ARGS, False), "
-            "Argument('return', 0, 0, AnnotationType.ARGS, False)], False)"
+            "Function('test_func', 0, 0, FunctionType.PUBLIC, False, None, False, False, "
+            "[Argument('foo', 0, 0, AnnotationType.ARGS, False, False, False), "
+            "Argument('return', 0, 0, AnnotationType.ARGS, False, False, False)])"
         ),
     ),
 }

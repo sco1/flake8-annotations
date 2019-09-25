@@ -1,25 +1,24 @@
-import sys
+from setuptools import setup
 
-from setuptools import find_packages, setup
-
-assert sys.version_info >= (3, 6, 0), "flake8-annotations requires Python 3.6+"
 
 setup(
-    name="flake8_annotations",
+    name="flake8-annotations",
     license="MIT",
-    version="1.0.0",
+    version="1.1.0",
     description="Flake8 Type Annotation Checks",
-    long_description=open("README.md").read(),
+    long_description=open("README.md", encoding="utf-8").read(),
     long_description_content_type="text/markdown",
     author="Python Discord",
     author_email="staff@pythondiscord.com",
     url="https://github.com/python-discord/flake8-annotations",
-    packages=find_packages(),
+    packages=['flake8_annotations'],
     entry_points={
         "flake8.extension": [
             'TYP = flake8_annotations.checker:TypeHintChecker',
         ],
     },
+    python_requires=">=3.6",
+    zip_safe=True,
     classifiers=[
         "Framework :: Flake8",
         "Environment :: Console",
@@ -34,17 +33,27 @@ setup(
         "Topic :: Software Development :: Libraries :: Python Modules",
         "Topic :: Software Development :: Quality Assurance",
     ],
+    project_urls={
+        'Issue tracker': 'https://github.com/python-discord/flake8-annotations/issues',
+        'Discord server': 'https://discord.gg/python',
+    },
     install_requires=[
-        "flake8~=3.7.8"
+        "flake8~=3.7.8",
+        "typed-ast~=1.4"
     ],
     extras_require={
         "dev": [
-            "flake8-bugbear~=19.3",
-            "flake8-docstrings~=1.3",
+            "flake8-bugbear~=19.8",
+            "flake8-docstrings~=1.4",
+            "flake8-formatter-junit-xml~=0.0",
             "flake8-import-order~=0.18",
             "flake8-string-format~=0.2",
             "flake8-tidy-imports~=2.0",
             "flake8-todo~=0.7",
+            "pre-commit~=1.18",
+            "pytest~=5.1",
+            "pytest-check~=0.3",
+            "pytest-cov~=2.7",
         ]
     }
 )
