@@ -5,7 +5,7 @@ from typing import List, Union
 from flake8_annotations.enums import AnnotationType, ClassDecoratorType, FunctionType
 from typed_ast import _ast3, ast3 as ast
 
-__version__ = "1.1.0"
+__version__ = "1.1.1"
 
 AST_ARG_TYPES = ("args", "vararg", "kwonlyargs", "kwarg")
 AST_FUNCTION_TYPES = Union[ast.FunctionDef, ast.AsyncFunctionDef]
