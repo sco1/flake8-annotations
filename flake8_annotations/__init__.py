@@ -1,9 +1,18 @@
+import sys
 from itertools import zip_longest
 from pathlib import Path
 from typing import List, Union
 
 from flake8_annotations.enums import AnnotationType, ClassDecoratorType, FunctionType
-from typed_ast import _ast3, ast3 as ast
+
+# Check if we can use the stdlib ast module instead of typed_ast
+# stdlib ast gains native type comment support in Python 3.8
+if sys.version_info >= (3, 8):
+    import ast
+    from ast import Ellipsis as ast_Ellipsis
+else:
+    from typed_ast import ast3 as ast
+    from typed_ast.ast3 import Ellipsis as ast_Ellipsis
 
 __version__ = "1.1.1"
 
@@ -209,7 +218,7 @@ class Function:
         hint_tree = ast.parse(node.type_comment, "<func_type>", "func_type")
 
         for arg, hint_comment in zip_longest(func_obj.args, hint_tree.argtypes):
-            if isinstance(hint_comment, _ast3.Ellipsis):
+            if isinstance(hint_comment, ast_Ellipsis):
                 continue
 
             if arg and hint_comment:

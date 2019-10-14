@@ -5,12 +5,12 @@ name = "pypi"
 
 [packages]
 flake8 = "~=3.7.8"
-typed-ast = "~=1.4"
+typed-ast = {version = "~=1.4", markers="python_version < '3.8'"}
 
 [dev-packages]
 flake8-annotations = {path = ".",editable = true}
 flake8-bugbear = "~=19.8"
-flake8-docstrings = "~=1.4"
+flake8-docstrings = "~=1.5"
 flake8-formatter-junit-xml = "~=0.0"
 flake8-import-order = "~=0.18"
 flake8-string-format = "~=0.2"
@@ -18,9 +18,9 @@ flake8-tidy-imports = "~=2.0"
 flake8-todo = "~=0.7"
 pipenv-setup = "~=2.1"
 pre-commit = "~=1.18"
-pytest = "~=5.1"
+pytest = "~=5.2"
 pytest-check = "~=0.3"
-pytest-cov = "~=2.7"
+pytest-cov = "~=2.8"
 
 [scripts]
 lint = "flake8"

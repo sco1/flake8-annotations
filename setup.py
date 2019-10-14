@@ -27,6 +27,7 @@ setup(
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3 :: Only",
         "Topic :: Software Development :: Libraries :: Python Modules",
         "Topic :: Software Development :: Quality Assurance",
@@ -37,12 +38,12 @@ setup(
     },
     install_requires=[
         "flake8==3.7.8",
-        "typed-ast>=1.4,<2.0",
+        "typed-ast>=1.4,<2.0; python_version<'3.8'",
     ],
     extras_require={
         "dev": [
             "flake8-bugbear~=19.8",
-            "flake8-docstrings~=1.4",
+            "flake8-docstrings~=1.5",
             "flake8-formatter-junit-xml~=0.0",
             "flake8-import-order~=0.18",
             "flake8-string-format~=0.2",
@@ -50,9 +51,9 @@ setup(
             "flake8-todo~=0.7",
             "pipenv-setup~=2.1",
             "pre-commit~=1.18",
-            "pytest~=5.1",
+            "pytest~=5.2",
             "pytest-check~=0.3",
-            "pytest-cov~=2.7",
+            "pytest-cov~=2.8",
         ]
     },
     dependency_links=[],
