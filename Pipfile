@@ -21,10 +21,11 @@ pre-commit = "~=1.18"
 pytest = "~=5.2"
 pytest-check = "~=0.3"
 pytest-cov = "~=2.8"
+tox = "~=3.14"
 
 [scripts]
 lint = "flake8"
 check_metadata = "python setup.py --quiet check --metadata --strict"
 precommit = "pre-commit install"
-test = "pytest"
+test = "tox"
 coverage = "pytest --cov=flake8_annotations testing/ --cov-branch --cov-report term-missing"
