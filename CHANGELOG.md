@@ -4,6 +4,10 @@ Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (`<ma
 ## Current
 ### Added
 * Add [`pipenv-setup`](https://github.com/Madoshakalaka/pipenv-setup) as a dev dependency & CI check to ensure synchronization between `Pipfile` and `setup.py`
+* Add [tox](https://github.com/tox-dev/tox) configuration for local testing across Python versions
+
+### Changed
+* [`typed_ast`](https://github.com/python/typed_ast) is now required only for Python versions `< 3.8`
 
 ## [v1.1.0]
 ### Added
