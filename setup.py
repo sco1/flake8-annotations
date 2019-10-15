@@ -54,6 +54,7 @@ setup(
             "pytest~=5.2",
             "pytest-check~=0.3",
             "pytest-cov~=2.8",
+            "tox~=3.14",
         ]
     },
     dependency_links=[],
