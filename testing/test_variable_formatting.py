@@ -1,11 +1,20 @@
 import re
+import sys
 from collections import defaultdict
 from pathlib import Path
 from typing import List, Tuple
 
 import pytest
 from flake8_annotations import checker
-from typed_ast import ast3 as ast
+
+# Check if we can use the stdlib ast module instead of typed_ast
+# stdlib ast gains native type comment support in Python 3.8
+if sys.version_info >= (3, 8):
+    import ast
+    from ast import Ellipsis as ast_Ellipsis
+else:
+    from typed_ast import ast3 as ast
+
 
 TEST_FILE = Path("./testing/code/variable_formatting.py")
 ERROR_CODE_TYPE = Tuple[int, int, str, checker.TypeHintChecker]
