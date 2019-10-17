@@ -17,6 +17,10 @@ else:
 __version__ = "1.1.1"
 
 AST_ARG_TYPES = ("args", "vararg", "kwonlyargs", "kwarg")
+if sys.version_info >= (3, 8):
+    # Positional-only args introduced in Python 3.8
+    AST_ARG_TYPES += ("posonlyargs",)
+
 AST_FUNCTION_TYPES = Union[ast.FunctionDef, ast.AsyncFunctionDef]
 
 
