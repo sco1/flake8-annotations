@@ -67,7 +67,13 @@ class TypeHintChecker:
         with src_filepath.open("r", encoding="utf-8") as f:
             src = f.read()
 
-        tree = ast.parse(src)
+        if sys.version_info >= (3, 8):
+            # Built-in ast requires a flag to parse type comments
+            tree = ast.parse(src, type_comments=False)
+        else:
+            # typed-ast will implicitly parse type comments
+            tree = ast.parse(src)
+
         lines = src.splitlines()
 
         return tree, lines
