@@ -69,7 +69,7 @@ class TypeHintChecker:
 
         if sys.version_info >= (3, 8):
             # Built-in ast requires a flag to parse type comments
-            tree = ast.parse(src, type_comments=False)
+            tree = ast.parse(src, type_comments=True)
         else:
             # typed-ast will implicitly parse type comments
             tree = ast.parse(src)
