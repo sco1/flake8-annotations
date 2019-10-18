@@ -9,8 +9,10 @@ from flake8_annotations import Argument, Function, FunctionVisitor, __version__,
 # stdlib ast gains native type comment support in Python 3.8
 if sys.version_info >= (3, 8):
     import ast
+    PY_GTE_38 = True
 else:
     from typed_ast import ast3 as ast
+    PY_GTE_38 = False
 
 
 class TypeHintChecker:
@@ -67,7 +69,7 @@ class TypeHintChecker:
         with src_filepath.open("r", encoding="utf-8") as f:
             src = f.read()
 
-        if sys.version_info >= (3, 8):
+        if PY_GTE_38:
             # Built-in ast requires a flag to parse type comments
             tree = ast.parse(src, type_comments=True)
         else:
@@ -156,5 +158,5 @@ def _argument_error_classifier(
     elif annotation_type == enums.AnnotationType.VARARG:
         return error_codes.TYP002
     else:
-        # Combine ARG and KWONLYARGS
+        # Combine POSONLYARG, ARG, and KWONLYARGS
         return error_codes.TYP001

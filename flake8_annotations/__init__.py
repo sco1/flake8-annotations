@@ -10,14 +10,16 @@ from flake8_annotations.enums import AnnotationType, ClassDecoratorType, Functio
 if sys.version_info >= (3, 8):
     import ast
     from ast import Ellipsis as ast_Ellipsis
+    PY_GTE_38 = True
 else:
     from typed_ast import ast3 as ast
     from typed_ast.ast3 import Ellipsis as ast_Ellipsis
+    PY_GTE_38 = False
 
 __version__ = "1.1.1"
 
 AST_ARG_TYPES = ("args", "vararg", "kwonlyargs", "kwarg")
-if sys.version_info >= (3, 8):
+if PY_GTE_38:
     # Positional-only args introduced in Python 3.8
     AST_ARG_TYPES += ("posonlyargs",)
 
@@ -338,7 +340,7 @@ class FunctionVisitor(ast.NodeVisitor):
         with src_filepath.open("r", encoding="utf-8") as f:
             src = f.read()
 
-        if sys.version_info >= (3, 8):
+        if PY_GTE_38:
             # Built-in ast requires a flag to parse type comments
             tree = ast.parse(src, type_comments=True)
         else:
