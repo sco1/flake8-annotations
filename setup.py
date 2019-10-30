@@ -37,7 +37,7 @@ setup(
         "Discord server": "https://discord.gg/python",
     },
     install_requires=[
-        "flake8==3.7.8",
+        "flake8==3.7.9",
         "typed-ast>=1.4,<2.0; python_version<'3.8'",
     ],
     extras_require={
@@ -50,7 +50,7 @@ setup(
             "flake8-tidy-imports~=2.0",
             "flake8-todo~=0.7",
             "pipenv-setup~=2.1",
-            "pre-commit~=1.18",
+            "pre-commit~=1.20",
             "pytest~=5.2",
             "pytest-check~=0.3",
             "pytest-cov~=2.8",

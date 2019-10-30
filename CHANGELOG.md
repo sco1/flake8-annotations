@@ -8,6 +8,7 @@ Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (`<ma
 
 ### Changed
 * [`typed_ast`](https://github.com/python/typed_ast) is now required only for Python versions `< 3.8`
+* Update flake8 minimum version to `3.7.9` for Python 3.8 compatibility
 
 ## [v1.1.0]
 ### Added
