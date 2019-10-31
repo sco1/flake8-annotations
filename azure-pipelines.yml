@@ -3,7 +3,7 @@ jobs:
   displayName: 'Lint & Test'
 
   pool:
-    vmImage: 'Ubuntu 16.04'
+    vmImage: 'ubuntu-18.04'
   
   strategy:
     matrix:
@@ -11,6 +11,8 @@ jobs:
         python.version: '3.6'
       Python37:
         python.version: '3.7'
+      Python38:
+        python.version: '3.8'
 
   variables:
     PIP_CACHE_DIR: ".cache/pip"
@@ -23,7 +25,7 @@ jobs:
       versionSpec: '$(python.version)'
       addToPath: true
 
-  - script: python3 -m pip install setuptools
+  - script: python3 -m pip install setuptools importlib-metadata
     displayName: 'Install base dependencies'
 
   - script: python3 -m pip install pipenv && pipenv install --dev --deploy --system
@@ -35,8 +37,12 @@ jobs:
   - script: python3 -m flake8
     displayName: 'Lint flake8-annotations'
 
-  - script: python3 -m pytest --junitxml test-pytest.xml
-    displayName: 'Test flake8-annotations'
+  - script: python3 -m pytest
+      --junitxml test-pytest.xml
+      --cov=flake8_annotations testing/
+      --cov-append --cov-report xml:cov.xml
+      --cov-report term-missing
+    displayName: 'Test flake8-annotations & generate coverage'
     condition: succeededOrFailed()
 
   - task: PublishTestResults@2
@@ -45,10 +51,6 @@ jobs:
     inputs:
       testResultsFiles: '**/test-*.xml'
       testRunTitle: 'flake8-annotations Test Results'
-
-  - script: python3 -m pytest --cov-report xml:cov.xml --cov-report term-missing --cov=flake8_annotations testing/
-    displayName: 'Generate Coverage Report'
-    condition: succeededOrFailed()
 
   - task: PublishCodeCoverageResults@1
     displayName: 'Publish Coverage Results'
