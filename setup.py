@@ -37,7 +37,7 @@ setup(
         "Discord server": "https://discord.gg/python",
     },
     install_requires=[
-        "flake8==3.7.9",
+        "flake8>=3.7.9,<3.8",
         "typed-ast>=1.4,<2.0; python_version<'3.8'",
     ],
     extras_require={
