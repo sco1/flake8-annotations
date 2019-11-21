@@ -1,5 +1,4 @@
-from pathlib import Path
-from typing import Tuple
+from typing import List, Tuple
 
 import pytest
 import pytest_check as check
@@ -8,6 +7,8 @@ from flake8_annotations.checker import TypeHintChecker, classify_error
 from flake8_annotations.enums import AnnotationType
 from flake8_annotations.error_codes import Error
 from testing import classifier_object_attributes
+from testing.helpers import parse_source
+from testing.type_comment_test_cases import ParserTestCase, parser_test_cases
 
 
 class TestReturnClassifier:
@@ -53,7 +54,7 @@ class TestArgumentClassifier:
     dummy_arg = Argument(argname="DummyArg", lineno=0, col_offset=0, annotation_type=None)
 
     @pytest.fixture(params=classifier_object_attributes.argument_classifications.keys())
-    def function_builder(self, request) -> Tuple[Function, Argument, Error]:  # noqa
+    def function_builder(self, request) -> Tuple[Function, Argument, Error]:  # noqa: TYP001
         """
         Build function and argument objects from the fixtured parameters.
 
@@ -94,23 +95,30 @@ class TestArgumentClassifier:
         assert isinstance(classify_error(test_function, test_argument), error_object)
 
 
-class MixedTypeHintClassifier:
+class TestMixedTypeHintClassifier:
     """Test for correct classification of mixed type comments & type annotations."""
 
-    src_filepath = Path("./testing/code/type_comments.py")
-    checker_instance = TypeHintChecker(None, src_filepath)
-    errors = checker_instance.run()
-
-    @pytest.fixture(params=errors)
-    def yielded_error(self, request) -> classifier_object_attributes.TypeHintFun:  # noqa
+    @pytest.fixture(params=parser_test_cases.items())
+    def yielded_error(self, request) -> Tuple[str, ParserTestCase, List[Error]]:  # noqa: TYP001
         """
         Build a fixture for the error codes emitted from parsing the type comments test code.
 
-        Provide a (TYP301, TypeHintFun) tuple for functions that yield a TYP301 linting error.
+        Fixture provides a tuple of: test case name, its corresponding ParserTestCase instance, and
+        whether a TYP301 error is yielded by the checker
         """
-        lineno = request[0]
-        return classifier_object_attributes.mixed_type_comment_classifications[lineno]
+        test_case_name, test_case = request.param
 
-    def test_argument(self, yielded_fun: classifier_object_attributes.TypeHintFun) -> None:
+        # Because TypeHintChecker is expecting a filename to initialize, rather than change this
+        # logic use this file as a dummy, then update its tree & lines attributes in the fixture
+        checker_instance = TypeHintChecker(None, __file__)
+        tree, lines = parse_source(test_case.src)
+        checker_instance.tree = tree
+        checker_instance.lines = lines
+        yielded_TYP301 = any("TYP301" in error[2] for error in checker_instance.run())
+
+        return test_case_name, test_case, yielded_TYP301
+
+    def test_argument(self, yielded_error: Tuple[str, ParserTestCase, List[Error]]) -> None:
         """Test for correct classification of mixed type comments & type annotations."""
-        check.is_true(yielded_fun.emits_TYP301)
+        failure_msg = f"Check failed for case '{yielded_error[0]}'"
+        check.equal(yielded_error[1].should_yield_TYP301, yielded_error[2], msg=failure_msg)
