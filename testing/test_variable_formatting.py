@@ -1,19 +1,10 @@
 import re
-import sys
 from collections import defaultdict
 from pathlib import Path
 from typing import List, Tuple
 
 import pytest
 from flake8_annotations import checker
-
-# Check if we can use the stdlib ast module instead of typed_ast
-# stdlib ast gains native type comment support in Python 3.8
-if sys.version_info >= (3, 8):
-    import ast
-    from ast import Ellipsis as ast_Ellipsis
-else:
-    from typed_ast import ast3 as ast
 
 
 TEST_FILE = Path("./testing/code/variable_formatting.py")
@@ -45,7 +36,7 @@ def _simplify_error(error_code: ERROR_CODE_TYPE) -> SIMPLE_ERROR_CODE:
 class TestArgumentFormatting:
     """Testing class for containerizing parsed error codes & running the fixtured tests."""
 
-    tree= checker.TypeHintChecker.load_file(TEST_FILE)
+    tree = checker.TypeHintChecker.load_file(TEST_FILE)
 
     batched_error_codes = defaultdict(list)
     for error in checker.TypeHintChecker(tree, TEST_FILE).run():

@@ -1,4 +1,3 @@
-import sys
 from itertools import zip_longest
 from pathlib import Path
 from typing import Generator, Tuple
@@ -6,14 +5,6 @@ from typing import Generator, Tuple
 import pytest
 import pytest_check as check
 from flake8_annotations import checker
-
-# Check if we can use the stdlib ast module instead of typed_ast
-# stdlib ast gains native type comment support in Python 3.8
-if sys.version_info >= (3, 8):
-    import ast
-    from ast import Ellipsis as ast_Ellipsis
-else:
-    from typed_ast import ast3 as ast
 
 
 TEST_FILE = Path("./testing/code/column_line_numbers.py")

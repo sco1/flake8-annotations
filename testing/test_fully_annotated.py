@@ -40,6 +40,4 @@ class TestFunctionParsing:
     def test_fully_annotated(self, functions: Function) -> None:
         """Check the result of Function.is_fully_annotated() against the test case's truth value."""
         failure_msg = f"Comparison check failed for function: '{functions.name}'"
-        check.equal(
-            functions.is_fully_annotated(), TEST_CASES[functions.name], msg=failure_msg
-        )
+        check.equal(functions.is_fully_annotated(), TEST_CASES[functions.name], msg=failure_msg)

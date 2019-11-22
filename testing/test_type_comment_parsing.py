@@ -1,12 +1,11 @@
 from itertools import zip_longest
-from pathlib import Path
-from typing import List, Tuple, Union
+from typing import List, Tuple
 
 import pytest
 import pytest_check as check
-from flake8_annotations import Argument, Function, FunctionVisitor
-from testing import type_comment_parser_object_attributes
-from testing.test_parser import _find_matching_function
+from flake8_annotations import Argument, FunctionVisitor
+from testing.helpers import parse_source
+from testing.type_comment_test_cases import parser_test_cases
 
 ARG_FIXTURE_TYPE = Tuple[List[Argument], List[Argument], str]
 
@@ -14,34 +13,30 @@ ARG_FIXTURE_TYPE = Tuple[List[Argument], List[Argument], str]
 class TestArgumentParsing:
     """Test for proper argument parsing from source."""
 
-    src_filepath = Path("./testing/code/type_comments.py")
-    visitor = FunctionVisitor.parse_file(src_filepath)
-
-    @pytest.fixture(params=type_comment_parser_object_attributes.parsed_arguments.keys())
+    @pytest.fixture(params=parser_test_cases.items())
     def argument_lists(self, request) -> ARG_FIXTURE_TYPE:  # noqa
         """
         Build a pair of lists of arguments to compare and return as a (truth, parsed) tuple.
 
-        `parser_object_attributes.parsed_arguments` is a dictionary of the arguments that should be
-        parsed out of the testing source code:
-          * Keys are the function name, as str
-          * Values are a list of Argument objects that should be parsed from the function definition
+        `parser_test_cases` is a dictionary of ParserTestCase named tuples, which provide the
+        following:
+          * `src` - Source code for the test case to be parsed
+          * `args` - A list of Argument objects to be used as the truth values
+          * `should_yield_TYP301` - A boolean flag indicating whether the source should yield TYP301
 
         A list of parsed Argument objects is taken from the class-level source parser
 
         The function name is also returned in order to provide a more verbose message for a failed
         assertion
         """
-        truth_arguments = type_comment_parser_object_attributes.parsed_arguments[request.param]
+        test_case_name, test_case = request.param
 
-        matching_func = _find_matching_function(self.visitor.function_definitions, request.param)
-        if matching_func:
-            parsed_arguments = matching_func.args
-        else:
-            # We shouldn't ever get here, but add as a catch-all
-            parsed_arguments = None
+        tree, lines = parse_source(test_case.src)
+        visitor = FunctionVisitor(lines)
+        visitor.visit(tree)
+        parsed_arguments = visitor.function_definitions[0].args
 
-        return truth_arguments, parsed_arguments, request.param
+        return test_case.args, parsed_arguments, test_case_name
 
     def test_argument_parsing(self, argument_lists: ARG_FIXTURE_TYPE) -> None:
         """
@@ -53,12 +48,12 @@ class TestArgumentParsing:
             failure_msg = (
                 f"Comparison check failed for arg '{parsed_arg.argname}' in '{argument_lists[2]}'"
             )
-            check.is_true(self._is_same_arg(truth_arg, parsed_arg), msg=f"{repr(truth_arg)}\n{repr(parsed_arg)}")
+            check.is_true(self._is_same_arg(truth_arg, parsed_arg), msg=failure_msg)
 
     @staticmethod
     def _is_same_arg(arg_a: Argument, arg_b: Argument) -> bool:
         """
-        Compare two Argument objects for "equality."
+        Compare two Argument objects for "equality".
 
         Because we are testing argument parsing in another test, we can make this comparison less
         fragile by ignoring line & column indices and instead comparing only the following:
@@ -72,6 +67,6 @@ class TestArgumentParsing:
                 arg_a.argname == arg_b.argname,
                 arg_a.has_type_annotation == arg_b.has_type_annotation,
                 arg_a.has_3107_annotation == arg_b.has_3107_annotation,
-                arg_a.has_type_comment == arg_b.has_type_comment
+                arg_a.has_type_comment == arg_b.has_type_comment,
             )
         )

@@ -40,9 +40,6 @@ class TestArgumentParsing:
         matching_func = _find_matching_function(self.visitor.function_definitions, request.param)
         if matching_func:
             parsed_arguments = matching_func.args
-        else:
-            # We shouldn't ever get here, but add as a catch-all
-            parsed_arguments = None
 
         return truth_arguments, parsed_arguments, request.param
 
@@ -61,7 +58,7 @@ class TestArgumentParsing:
     @staticmethod
     def _is_same_arg(arg_a: Argument, arg_b: Argument) -> bool:
         """
-        Compare two Argument objects for "equality."
+        Compare two Argument objects for "equality".
 
         Because we are testing column/line number parsing in another test, we can make this
         comparison less fragile by ignoring line & column indices and instead comparing only the
@@ -117,7 +114,7 @@ class TestFunctionParsing:
     @staticmethod
     def _is_same_func(func_a: Function, func_b: Function) -> bool:
         """
-        Compare two Function objects for "equality."
+        Compare two Function objects for "equality".
 
         Because we are testing column/line number parsing in another test, along with argument
         parsing, we can simplify this comparison by comparing a subset of the Function object's

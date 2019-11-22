@@ -1,14 +1,21 @@
 # Changelog
 Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (`<major>`.`<minor>`.`<patch>`)
 
-## Current
+## [v1.1.1]
 ### Added
 * Add [`pipenv-setup`](https://github.com/Madoshakalaka/pipenv-setup) as a dev dependency & CI check to ensure synchronization between `Pipfile` and `setup.py`
 * Add [tox](https://github.com/tox-dev/tox) configuration for local testing across Python versions
+* Add test for checking a single yield of TYP301 per function
+* Add coverage reporting to test suite
 
 ### Changed
 * [`typed_ast`](https://github.com/python/typed_ast) is now required only for Python versions `< 3.8`
 * Update flake8 minimum version to `3.7.9` for Python 3.8 compatibility
+* #50 Partially merge in test suite refactoring for ease of maintainability
+
+### Fixed
+* Fix mixed type hint tests not being run due to misnamed test class
+* Fix `TYP301` classification issue where error is not yielded if the first argument is type annotated and the remaining arguments have type comments
 
 ## [v1.1.0]
 ### Added
