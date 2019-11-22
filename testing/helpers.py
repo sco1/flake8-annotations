@@ -1,8 +1,8 @@
 import sys
 from functools import partial
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 
-from flake8_annotations import Argument
+from flake8_annotations import Argument, Function
 from flake8_annotations.enums import AnnotationType
 
 if sys.version_info >= (3, 8):
@@ -27,6 +27,17 @@ def parse_source(src: str) -> Tuple[ast.Module, List[str]]:
     lines = src.splitlines()
 
     return tree, lines
+
+
+def find_matching_function(func_list: List[Function], match_name: str) -> Optional[Function]:
+    """
+    Iterate over a list of Function objects & find the matching named function.
+
+    If no function is found, this returns None
+    """
+    for function in func_list:
+        if function.name == match_name:
+            return function
 
 
 untyped_arg = partial(

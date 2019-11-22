@@ -1,32 +1,8 @@
 from functools import partial
 
-from flake8_annotations import Argument, Function
-from flake8_annotations.enums import AnnotationType, ClassDecoratorType, FunctionType
+from flake8_annotations import Function
+from flake8_annotations.enums import ClassDecoratorType, FunctionType
 
-# Build a dictionary of Argument objects corresponding to what we should be getting out of the
-# argument parsing test
-# Note: For testing purposes, lineno and col_offset are ignored so these are set to dummy values
-# using partial objects
-untyped_arg = partial(Argument, lineno=0, col_offset=0, has_type_annotation=False)
-typed_arg = partial(
-    Argument, lineno=0, col_offset=0, has_type_annotation=True, has_3107_annotation=True
-)
-parsed_arguments = {
-    "all_args_untyped": [
-        untyped_arg(argname="arg", annotation_type=AnnotationType.ARGS),
-        untyped_arg(argname="vararg", annotation_type=AnnotationType.VARARG),
-        untyped_arg(argname="kwonlyarg", annotation_type=AnnotationType.KWONLYARGS),
-        untyped_arg(argname="kwarg", annotation_type=AnnotationType.KWARG),
-        untyped_arg(argname="return", annotation_type=AnnotationType.RETURN),
-    ],
-    "all_args_typed": [
-        typed_arg(argname="arg", annotation_type=AnnotationType.ARGS),
-        typed_arg(argname="vararg", annotation_type=AnnotationType.VARARG),
-        typed_arg(argname="kwonlyarg", annotation_type=AnnotationType.KWONLYARGS),
-        typed_arg(argname="kwarg", annotation_type=AnnotationType.KWARG),
-        typed_arg(argname="return", annotation_type=AnnotationType.RETURN),
-    ],
-}
 
 # Build a dictionary of Function objects corresponding to what we should be getting out of the
 # function parsing test
