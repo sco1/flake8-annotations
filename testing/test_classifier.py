@@ -98,13 +98,13 @@ class TestArgumentClassifier:
 class TestMixedTypeHintClassifier:
     """Test for correct classification of mixed type comments & type annotations."""
 
-    @pytest.fixture(params=parser_test_cases.items())
-    def yielded_error(self, request) -> Tuple[str, ParserTestCase, List[Error]]:  # noqa: TYP001
+    @pytest.fixture(params=parser_test_cases.items(), ids=parser_test_cases.keys())
+    def yielded_errors(self, request) -> Tuple[str, ParserTestCase, Tuple[Error]]:  # noqa: TYP001
         """
         Build a fixture for the error codes emitted from parsing the type comments test code.
 
         Fixture provides a tuple of: test case name, its corresponding ParserTestCase instance, and
-        whether a TYP301 error is yielded by the checker
+        a tuple of the errors yielded by the checker
         """
         test_case_name, test_case = request.param
 
@@ -114,13 +114,23 @@ class TestMixedTypeHintClassifier:
         tree, lines = parse_source(test_case.src)
         checker_instance.tree = tree
         checker_instance.lines = lines
-        yielded_TYP301 = any("TYP301" in error[2] for error in checker_instance.run())
+        errors = tuple(checker_instance.run())
 
-        # TODO: Refactor to check that TYP301 is only emitted once
+        return test_case_name, test_case, errors
 
-        return test_case_name, test_case, yielded_TYP301
-
-    def test_argument(self, yielded_error: Tuple[str, ParserTestCase, List[Error]]) -> None:
+    def test_TYP301_classification(
+        self, yielded_errors: Tuple[str, ParserTestCase, Tuple[Error]]
+    ) -> None:
         """Test for correct classification of mixed type comments & type annotations."""
-        failure_msg = f"Check failed for case '{yielded_error[0]}'"
-        check.equal(yielded_error[1].should_yield_TYP301, yielded_error[2], msg=failure_msg)
+        failure_msg = f"Check failed for case '{yielded_errors[0]}'"
+
+        yielded_TYP301 = any("TYP301" in error[2] for error in yielded_errors[2])
+        check.equal(yielded_errors[1].should_yield_TYP301, yielded_TYP301, msg=failure_msg)
+
+    def test_single_TYP301_yield(
+        self, yielded_errors: Tuple[str, ParserTestCase, Tuple[Error]]
+    ) -> None:
+        """Test that only one TYP301 error is yielded if a function mixes type comments."""
+        if yielded_errors[1].should_yield_TYP301:
+            n_yielded_TYP301_errors = sum("TYP301" in error[2] for error in yielded_errors[2])
+            assert n_yielded_TYP301_errors == 1
