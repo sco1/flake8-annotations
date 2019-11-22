@@ -9,9 +9,11 @@ from flake8_annotations import Argument, Function, FunctionVisitor, __version__,
 # stdlib ast gains native type comment support in Python 3.8
 if sys.version_info >= (3, 8):
     import ast
+
     PY_GTE_38 = True
 else:
     from typed_ast import ast3 as ast
+
     PY_GTE_38 = False
 
 

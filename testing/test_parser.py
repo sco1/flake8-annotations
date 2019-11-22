@@ -1,31 +1,29 @@
+import sys
 from itertools import zip_longest
-from pathlib import Path
-from typing import List, Tuple, Union
+from typing import List, Tuple
 
 import pytest
 import pytest_check as check
 from flake8_annotations import Argument, Function, FunctionVisitor
-from testing import parser_object_attributes
+from testing.helpers import find_matching_function, parse_source
+
+from .test_cases.argument_parsing_test_cases import argument_test_cases
+from .test_cases.function_parsing_test_cases import function_test_cases
 
 ARG_FIXTURE_TYPE = Tuple[List[Argument], List[Argument], str]
-FUNC_FIXTURE_TYPE = Tuple[Function, Function]
+FUNC_FIXTURE_TYPE = Tuple[Tuple[Function], List[Function], str]
 
 
 class TestArgumentParsing:
     """Test for proper argument parsing from source."""
 
-    src_filepath = Path("./testing/code/all_args.py")
-    visitor = FunctionVisitor.parse_file(src_filepath)
-
-    @pytest.fixture(params=parser_object_attributes.parsed_arguments.keys())
-    def argument_lists(self, request) -> ARG_FIXTURE_TYPE:  # noqa
+    @pytest.fixture(params=argument_test_cases.items(), ids=argument_test_cases.keys())
+    def argument_lists(self, request) -> ARG_FIXTURE_TYPE:  # noqa: TYP001
         """
         Build a pair of lists of arguments to compare and return as a (truth, parsed) tuple.
 
-        `parser_object_attributes.parsed_arguments` is a dictionary of the arguments that should be
-        parsed out of the testing source code:
-          * Keys are the function name, as str
-          * Values are a list of Argument objects that should be parsed from the function definition
+        `argument_test_cases` is a dictionary of the TestCase named tuples that provide the source
+        code to be parsed and a list of Argument objects to be used as truth values
 
         A list of parsed Argument objects is taken from the class-level source parser
 
@@ -35,13 +33,21 @@ class TestArgumentParsing:
         Note: For testing purposes, Argument lineno and col_offset are ignored so these are set to
         dummy values in the truth dictionary
         """
-        truth_arguments = parser_object_attributes.parsed_arguments[request.param]
+        test_case_name, test_case = request.param
 
-        matching_func = _find_matching_function(self.visitor.function_definitions, request.param)
-        if matching_func:
-            parsed_arguments = matching_func.args
+        # Since positional-only args are part of these test cases, short-circuit for Python < 3.8 if
+        # the `py38_only` boolean flag is set in the test case
+        if test_case.py38_only and sys.version_info < (3, 8):
+            pytest.skip("Test case expected to fail for Python < 3.8")
 
-        return truth_arguments, parsed_arguments, request.param
+        truth_arguments = test_case.args
+
+        tree, lines = parse_source(test_case.src)
+        visitor = FunctionVisitor(lines)
+        visitor.visit(tree)
+        parsed_arguments = visitor.function_definitions[0].args
+
+        return truth_arguments, parsed_arguments, test_case_name
 
     def test_argument_parsing(self, argument_lists: ARG_FIXTURE_TYPE) -> None:
         """
@@ -81,11 +87,8 @@ class TestArgumentParsing:
 class TestFunctionParsing:
     """Test for proper function parsing from source."""
 
-    src_filepath = Path("./testing/code/all_functions.py")
-    visitor = FunctionVisitor.parse_file(src_filepath)
-
-    @pytest.fixture(params=parser_object_attributes.parsed_functions.keys())
-    def functions(self, request) -> FUNC_FIXTURE_TYPE:  # noqa
+    @pytest.fixture(params=function_test_cases.items(), ids=function_test_cases.keys())
+    def functions(self, request) -> FUNC_FIXTURE_TYPE:  # noqa: TYP001
         """
         Build a pair of Function objects to compare and return as a (truth, parsed) tuple.
 
@@ -94,13 +97,16 @@ class TestFunctionParsing:
           * Keys are the function name, as str
           * Values are the Function object that should be parsed from the source
         """
-        truth_function = parser_object_attributes.parsed_functions[request.param]
+        test_case_name, test_case = request.param
 
-        # This should return the Function object. It may return None if no matching function name
-        # is found, due to misconfigured test parameters
-        parsed_function = _find_matching_function(self.visitor.function_definitions, request.param)
+        truth_functions = test_case.func
 
-        return truth_function, parsed_function
+        tree, lines = parse_source(test_case.src)
+        visitor = FunctionVisitor(lines)
+        visitor.visit(tree)
+        parsed_functions = visitor.function_definitions
+
+        return truth_functions, parsed_functions, test_case_name
 
     def test_function_parsing(self, functions: FUNC_FIXTURE_TYPE) -> None:
         """
@@ -108,8 +114,11 @@ class TestFunctionParsing:
 
         Function objects are provided as a (truth, source) tuple
         """
-        failure_msg = f"Comparison check failed for function: '{functions[1].name}'"
-        check.is_true(self._is_same_func(functions[0], functions[1]), msg=failure_msg)
+        failure_msg = f"Comparison check failed for function: '{functions[2]}'"
+
+        for function in functions[1]:
+            matched_truth_function = find_matching_function(functions[0], function.name)
+            check.is_true(self._is_same_func(matched_truth_function, function), msg=failure_msg)
 
     @staticmethod
     def _is_same_func(func_a: Function, func_b: Function) -> bool:
@@ -134,14 +143,3 @@ class TestFunctionParsing:
                 func_a.is_return_annotated == func_b.is_return_annotated,
             )
         )
-
-
-def _find_matching_function(func_list: List[Function], match_name: str) -> Union[Function, None]:
-    """
-    Iterate over a list of Function objects & find the matching named function.
-
-    If no function is found, this returns None
-    """
-    for function in func_list:
-        if function.name == match_name:
-            return function

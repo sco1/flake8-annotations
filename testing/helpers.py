@@ -1,9 +1,11 @@
 import sys
 from functools import partial
-from typing import List, Tuple
+from typing import Generator, Iterable, List, Optional, Tuple
 
-from flake8_annotations import Argument
+from flake8_annotations import Argument, Function, FunctionVisitor
+from flake8_annotations.checker import TypeHintChecker
 from flake8_annotations.enums import AnnotationType
+from flake8_annotations.error_codes import Error
 
 if sys.version_info >= (3, 8):
     import ast
@@ -27,6 +29,36 @@ def parse_source(src: str) -> Tuple[ast.Module, List[str]]:
     lines = src.splitlines()
 
     return tree, lines
+
+
+def check_source(src: str) -> Generator[Error, None, None]:
+    """Helper for generating linting errors from the provided source code."""
+    # Because TypeHintChecker is expecting a filename to initialize, rather than change this logic
+    # we can use this file as a dummy, then update its tree & lines attributes as parsed from source
+    checker_instance = TypeHintChecker(None, __file__)
+    checker_instance.tree, checker_instance.lines = parse_source(src)
+
+    return checker_instance.run()
+
+
+def functions_from_source(src: str) -> List[Function]:
+    """Helper for obtaining a list of Function objects from the provided source code."""
+    tree, lines = parse_source(src)
+    visitor = FunctionVisitor(lines)
+    visitor.visit(tree)
+
+    return visitor.function_definitions
+
+
+def find_matching_function(func_list: Iterable[Function], match_name: str) -> Optional[Function]:
+    """
+    Iterate over a list of Function objects & find the matching named function.
+
+    If no function is found, this returns None
+    """
+    for function in func_list:
+        if function.name == match_name:
+            return function
 
 
 untyped_arg = partial(

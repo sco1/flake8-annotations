@@ -1,14 +1,14 @@
 import re
-from collections import defaultdict
-from pathlib import Path
 from typing import List, Tuple
 
 import pytest
-from flake8_annotations import checker
+from flake8_annotations.checker import TypeHintChecker
+from testing.helpers import check_source
+
+from .test_cases.variable_formatting_test_cases import variable_formatting_test_cases
 
 
-TEST_FILE = Path("./testing/code/variable_formatting.py")
-ERROR_CODE_TYPE = Tuple[int, int, str, checker.TypeHintChecker]
+ERROR_CODE_TYPE = Tuple[int, int, str, TypeHintChecker]
 SIMPLE_ERROR_CODE = Tuple[str, str]
 
 # Error type specific matching patterns
@@ -36,27 +36,28 @@ def _simplify_error(error_code: ERROR_CODE_TYPE) -> SIMPLE_ERROR_CODE:
 class TestArgumentFormatting:
     """Testing class for containerizing parsed error codes & running the fixtured tests."""
 
-    tree = checker.TypeHintChecker.load_file(TEST_FILE)
-
-    batched_error_codes = defaultdict(list)
-    for error in checker.TypeHintChecker(tree, TEST_FILE).run():
-        code, arg_name = _simplify_error(error)
-        batched_error_codes[code].append(arg_name)
-
-    @pytest.fixture(params=TEST_ARG_NAMES.keys())
-    def parsed_errors(self, request) -> Tuple[str, List[SIMPLE_ERROR_CODE]]:  # noqa
+    @pytest.fixture(
+        params=variable_formatting_test_cases.items(), ids=variable_formatting_test_cases.keys()
+    )
+    def parsed_errors(self, request) -> Tuple[List[SIMPLE_ERROR_CODE], str]:  # noqa: TYP001
         """
-        Create a fixture for the error codes emitted by our testing source code.
+        Create a fixture for the error codes emitted by the test case source code.
 
-        Error codes are batched by type as fixture params so each error type is tested explicitly
+        Error codes for the test case source code are simplified into a list of
+        (error code, argument name) tuples.
         """
-        return request.param, self.batched_error_codes[request.param]
+        test_case_name, test_case = request.param
+        simplified_errors = [_simplify_error(error) for error in check_source(test_case.src)]
 
-    def test_arg_name(self, parsed_errors: Tuple[str, List[SIMPLE_ERROR_CODE]]) -> None:
+        return simplified_errors, test_case_name
+
+    def test_arg_name(self, parsed_errors: Tuple[List[SIMPLE_ERROR_CODE], str]) -> None:
         """
         Check for correctly formatted argument names.
 
-        Error code information is provided by the fixture as an (error type, list of arg name) tuple
+        Simplified error code information is provided by the fixture as a list of
+        (yielded error, test case name) tuples
         """
-        error_type, arg_names = parsed_errors
-        assert all(TEST_ARG_NAMES[error_type] == arg_name for arg_name in arg_names)
+        assert all(
+            TEST_ARG_NAMES[error_type] == arg_name for error_type, arg_name in parsed_errors[0]
+        )

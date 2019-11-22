@@ -5,7 +5,8 @@ import pytest
 import pytest_check as check
 from flake8_annotations import Argument, FunctionVisitor
 from testing.helpers import parse_source
-from testing.type_comment_test_cases import parser_test_cases
+
+from .test_cases.type_comment_test_cases import parser_test_cases
 
 ARG_FIXTURE_TYPE = Tuple[List[Argument], List[Argument], str]
 
@@ -20,9 +21,9 @@ class TestArgumentParsing:
 
         `parser_test_cases` is a dictionary of ParserTestCase named tuples, which provide the
         following:
-          * `src` - Source code for the test case to be parsed
-          * `args` - A list of Argument objects to be used as the truth values
-          * `should_yield_TYP301` - A boolean flag indicating whether the source should yield TYP301
+            * `src` - Source code for the test case to be parsed
+            * `args` - A list of Argument objects to be used as the truth values
+            * `should_yield_TYP301` - Boolean flag indicating whether the source should yield TYP301
 
         A list of parsed Argument objects is taken from the class-level source parser
 

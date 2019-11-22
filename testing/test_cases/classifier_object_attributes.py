@@ -3,9 +3,12 @@ from typing import NamedTuple
 from flake8_annotations import error_codes
 from flake8_annotations.enums import AnnotationType, ClassDecoratorType, FunctionType
 
+
 # Build a dictionary of possible function combinations & the resultant error code
 # Keys are named tuples of the form (function_type, is_class_method, class_decorator_type)
 class RT(NamedTuple):
+    """Helper object for return type attribute specification."""
+
     function_type: FunctionType
     is_class_method: bool
     class_decorator_type: ClassDecoratorType
@@ -36,10 +39,13 @@ return_classifications = {
     RT(FunctionType.PUBLIC, False, None): error_codes.TYP201,
 }
 
+
 # Build a dictionary of possible argument combinations & the resultant error code
 # Keys are named tuples of the form:
 #   (is_class_method, is_first_arg, class_decorator_type, annotation_type)
 class AT(NamedTuple):
+    """Helper object for return type attribute specification."""
+
     is_class_method: bool
     is_first_arg: bool
     class_decorator_type: ClassDecoratorType

@@ -7,11 +7,12 @@ Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (`<ma
 * Add [tox](https://github.com/tox-dev/tox) configuration for local testing across Python versions
 * Add test for checking a single yield of TYP301 per function
 * Add coverage reporting to test suite
+* Add testing for positional only arguments
 
 ### Changed
 * [`typed_ast`](https://github.com/python/typed_ast) is now required only for Python versions `< 3.8`
 * Update flake8 minimum version to `3.7.9` for Python 3.8 compatibility
-* #50 Partially merge in test suite refactoring for ease of maintainability
+* #50 Completely refactor test suite for maintainability
 
 ### Fixed
 * Fix mixed type hint tests not being run due to misnamed test class

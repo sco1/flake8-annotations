@@ -1,14 +1,15 @@
-from typing import List, Tuple
+from typing import Tuple
 
 import pytest
 import pytest_check as check
 from flake8_annotations import Argument, Function
-from flake8_annotations.checker import TypeHintChecker, classify_error
+from flake8_annotations.checker import classify_error
 from flake8_annotations.enums import AnnotationType
 from flake8_annotations.error_codes import Error
-from testing import classifier_object_attributes
-from testing.helpers import parse_source
-from testing.type_comment_test_cases import ParserTestCase, parser_test_cases
+from testing.helpers import check_source
+
+from .test_cases import classifier_object_attributes
+from .test_cases.type_comment_test_cases import ParserTestCase, parser_test_cases
 
 
 class TestReturnClassifier:
@@ -108,15 +109,7 @@ class TestMixedTypeHintClassifier:
         """
         test_case_name, test_case = request.param
 
-        # Because TypeHintChecker is expecting a filename to initialize, rather than change this
-        # logic use this file as a dummy, then update its tree & lines attributes in the fixture
-        checker_instance = TypeHintChecker(None, __file__)
-        tree, lines = parse_source(test_case.src)
-        checker_instance.tree = tree
-        checker_instance.lines = lines
-        errors = tuple(checker_instance.run())
-
-        return test_case_name, test_case, errors
+        return test_case_name, test_case, tuple(check_source(test_case.src))
 
     def test_TYP301_classification(
         self, yielded_errors: Tuple[str, ParserTestCase, Tuple[Error]]
