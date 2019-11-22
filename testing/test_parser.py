@@ -1,3 +1,4 @@
+import sys
 from itertools import zip_longest
 from pathlib import Path
 from typing import List, Tuple
@@ -33,6 +34,12 @@ class TestArgumentParsing:
         dummy values in the truth dictionary
         """
         test_case_name, test_case = request.param
+
+        # Since positional-only args are part of these test cases, short-circuit for Python < 3.8 if
+        # the `py38_only` boolean flag is set in the test case
+        if test_case.py38_only and sys.version_info < (3, 8):
+            pytest.skip("Test case expected to fail for Python < 3.8")
+
         truth_arguments = test_case.args
 
         tree, lines = parse_source(test_case.src)

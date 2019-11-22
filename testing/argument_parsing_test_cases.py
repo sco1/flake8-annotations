@@ -7,10 +7,16 @@ from flake8_annotations.enums import AnnotationType
 
 
 class ArgumentTestCase(NamedTuple):
-    """Helper container for Argument parsing test cases."""
+    """
+    Helper container for Argument parsing test cases.
+
+    The `py38_only` flag may be optionally specified for use skipping test cases that will fail for
+    Python versions less than 3.8
+    """
 
     src: str
     args: Tuple[Argument]
+    py38_only: bool = False
 
 
 # Note: For testing purposes, lineno and col_offset are ignored so these are set to dummy values
@@ -24,7 +30,7 @@ argument_test_cases = {
     "all_args_untyped": ArgumentTestCase(
         src=dedent(
             """\
-            def all_args_untyped(arg, *vararg, kwonlyarg, **kwarg):
+            def foo(arg, *vararg, kwonlyarg, **kwarg):
                 pass
             """
         ),
@@ -39,7 +45,7 @@ argument_test_cases = {
     "all_args_typed": ArgumentTestCase(
         src=dedent(
             """\
-            def all_args_typed(arg: int, *vararg: int, kwonlyarg: int, **kwarg: int) -> int:
+            def foo(arg: int, *vararg: int, kwonlyarg: int, **kwarg: int) -> int:
                 pass
             """
         ),
@@ -51,4 +57,30 @@ argument_test_cases = {
             typed_arg(argname="return", annotation_type=AnnotationType.RETURN),
         ),
     ),
-}  # TODO: Add POSONLYARG case
+    "posonly_arg_untyped": ArgumentTestCase(
+        src=dedent(
+            """\
+            def foo(posonlyarg, /) -> int:
+                pass
+            """
+        ),
+        args=(
+            untyped_arg(argname="posonlyarg", annotation_type=AnnotationType.POSONLYARGS),
+            typed_arg(argname="return", annotation_type=AnnotationType.RETURN),
+        ),
+        py38_only=True,
+    ),
+    "posonly_arg_typed": ArgumentTestCase(
+        src=dedent(
+            """\
+            def foo(posonlyarg: int, /) -> int:
+                pass
+            """
+        ),
+        args=(
+            typed_arg(argname="posonlyarg", annotation_type=AnnotationType.POSONLYARGS),
+            typed_arg(argname="return", annotation_type=AnnotationType.RETURN),
+        ),
+        py38_only=True,
+    ),
+}
