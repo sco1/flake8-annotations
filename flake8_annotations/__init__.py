@@ -1,6 +1,5 @@
 import sys
 from itertools import zip_longest
-from pathlib import Path
 from typing import List, Union
 
 from flake8_annotations.enums import AnnotationType, ClassDecoratorType, FunctionType
@@ -335,23 +334,3 @@ class FunctionVisitor(ast.NodeVisitor):
         # Use ast.NodeVisitor.generic_visit to start down the nested method chain
         for sub_node in node.body:
             self.generic_visit(sub_node)
-
-    @classmethod
-    def parse_file(cls, src_filepath: Path) -> "FunctionVisitor":  # Need to quote for 3.6 compat
-        """Return a parsed AST for the provided Python source file."""
-        with src_filepath.open("r", encoding="utf-8") as f:
-            src = f.read()
-
-        if PY_GTE_38:
-            # Built-in ast requires a flag to parse type comments
-            tree = ast.parse(src, type_comments=True)
-        else:
-            # typed-ast will implicitly parse type comments
-            tree = ast.parse(src)
-
-        lines = src.splitlines()
-
-        visitor = cls(lines)
-        visitor.visit(tree)
-
-        return visitor

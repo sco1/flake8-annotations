@@ -1,17 +1,16 @@
 import sys
 from itertools import zip_longest
-from pathlib import Path
 from typing import List, Tuple
 
 import pytest
 import pytest_check as check
 from flake8_annotations import Argument, Function, FunctionVisitor
-from testing import parser_object_attributes
 from testing.argument_parsing_test_cases import argument_test_cases
+from testing.function_parsing_test_cases import function_test_cases
 from testing.helpers import find_matching_function, parse_source
 
 ARG_FIXTURE_TYPE = Tuple[List[Argument], List[Argument], str]
-FUNC_FIXTURE_TYPE = Tuple[Function, Function]
+FUNC_FIXTURE_TYPE = Tuple[Tuple[Function], List[Function], str]
 
 
 class TestArgumentParsing:
@@ -87,11 +86,8 @@ class TestArgumentParsing:
 class TestFunctionParsing:
     """Test for proper function parsing from source."""
 
-    src_filepath = Path("./testing/code/all_functions.py")
-    visitor = FunctionVisitor.parse_file(src_filepath)
-
-    @pytest.fixture(params=parser_object_attributes.parsed_functions.keys())
-    def functions(self, request) -> FUNC_FIXTURE_TYPE:  # noqa
+    @pytest.fixture(params=function_test_cases.items(), ids=function_test_cases.keys())
+    def functions(self, request) -> FUNC_FIXTURE_TYPE:  # noqa: TYP001
         """
         Build a pair of Function objects to compare and return as a (truth, parsed) tuple.
 
@@ -100,13 +96,16 @@ class TestFunctionParsing:
           * Keys are the function name, as str
           * Values are the Function object that should be parsed from the source
         """
-        truth_function = parser_object_attributes.parsed_functions[request.param]
+        test_case_name, test_case = request.param
 
-        # This should return the Function object. It may return None if no matching function name
-        # is found, due to misconfigured test parameters
-        parsed_function = find_matching_function(self.visitor.function_definitions, request.param)
+        truth_functions = test_case.func
 
-        return truth_function, parsed_function
+        tree, lines = parse_source(test_case.src)
+        visitor = FunctionVisitor(lines)
+        visitor.visit(tree)
+        parsed_functions = visitor.function_definitions
+
+        return truth_functions, parsed_functions, test_case_name
 
     def test_function_parsing(self, functions: FUNC_FIXTURE_TYPE) -> None:
         """
@@ -114,8 +113,11 @@ class TestFunctionParsing:
 
         Function objects are provided as a (truth, source) tuple
         """
-        failure_msg = f"Comparison check failed for function: '{functions[1].name}'"
-        check.is_true(self._is_same_func(functions[0], functions[1]), msg=failure_msg)
+        failure_msg = f"Comparison check failed for function: '{functions[2]}'"
+
+        for function in functions[1]:
+            matched_truth_function = find_matching_function(functions[0], function.name)
+            check.is_true(self._is_same_func(matched_truth_function, function), msg=failure_msg)
 
     @staticmethod
     def _is_same_func(func_a: Function, func_b: Function) -> bool:

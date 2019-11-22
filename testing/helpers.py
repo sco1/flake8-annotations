@@ -1,6 +1,6 @@
 import sys
 from functools import partial
-from typing import List, Optional, Tuple
+from typing import Iterable, List, Optional, Tuple
 
 from flake8_annotations import Argument, Function
 from flake8_annotations.enums import AnnotationType
@@ -29,7 +29,7 @@ def parse_source(src: str) -> Tuple[ast.Module, List[str]]:
     return tree, lines
 
 
-def find_matching_function(func_list: List[Function], match_name: str) -> Optional[Function]:
+def find_matching_function(func_list: Iterable[Function], match_name: str) -> Optional[Function]:
     """
     Iterate over a list of Function objects & find the matching named function.
 
