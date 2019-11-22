@@ -10,10 +10,12 @@ from flake8_annotations.enums import AnnotationType, ClassDecoratorType, Functio
 if sys.version_info >= (3, 8):
     import ast
     from ast import Ellipsis as ast_Ellipsis
+
     PY_GTE_38 = True
 else:
     from typed_ast import ast3 as ast
     from typed_ast.ast3 import Ellipsis as ast_Ellipsis
+
     PY_GTE_38 = False
 
 __version__ = "1.1.1"
@@ -260,7 +262,7 @@ class Function:
 
     @staticmethod
     def get_class_decorator_type(
-        function_node: AST_FUNCTION_TYPES
+        function_node: AST_FUNCTION_TYPES,
     ) -> Union[ClassDecoratorType, None]:
         """
         Get the class method's decorator type from its function node.

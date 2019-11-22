@@ -1,29 +1,45 @@
 from itertools import zip_longest
-from pathlib import Path
 from typing import Generator, Tuple
 
 import pytest
 import pytest_check as check
 from flake8_annotations import checker
+from testing.column_line_numbers_test_cases import ParserTestCase, parser_test_cases
+from testing.helpers import parse_source
 
-
-TEST_FILE = Path("./testing/code/column_line_numbers.py")
-
-# (line, column) tuples where we should get linting errors in the test file
-# Line numbers are 1-indexed
-# Column offsets are 0-indexed when yielded by our checker; flake8 adds 1 when emitted
-SHOULD_ERROR = ((20, 8), (20, 11), (28, 4), (29, 4), (30, 2), (34, 10), (39, 11))
 ERROR_CODE = Tuple[int, int, str, checker.TypeHintChecker]
 
 
-@pytest.fixture
-def parsed_errors(src_filepath: Path = TEST_FILE) -> Generator[ERROR_CODE, None, None]:
-    """Create a fixture for the error codes emitted by our testing code."""
-    tree = checker.TypeHintChecker.load_file(src_filepath)
-    return checker.TypeHintChecker(tree, src_filepath).run()
+@pytest.fixture(params=parser_test_cases.items())
+def parsed_errors(
+    request,  # noqa: TYP001
+) -> Tuple[Generator[ERROR_CODE, None, None], ParserTestCase]:
+    """
+    Create a fixture for the error codes emitted by our testing code.
+
+    `parser_test_cases` is a dictionary of ParserTestCase named tuples, which provide the
+    following:
+        * `src` - Source code for the test case to be parsed
+        * `error_locations` - Truthe value tuple of (row number, column offset) tuples
+            * Row numbers are 1-indexed
+            * Column offsets are 0-indexed when yielded by our checker; flake8 adds 1 when emitted
+
+    The fixture provides a generator of yielded errors for the input source, along with the test
+    case to use for obtaining truth values
+    """
+    # Because TypeHintChecker is expecting a filename to initialize, rather than change this
+    # logic use this file as a dummy, then update its tree & lines attributes in the fixture
+    test_case_name, test_case = request.param
+
+    checker_instance = checker.TypeHintChecker(None, __file__)
+    tree, lines = parse_source(test_case.src)
+    checker_instance.tree = tree
+    checker_instance.lines = lines
+
+    return checker_instance.run(), test_case
 
 
-def test_lineno(parsed_errors: Generator[ERROR_CODE, None, None]) -> None:
+def test_lineno(parsed_errors: Tuple[Generator[ERROR_CODE, None, None], ParserTestCase]) -> None:
     """
     Check for correct line number values.
 
@@ -32,11 +48,15 @@ def test_lineno(parsed_errors: Generator[ERROR_CODE, None, None]) -> None:
 
     Note: Line numbers are 1-indexed
     """
-    for should_error_idx, raised_error_code in zip_longest(SHOULD_ERROR, parsed_errors):
+    for should_error_idx, raised_error_code in zip_longest(
+        parsed_errors[1].error_locations, parsed_errors[0]
+    ):
         check.equal(should_error_idx[0], raised_error_code[0])
 
 
-def test_column_offset(parsed_errors: Generator[ERROR_CODE, None, None]) -> None:
+def test_column_offset(
+    parsed_errors: Tuple[Generator[ERROR_CODE, None, None], ParserTestCase]
+) -> None:
     """
     Check for correct column number values.
 
@@ -45,5 +65,7 @@ def test_column_offset(parsed_errors: Generator[ERROR_CODE, None, None]) -> None
 
     Note: Column offsets are 0-indexed when yielded by our checker; flake8 adds 1 when emitted
     """
-    for should_error_idx, raised_error_code in zip_longest(SHOULD_ERROR, parsed_errors):
+    for should_error_idx, raised_error_code in zip_longest(
+        parsed_errors[1].error_locations, parsed_errors[0]
+    ):
         check.equal(should_error_idx[1], raised_error_code[1])
