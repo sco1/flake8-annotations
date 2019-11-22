@@ -94,7 +94,7 @@ parser_test_cases = {
         ],
         should_yield_TYP301=False,
     ),
-    "mixed_argument_hint_types": ParserTestCase(
+    "mixed_argument_hint_types_case_1": ParserTestCase(  # Type comment before 3107 type annotation
         src=dedent(
             """\
             def foo(
@@ -107,6 +107,42 @@ parser_test_cases = {
         args=[
             typed_arg(argname="arg1"),
             typed_arg(argname="arg2", has_type_comment=False, has_3107_annotation=True),
+            untyped_arg(argname="return", annotation_type=AnnotationType.RETURN),
+        ],
+        should_yield_TYP301=True,
+    ),
+    "mixed_argument_hint_types_case_2": ParserTestCase(  # 3107 type annotation before type comment
+        src=dedent(
+            """\
+            def foo(
+                arg1: int,
+                arg2,  # type: int
+            ):
+                pass
+            """
+        ),
+        args=[
+            typed_arg(argname="arg1", has_type_comment=False, has_3107_annotation=True),
+            typed_arg(argname="arg2"),
+            untyped_arg(argname="return", annotation_type=AnnotationType.RETURN),
+        ],
+        should_yield_TYP301=True,
+    ),
+    "mixed_argument_hint_types_case_3": ParserTestCase(  # Should only yield TYP301 once
+        src=dedent(
+            """\
+            def foo(
+                arg1: int,
+                arg2,  # type: int
+                arg3,  # type: int
+            ):
+                pass
+            """
+        ),
+        args=[
+            typed_arg(argname="arg1", has_type_comment=False, has_3107_annotation=True),
+            typed_arg(argname="arg2"),
+            typed_arg(argname="arg3"),
             untyped_arg(argname="return", annotation_type=AnnotationType.RETURN),
         ],
         should_yield_TYP301=True,

@@ -40,9 +40,6 @@ class TestArgumentParsing:
         matching_func = _find_matching_function(self.visitor.function_definitions, request.param)
         if matching_func:
             parsed_arguments = matching_func.args
-        else:
-            # We shouldn't ever get here, but add as a catch-all
-            parsed_arguments = None
 
         return truth_arguments, parsed_arguments, request.param
 

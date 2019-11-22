@@ -42,11 +42,13 @@ class TypeHintChecker:
         #
         # Flake8 handles all noqa and error code ignore configurations after the error is yielded
         for function in visitor.function_definitions:
-            # Create a sentinel to check for mixed hint styles
+            # Create sentinels to check for mixed hint styles
             if function.has_type_comment:
                 has_type_comment = True
             else:
                 has_type_comment = False
+
+            has_3107_annotation = False  # 3107 annotations are captured by the return arg
 
             # Iterate over annotated args to detect mixing of type annotations and type comments
             # Emit this only once per function definition
@@ -54,7 +56,10 @@ class TypeHintChecker:
                 if arg.has_type_comment:
                     has_type_comment = True
 
-                if has_type_comment and arg.has_3107_annotation:
+                if arg.has_3107_annotation:
+                    has_3107_annotation = True
+
+                if has_type_comment and has_3107_annotation:
                     # Short-circuit check for mixing of type comments & 3107-style annotations
                     yield error_codes.TYP301.from_function(function).to_flake8()
                     break

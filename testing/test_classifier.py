@@ -116,6 +116,8 @@ class TestMixedTypeHintClassifier:
         checker_instance.lines = lines
         yielded_TYP301 = any("TYP301" in error[2] for error in checker_instance.run())
 
+        # TODO: Refactor to check that TYP301 is only emitted once
+
         return test_case_name, test_case, yielded_TYP301
 
     def test_argument(self, yielded_error: Tuple[str, ParserTestCase, List[Error]]) -> None:
