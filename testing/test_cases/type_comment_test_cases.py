@@ -1,9 +1,9 @@
+from functools import partial
 from textwrap import dedent
 from typing import List, NamedTuple
 
 from flake8_annotations import Argument
 from flake8_annotations.enums import AnnotationType
-from testing.helpers import typed_arg, untyped_arg
 
 
 class ParserTestCase(NamedTuple):
@@ -12,6 +12,26 @@ class ParserTestCase(NamedTuple):
     src: str
     args: List[Argument]
     should_yield_TYP301: bool
+
+
+untyped_arg = partial(
+    Argument,
+    lineno=0,
+    col_offset=0,
+    annotation_type=AnnotationType.ARGS,
+    has_type_annotation=False,
+    has_type_comment=False,
+    has_3107_annotation=False,
+)
+typed_arg = partial(
+    Argument,
+    lineno=0,
+    col_offset=0,
+    annotation_type=AnnotationType.ARGS,
+    has_type_annotation=True,
+    has_type_comment=True,
+    has_3107_annotation=False,
+)
 
 
 parser_test_cases = {

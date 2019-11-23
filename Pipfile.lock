@@ -301,13 +301,6 @@
             ],
             "version": "==2.8"
         },
-        "importlib-metadata": {
-            "hashes": [
-                "sha256:aa18d7378b00b40847790e7c27e11673d7fed219354109d0e7b9e5b25dc3ad26",
-                "sha256:d5f18a79777f3aa179c145737780282e27b508fc8fd688cb17c7a813e8bd39af"
-            ],
-            "version": "==0.23"
-        },
         "junit-xml": {
             "hashes": [
                 "sha256:602f1c480a19d64edb452bf7632f76b5f2cb92c1938c6e071dcda8ff9541dc21"
@@ -356,17 +349,17 @@
         },
         "pep517": {
             "hashes": [
-                "sha256:d283181fdb83fb698556cd3a4ebde5bb352b59242574e6ca56a95118774da374",
-                "sha256:fac83aa4c3b73adc84cb2a295f1f5bd5b9a13946ebd1339ba3b33ce287165c88"
+                "sha256:5ce351f3be71d01bb094d63253854b6139931fcaba8e2f380c02102136c51e40",
+                "sha256:882e2eeeffe39ccd6be6122d98300df18d80950cb5f449766d64149c94c5614a"
             ],
-            "version": "==0.7.0"
+            "version": "==0.8.1"
         },
         "pip-shims": {
             "hashes": [
-                "sha256:81772e056f2d13e33ca98fecba0484a27174c9571a2e397707e83e33cffc919e",
-                "sha256:e37f7049034c6595418874a068b672e3eb39378a9640dc9203e0a8549c88a755"
+                "sha256:383e054386d15f7a33d619a9fc19d670575cdf88e05a4dab93f0a254696ce836",
+                "sha256:d4b720d85a8cbd81f72ea22e273ac72415f1e0b49cade597b815c63b351d9637"
             ],
-            "version": "==0.3.4"
+            "version": "==0.4.0"
         },
         "pipenv-setup": {
             "hashes": [
@@ -394,10 +387,10 @@
         },
         "pluggy": {
             "hashes": [
-                "sha256:0db4b7601aae1d35b4a033282da476845aa19185c1e6964b25cf324b5e4ec3e6",
-                "sha256:fa5fa1622fa6dd5c030e9cad086fa19ef6a0cf6d7a2d12318e10cb49d6d68f34"
+                "sha256:15b2acde666561e1298d71b523007ed7364de07029219b604cf808bfa1c765b0",
+                "sha256:966c145cd83c96502c3c3868f50408687b38434af77734af1e9ca461a4081d2d"
             ],
-            "version": "==0.13.0"
+            "version": "==0.13.1"
         },
         "pre-commit": {
             "hashes": [
@@ -596,10 +589,10 @@
         },
         "virtualenv": {
             "hashes": [
-                "sha256:11cb4608930d5fd3afb545ecf8db83fa50e1f96fc4fca80c94b07d2c83146589",
-                "sha256:d257bb3773e48cac60e475a19b608996c73f4d333b3ba2e4e57d5ac6134e0136"
+                "sha256:116655188441670978117d0ebb6451eb6a7526f9ae0796cc0dee6bd7356909b0",
+                "sha256:b57776b44f91511866594e477dd10e76a6eb44439cdd7f06dcd30ba4c5bd854f"
             ],
-            "version": "==16.7.7"
+            "version": "==16.7.8"
         },
         "vistir": {
             "hashes": [
@@ -621,13 +614,6 @@
                 "sha256:f4da1763d3becf2e2cd92a14a7c920f0f00eca30fdde9ea992c836685b9faf28"
             ],
             "version": "==0.33.6"
-        },
-        "zipp": {
-            "hashes": [
-                "sha256:3718b1cbcd963c7d4c5511a8240812904164b7f381b647143a89d3b98f9bcd8e",
-                "sha256:f06903e9f1f43b12d371004b4ac7b06ab39a44adc747266928ae6debfa7b3335"
-            ],
-            "version": "==0.6.0"
         }
     }
 }

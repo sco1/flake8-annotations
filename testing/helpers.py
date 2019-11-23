@@ -1,10 +1,8 @@
 import sys
-from functools import partial
 from typing import Generator, Iterable, List, Optional, Tuple
 
-from flake8_annotations import Argument, Function, FunctionVisitor
+from flake8_annotations import Function, FunctionVisitor
 from flake8_annotations.checker import TypeHintChecker
-from flake8_annotations.enums import AnnotationType
 from flake8_annotations.error_codes import Error
 
 if sys.version_info >= (3, 8):
@@ -59,23 +57,3 @@ def find_matching_function(func_list: Iterable[Function], match_name: str) -> Op
     for function in func_list:
         if function.name == match_name:
             return function
-
-
-untyped_arg = partial(
-    Argument,
-    lineno=0,
-    col_offset=0,
-    annotation_type=AnnotationType.ARGS,
-    has_type_annotation=False,
-    has_type_comment=False,
-    has_3107_annotation=False,
-)
-typed_arg = partial(
-    Argument,
-    lineno=0,
-    col_offset=0,
-    annotation_type=AnnotationType.ARGS,
-    has_type_annotation=True,
-    has_type_comment=True,
-    has_3107_annotation=False,
-)
