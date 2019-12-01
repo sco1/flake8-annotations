@@ -1,20 +1,17 @@
-import sys
 from functools import lru_cache
 from pathlib import Path
 from typing import Generator, List, Tuple
 
-from flake8_annotations import Argument, Function, FunctionVisitor, __version__, enums, error_codes
+from flake8_annotations import (
+    Argument, Function, FunctionVisitor, PY_GTE_38, __version__, enums, error_codes
+)
 
 # Check if we can use the stdlib ast module instead of typed_ast
 # stdlib ast gains native type comment support in Python 3.8
-if sys.version_info >= (3, 8):
+if PY_GTE_38:
     import ast
-
-    PY_GTE_38 = True
 else:
     from typed_ast import ast3 as ast
-
-    PY_GTE_38 = False
 
 
 class TypeHintChecker:

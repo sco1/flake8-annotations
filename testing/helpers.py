@@ -1,18 +1,13 @@
-import sys
 from typing import Generator, Iterable, List, Optional, Tuple
 
-from flake8_annotations import Function, FunctionVisitor
+from flake8_annotations import Function, FunctionVisitor, PY_GTE_38
 from flake8_annotations.checker import TypeHintChecker
 from flake8_annotations.error_codes import Error
 
-if sys.version_info >= (3, 8):
+if PY_GTE_38:
     import ast
-
-    PY_GTE_38 = True
 else:
     from typed_ast import ast3 as ast
-
-    PY_GTE_38 = False
 
 
 def parse_source(src: str) -> Tuple[ast.Module, List[str]]:
