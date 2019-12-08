@@ -5,9 +5,6 @@ from flake8_annotations import Argument, Function
 from flake8_annotations.enums import AnnotationType
 
 
-# Create a dictionary of test cases for Argument and Function __str__ and __repr__ testing
-# Where keys represent the name of the test case and values are a named tuple:
-#  (test_object, str_output, repr_output)
 class FormatTestCase(NamedTuple):
     """Named tuple for representing our test cases."""
 
@@ -36,7 +33,7 @@ formatting_test_cases = {
     ),
     "func_has_arg": FormatTestCase(
         func(args=[arg(argname="foo"), arg(argname="return")]),
-        "<Function: test_func, Args: [<Argument: foo, Annotated: False>, <Argument: return, Annotated: False>]>",  # noqa
+        "<Function: test_func, Args: [<Argument: foo, Annotated: False>, <Argument: return, Annotated: False>]>",  # noqa: E501
         (
             "Function('test_func', 0, 0, FunctionType.PUBLIC, False, None, False, False, "
             "[Argument('foo', 0, 0, AnnotationType.ARGS, False, False, False), "

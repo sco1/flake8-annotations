@@ -2,8 +2,16 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Generator, List, Tuple
 
-from flake8_annotations import Argument, Function, FunctionVisitor, __version__, enums, error_codes
-from typed_ast import ast3 as ast
+from flake8_annotations import (
+    Argument, Function, FunctionVisitor, PY_GTE_38, __version__, enums, error_codes
+)
+
+# Check if we can use the stdlib ast module instead of typed_ast
+# stdlib ast gains native type comment support in Python 3.8
+if PY_GTE_38:
+    import ast
+else:
+    from typed_ast import ast3 as ast
 
 
 class TypeHintChecker:
@@ -33,11 +41,13 @@ class TypeHintChecker:
         #
         # Flake8 handles all noqa and error code ignore configurations after the error is yielded
         for function in visitor.function_definitions:
-            # Create a sentinel to check for mixed hint styles
+            # Create sentinels to check for mixed hint styles
             if function.has_type_comment:
                 has_type_comment = True
             else:
                 has_type_comment = False
+
+            has_3107_annotation = False  # 3107 annotations are captured by the return arg
 
             # Iterate over annotated args to detect mixing of type annotations and type comments
             # Emit this only once per function definition
@@ -45,7 +55,10 @@ class TypeHintChecker:
                 if arg.has_type_comment:
                     has_type_comment = True
 
-                if has_type_comment and arg.has_3107_annotation:
+                if arg.has_3107_annotation:
+                    has_3107_annotation = True
+
+                if has_type_comment and has_3107_annotation:
                     # Short-circuit check for mixing of type comments & 3107-style annotations
                     yield error_codes.TYP301.from_function(function).to_flake8()
                     break
@@ -60,7 +73,13 @@ class TypeHintChecker:
         with src_filepath.open("r", encoding="utf-8") as f:
             src = f.read()
 
-        tree = ast.parse(src)
+        if PY_GTE_38:
+            # Built-in ast requires a flag to parse type comments
+            tree = ast.parse(src, type_comments=True)
+        else:
+            # typed-ast will implicitly parse type comments
+            tree = ast.parse(src)
+
         lines = src.splitlines()
 
         return tree, lines
@@ -143,5 +162,5 @@ def _argument_error_classifier(
     elif annotation_type == enums.AnnotationType.VARARG:
         return error_codes.TYP002
     else:
-        # Combine ARG and KWONLYARGS
+        # Combine POSONLYARG, ARG, and KWONLYARGS
         return error_codes.TYP001

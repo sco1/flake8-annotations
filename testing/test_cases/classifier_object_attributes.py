@@ -3,9 +3,12 @@ from typing import NamedTuple
 from flake8_annotations import error_codes
 from flake8_annotations.enums import AnnotationType, ClassDecoratorType, FunctionType
 
+
 # Build a dictionary of possible function combinations & the resultant error code
 # Keys are named tuples of the form (function_type, is_class_method, class_decorator_type)
 class RT(NamedTuple):
+    """Helper object for return type attribute specification."""
+
     function_type: FunctionType
     is_class_method: bool
     class_decorator_type: ClassDecoratorType
@@ -36,10 +39,13 @@ return_classifications = {
     RT(FunctionType.PUBLIC, False, None): error_codes.TYP201,
 }
 
+
 # Build a dictionary of possible argument combinations & the resultant error code
 # Keys are named tuples of the form:
 #   (is_class_method, is_first_arg, class_decorator_type, annotation_type)
 class AT(NamedTuple):
+    """Helper object for return type attribute specification."""
+
     is_class_method: bool
     is_first_arg: bool
     class_decorator_type: ClassDecoratorType
@@ -84,22 +90,4 @@ argument_classifications = {
     AT(True, False, None, AnnotationType.KWONLYARGS): error_codes.TYP001,
     AT(False, True, None, AnnotationType.KWONLYARGS): error_codes.TYP001,
     AT(False, False, None, AnnotationType.KWONLYARGS): error_codes.TYP001,
-}
-
-# Build a dictionary for the type comment testing code defs & whether a TYP301 error is expected
-class TypeHintFun(NamedTuple):
-    name: str
-    emits_TYP301: bool
-
-
-mixed_type_comment_classifications = {
-    4: TypeHintFun("full_function_comment", False),
-    9: TypeHintFun("partial_function_comment_no_ellipsis", False),
-    14: TypeHintFun("partial_function_comment_with_ellipsis", False),
-    19: TypeHintFun("argument_comments_ellipsis_function_comment", False),
-    26: TypeHintFun("argument_comments_no_function_comment", False),
-    33: TypeHintFun("mixed_argument_hint_types", True),
-    40: TypeHintFun("duplicate_argument_hint_types", True),
-    47: TypeHintFun("arg_comment_return_annotation_hint_types", True),
-    54: TypeHintFun("arg_annotation_return_comment_hint_types", True),
 }

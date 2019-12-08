@@ -26,6 +26,7 @@ class ClassDecoratorType(Enum):
 class AnnotationType(Enum):
     """Represent the kind of missing type annotation."""
 
+    POSONLYARGS = auto()
     ARGS = auto()
     VARARG = auto()
     KWONLYARGS = auto()

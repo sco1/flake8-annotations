@@ -20,6 +20,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+.python-version
 
 # jetbrains
 .idea/
@@ -39,3 +40,4 @@ test-*.xml
 coverage.xml
 cov.xml
 htmlcov
+.pytest_cache/

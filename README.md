@@ -7,7 +7,7 @@
 
 `flake8-annotations` is a plugin for [Flake8](http://flake8.pycqa.org/en/latest/) that detects the absence of [PEP 3107-style](https://www.python.org/dev/peps/pep-3107/) function annotations and [PEP 484-style](https://www.python.org/dev/peps/pep-0484/#type-comments) type comments  (see: [Caveats](#Caveats-for-PEP-484-style-Type-Comments)).
 
-What this won't do: Check variable annotations (see: [PEP 526](https://www.python.org/dev/peps/pep-0526/)), respect stub files, or replace [mypy's](http://mypy-lang.org/) compile-time type checking.
+What this won't do: Check variable annotations (see: [PEP 526](https://www.python.org/dev/peps/pep-0526/)), respect stub files, or replace [mypy's](http://mypy-lang.org/) static type checking.
 
 ## Installation
 
@@ -23,7 +23,7 @@ You can verify it's being picked up by invoking the following in your shell:
 
 ```bash
 $ flake8 --version
-3.7.8 (flake8-annotations: 1.1.0, mccabe: 0.6.1, pycodestyle: 2.5.0, pyflakes: 2.1.1) CPython 3.7.4 on Darwin
+3.7.8 (flake8-annotations: 1.1.1, mccabe: 0.6.1, pycodestyle: 2.5.0, pyflakes: 2.1.1) CPython 3.7.4 on Darwin
 ```
 
 ## Table of Warnings
@@ -124,7 +124,7 @@ $ pipenv run precommit
 ```
 
 ### Testing
-A [pytest](https://docs.pytest.org/en/latest/) suite is provided for testing:
+A [pytest](https://docs.pytest.org/en/latest/) suite is provided for testing across multiple Python environments via [tox](https://github.com/tox-dev/tox/):
 
 ```bash
 $ pipenv run test

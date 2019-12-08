@@ -2,11 +2,12 @@ from typing import Tuple
 
 import pytest
 import pytest_check as check
-from testing.printed_object_formatting import FormatTestCase, formatting_test_cases
+
+from .test_cases.object_formatting_test_cases import FormatTestCase, formatting_test_cases
 
 
 @pytest.fixture(params=formatting_test_cases.keys())
-def build_test_cases(request) -> Tuple[FormatTestCase, str]:  # noqa
+def build_test_cases(request) -> Tuple[FormatTestCase, str]:  # noqa: TYP001
     """
     Create a fixture for the provided test cases.
 
