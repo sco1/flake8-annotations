@@ -37,11 +37,7 @@ jobs:
   - script: python3 -m flake8
     displayName: 'Lint flake8-annotations'
 
-  - script: python3 -m pytest
-      --junitxml test-pytest.xml
-      --cov=flake8_annotations testing/
-      --cov-append --cov-report xml:cov.xml
-      --cov-report term-missing
+  - script: tox -e py
     displayName: 'Test flake8-annotations & generate coverage'
     condition: succeededOrFailed()
 
