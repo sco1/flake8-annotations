@@ -1,6 +1,8 @@
 # Changelog
 Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (`<major>`.`<minor>`.`<patch>`)
 
+## [v1.1.2]
+
 ## [v1.1.1]
 ### Added
 * Add [`pipenv-setup`](https://github.com/Madoshakalaka/pipenv-setup) as a dev dependency & CI check to ensure synchronization between `Pipfile` and `setup.py`

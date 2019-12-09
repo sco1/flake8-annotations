@@ -4,7 +4,7 @@ from setuptools import setup
 setup(
     name="flake8-annotations",
     license="MIT",
-    version="1.1.1",
+    version="1.1.2",
     description="Flake8 Type Annotation Checks",
     long_description=open("README.md", encoding="utf-8").read(),
     long_description_content_type="text/markdown",
