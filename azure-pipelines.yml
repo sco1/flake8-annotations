@@ -9,10 +9,13 @@ jobs:
     matrix:
       Python36:
         python.version: '3.6'
+        tox.env: "py36"
       Python37:
         python.version: '3.7'
+        tox.env: "py37"
       Python38:
         python.version: '3.8'
+        tox.env: "py38"
 
   variables:
     PIP_CACHE_DIR: ".cache/pip"
@@ -37,12 +40,8 @@ jobs:
   - script: python3 -m flake8
     displayName: 'Lint flake8-annotations'
 
-  - script: python3 -m pytest
-      --junitxml test-pytest.xml
-      --cov=flake8_annotations testing/
-      --cov-append --cov-report xml:cov.xml
-      --cov-report term-missing
-    displayName: 'Test flake8-annotations & generate coverage'
+  - script: tox -e $(tox.env)
+    displayName: 'Test & generate coverage'
     condition: succeededOrFailed()
 
   - task: PublishTestResults@2
