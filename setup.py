@@ -46,7 +46,6 @@ setup(
             "flake8-docstrings~=1.5",
             "flake8-formatter-junit-xml~=0.0",
             "flake8-import-order~=0.18",
-            "flake8-string-format~=0.2",
             "flake8-tidy-imports~=3.1",
             "flake8-todo~=0.7",
             "pipenv-setup~=2.2",
