@@ -1,9 +1,14 @@
 from functools import lru_cache
-from pathlib import Path
-from typing import Generator, List, Tuple
+from typing import Generator, List
 
 from flake8_annotations import (
-    Argument, Function, FunctionVisitor, PY_GTE_38, __version__, enums, error_codes
+    Argument,
+    Function,
+    FunctionVisitor,
+    PY_GTE_38,
+    __version__,
+    enums,
+    error_codes,
 )
 
 # Check if we can use the stdlib ast module instead of typed_ast
@@ -20,11 +25,10 @@ class TypeHintChecker:
     name = "flake8-annotations"
     version = __version__
 
-    def __init__(self, tree: ast.Module, filename: str):
-        # Unfortunately no way that I can find around requesting the ast-parsed tree from flake8
-        # Removing tree unregisters the plugin, and per the documentation the alternative is
-        # requesting per-line information
-        self.tree, self.lines = self.load_file(Path(filename))
+    def __init__(self, lines: List[str]):
+        # Request `lines` here and join to allow for correct handling of input from stdin
+        self.lines = lines
+        self.tree = self.get_typed_tree("".join(lines))  # flake8 doesn't strip newlines
 
     def run(self) -> Generator[error_codes.Error, None, None]:
         """
@@ -68,11 +72,8 @@ class TypeHintChecker:
                 yield classify_error(function, arg).to_flake8()
 
     @staticmethod
-    def load_file(src_filepath: Path) -> Tuple[ast.Module, List[str]]:
-        """Parse the provided Python file and return an (typed AST, source) tuple."""
-        with src_filepath.open("r", encoding="utf-8") as f:
-            src = f.read()
-
+    def get_typed_tree(src: str) -> ast.Module:
+        """Parse the provided source into a typed AST."""
         if PY_GTE_38:
             # Built-in ast requires a flag to parse type comments
             tree = ast.parse(src, type_comments=True)
@@ -80,9 +81,7 @@ class TypeHintChecker:
             # typed-ast will implicitly parse type comments
             tree = ast.parse(src)
 
-        lines = src.splitlines()
-
-        return tree, lines
+        return tree
 
 
 def classify_error(function: Function, arg: Argument) -> error_codes.Error:

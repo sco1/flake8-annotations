@@ -20,9 +20,9 @@ variable_formatting_test_cases = {
     "protected_function": FormatTestCase(
         src=dedent(
             """\
-        def _foo(some_arg, *some_args, **some_kwargs) -> int:
-            pass
-        """
+            def _foo(some_arg, *some_args, **some_kwargs) -> int:
+                pass
+            """
         ),
     ),
     "private_function": FormatTestCase(
