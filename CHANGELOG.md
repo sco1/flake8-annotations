@@ -1,6 +1,14 @@
 # Changelog
 Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (`<major>`.`<minor>`.`<patch>`)
 
+## [v1.1.2]
+### Changed
+* Request source from `flake8` as lines of code rather than parsing it from the requested filename ourselves, allowing for proper parsing of `stdin` inputs
+* Remove `flake8-string-format` from dev dependencies, as `str.format()` isn't used anywhere
+
+### Fixed
+* #52 Fix error when invoking with `stdin` source code instead of a filename
+
 ## [v1.1.1]
 ### Added
 * Add [`pipenv-setup`](https://github.com/Madoshakalaka/pipenv-setup) as a dev dependency & CI check to ensure synchronization between `Pipfile` and `setup.py`

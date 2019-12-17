@@ -13,3 +13,5 @@ update_configs:
           dependency_name: "pre-commit"
       - match:
           dependency_name: "pytest*"
+      - match:
+          dependency_name: "tox"
