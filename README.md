@@ -1,13 +1,13 @@
 # flake8-annotations
-![PyPI - Python Version](https://img.shields.io/pypi/pyversions/flake8-annotations)
-![PyPI](https://img.shields.io/pypi/v/flake8-annotations)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/flake8-annotations)](https://pypi.org/project/flake8-annotations/)
+[![PyPI](https://img.shields.io/pypi/v/flake8-annotations)](https://pypi.org/project/flake8-annotations/)
 [![Build Status](https://dev.azure.com/python-discord/Python%20Discord/_apis/build/status/python-discord.flake8-annotations?branchName=master)](https://dev.azure.com/python-discord/Python%20Discord/_build/latest?definitionId=16&branchName=master)
 [![Discord](https://img.shields.io/discord/267624335836053506?color=%237289DA&label=Python%20Discord&logo=discord&logoColor=white)](https://discord.gg/2B963hn)
 
 
 `flake8-annotations` is a plugin for [Flake8](http://flake8.pycqa.org/en/latest/) that detects the absence of [PEP 3107-style](https://www.python.org/dev/peps/pep-3107/) function annotations and [PEP 484-style](https://www.python.org/dev/peps/pep-0484/#type-comments) type comments  (see: [Caveats](#Caveats-for-PEP-484-style-Type-Comments)).
 
-What this won't do: Check variable annotations (see: [PEP 526](https://www.python.org/dev/peps/pep-0526/)), respect stub files, or replace [mypy's](http://mypy-lang.org/) static type checking.
+What this won't do: Check variable annotations (see: [PEP 526](https://www.python.org/dev/peps/pep-0526/)), respect stub files, or replace [mypy](http://mypy-lang.org/).
 
 ## Installation
 
@@ -23,7 +23,7 @@ You can verify it's being picked up by invoking the following in your shell:
 
 ```bash
 $ flake8 --version
-3.7.8 (flake8-annotations: 1.1.2, mccabe: 0.6.1, pycodestyle: 2.5.0, pyflakes: 2.1.1) CPython 3.7.4 on Darwin
+3.7.8 (flake8-annotations: 1.1.3, mccabe: 0.6.1, pycodestyle: 2.5.0, pyflakes: 2.1.1) CPython 3.7.4 on Darwin
 ```
 
 ## Table of Warnings
@@ -123,32 +123,17 @@ A [pre-commit](https://pre-commit.com) installation script and configuration is 
 $ pipenv run precommit
 ```
 
-### Testing
-A [pytest](https://docs.pytest.org/en/latest/) suite is provided for testing across multiple Python environments via [tox](https://github.com/tox-dev/tox/):
+or
 
 ```bash
-$ pipenv run test
+$ pre-commit install
 ```
 
-### Coverage
-Test coverage is provided by [pytest-cov](https://github.com/pytest-dev/pytest-cov) via a pipenv script:
+### Testing & Coverage
+A [pytest](https://docs.pytest.org/en/latest/) suite is provided, with coverage reporting from [pytest-cov](https://github.com/pytest-dev/pytest-cov). A [tox](https://github.com/tox-dev/tox/) configuration is provided to test across all supported versions of Python. Testing will be skipped for Python versions that cannot be found.
 
 ```bash
-$ pipenv run coverage
+$ tox
 ```
 
-When running via pipenv, details on missing coverage is provided in the report to allow the user to generate additional tests for full coverage.
-
-e.g.
-
-```
------------ coverage: platform win32, python 3.7.4-final-0 -----------
-Name                                Stmts   Miss Branch BrPart  Cover   Missing
--------------------------------------------------------------------------------
-flake8_annotations\__init__.py        108      0     38      0    99%   164
-flake8_annotations\checker.py          57      0     30      0   100%
-flake8_annotations\enums.py            15      0      0      0   100%
-flake8_annotations\error_codes.py      85      0      0      0   100%
--------------------------------------------------------------------------------
-TOTAL                                 265      0     68      0    99%
-```
+Details on missing coverage, including in the test suite, is provided in the report to allow the user to generate additional tests for full coverage.

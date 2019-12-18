@@ -1,6 +1,8 @@
 # Changelog
 Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (`<major>`.`<minor>`.`<patch>`)
 
+## [v1.1.3]
+
 ## [v1.1.2]
 ### Changed
 * Request source from `flake8` as lines of code rather than parsing it from the requested filename ourselves, allowing for proper parsing of `stdin` inputs
