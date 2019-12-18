@@ -43,10 +43,9 @@ def functions_from_source(src: str) -> List[Function]:
 
 def find_matching_function(func_list: Iterable[Function], match_name: str) -> Optional[Function]:
     """
-    Iterate over a list of Function objects & find the matching named function.
+    Iterate over a list of Function objects & find the first matching named function.
 
-    If no function is found, this returns None
+    Due to the definition of the test cases, this should always return something, but there is no
+    protection if a match isn't found & will raise an `IndexError`.
     """
-    for function in func_list:
-        if function.name == match_name:
-            return function
+    return [function for function in func_list if function.name == match_name][0]
