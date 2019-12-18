@@ -27,7 +27,7 @@ def parse_source(src: str) -> Tuple[ast.Module, List[str]]:
 def check_source(src: str) -> Generator[Error, None, None]:
     """Helper for generating linting errors from the provided source code."""
     _, lines = parse_source(src)
-    checker_instance = TypeHintChecker(lines)
+    checker_instance = TypeHintChecker(None, lines)
 
     return checker_instance.run()
 

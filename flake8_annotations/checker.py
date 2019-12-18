@@ -25,7 +25,8 @@ class TypeHintChecker:
     name = "flake8-annotations"
     version = __version__
 
-    def __init__(self, lines: List[str]):
+    def __init__(self, tree: ast.Module, lines: List[str]):
+        # Request `tree` in order to ensure flake8 will run the plugin, even though we don't use it
         # Request `lines` here and join to allow for correct handling of input from stdin
         self.lines = lines
         self.tree = self.get_typed_tree("".join(lines))  # flake8 doesn't strip newlines
