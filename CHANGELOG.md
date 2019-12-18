@@ -2,6 +2,8 @@
 Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (`<major>`.`<minor>`.`<patch>`)
 
 ## [v1.1.3]
+### Fixed
+* Add missing classifier test cases for POSONLYARGS
 
 ## [v1.1.2]
 ### Changed
