@@ -17,7 +17,7 @@ else:
 
     PY_GTE_38 = False
 
-__version__ = "1.1.2"
+__version__ = "1.1.3"
 
 AST_ARG_TYPES = ("args", "vararg", "kwonlyargs", "kwarg")
 if PY_GTE_38:

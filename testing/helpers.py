@@ -27,7 +27,7 @@ def parse_source(src: str) -> Tuple[ast.Module, List[str]]:
 def check_source(src: str) -> Generator[Error, None, None]:
     """Helper for generating linting errors from the provided source code."""
     _, lines = parse_source(src)
-    checker_instance = TypeHintChecker(lines)
+    checker_instance = TypeHintChecker(None, lines)
 
     return checker_instance.run()
 
@@ -43,10 +43,9 @@ def functions_from_source(src: str) -> List[Function]:
 
 def find_matching_function(func_list: Iterable[Function], match_name: str) -> Optional[Function]:
     """
-    Iterate over a list of Function objects & find the matching named function.
+    Iterate over a list of Function objects & find the first matching named function.
 
-    If no function is found, this returns None
+    Due to the definition of the test cases, this should always return something, but there is no
+    protection if a match isn't found & will raise an `IndexError`.
     """
-    for function in func_list:
-        if function.name == match_name:
-            return function
+    return [function for function in func_list if function.name == match_name][0]

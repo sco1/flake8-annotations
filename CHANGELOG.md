@@ -1,6 +1,11 @@
 # Changelog
 Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (`<major>`.`<minor>`.`<patch>`)
 
+## [v1.1.3]
+### Fixed
+* Add missing classifier test cases for POSONLYARGS
+* Re-add the `tree` argument to the checker so flake8 identifies the plugin as needing to run
+
 ## [v1.1.2]
 ### Changed
 * Request source from `flake8` as lines of code rather than parsing it from the requested filename ourselves, allowing for proper parsing of `stdin` inputs
