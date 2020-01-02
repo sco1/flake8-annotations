@@ -1,6 +1,10 @@
 # Changelog
 Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (`<major>`.`<minor>`.`<patch>`)
 
+## Current
+### Added
+* Add test case for checking whether flake8 invokes our plugin
+
 ## [v1.1.3]
 ### Fixed
 * Add missing classifier test cases for POSONLYARGS
