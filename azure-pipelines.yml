@@ -20,6 +20,7 @@ jobs:
   variables:
     PIP_CACHE_DIR: ".cache/pip"
     PIP_SRC: ".cache/src"
+    POETRY_VIRTUALENVS_CREATE: false
 
   steps:
   - task: UsePythonVersion@0
@@ -31,11 +32,8 @@ jobs:
   - script: python3 -m pip install setuptools importlib-metadata
     displayName: 'Install base dependencies'
 
-  - script: python3 -m pip install pipenv && pipenv install --dev --deploy --system
+  - script: python3 -m pip install poetry && poetry install
     displayName: 'Install Project Environment'
-
-  - script: pipenv-setup check
-    displayName: 'Check dependency synchronization'
 
   - script: python3 -m flake8
     displayName: 'Lint flake8-annotations'
