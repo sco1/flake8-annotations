@@ -24,14 +24,13 @@ def parse_source(src: str) -> Tuple[ast.Module, List[str]]:
     return tree, lines
 
 
-def check_source(src: str) -> Generator[Error, None, None]:
+def check_source(src: str, suppress_none_returns: bool = False) -> Generator[Error, None, None]:
     """Helper for generating linting errors from the provided source code."""
     _, lines = parse_source(src)
     checker_instance = TypeHintChecker(None, lines)
 
-    # Hardcode None return suppression since our test suite bypasses flake8's configuration parser
-    # None return suppression is tested explicitly in its own test suite
-    checker_instance.suppress_none_returning = False
+    # Manually set None return error suppression, as the test suite bypasses flake8's config parser
+    checker_instance.suppress_none_returning = suppress_none_returns
 
     return checker_instance.run()
 
