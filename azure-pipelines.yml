@@ -37,7 +37,7 @@ jobs:
   - script: pipenv-setup check
     displayName: 'Check dependency synchronization'
 
-  - script: python3 -m flake8
+  - script: flake8
     displayName: 'Lint flake8-annotations'
 
   - script: tox -e $(tox.env)
