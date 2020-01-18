@@ -29,6 +29,10 @@ def check_source(src: str) -> Generator[Error, None, None]:
     _, lines = parse_source(src)
     checker_instance = TypeHintChecker(None, lines)
 
+    # Hardcode None return suppression since our test suite bypasses flake8's configuration parser
+    # None return suppression is tested explicitly in its own test suite
+    checker_instance.suppress_none_returning = False
+
     return checker_instance.run()
 
 

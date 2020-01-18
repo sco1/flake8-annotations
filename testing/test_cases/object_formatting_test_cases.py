@@ -27,7 +27,7 @@ formatting_test_cases = {
         func(args=[arg(argname="return")]),
         "<Function: test_func, Args: [<Argument: return, Annotated: False>]>",
         (
-            "Function('test_func', 0, 0, FunctionType.PUBLIC, False, None, False, False, "
+            "Function('test_func', 0, 0, FunctionType.PUBLIC, False, None, False, False, True, "
             "[Argument('return', 0, 0, AnnotationType.ARGS, False, False, False)])"
         ),
     ),
@@ -35,7 +35,7 @@ formatting_test_cases = {
         func(args=[arg(argname="foo"), arg(argname="return")]),
         "<Function: test_func, Args: [<Argument: foo, Annotated: False>, <Argument: return, Annotated: False>]>",  # noqa: E501
         (
-            "Function('test_func', 0, 0, FunctionType.PUBLIC, False, None, False, False, "
+            "Function('test_func', 0, 0, FunctionType.PUBLIC, False, None, False, False, True, "
             "[Argument('foo', 0, 0, AnnotationType.ARGS, False, False, False), "
             "Argument('return', 0, 0, AnnotationType.ARGS, False, False, False)])"
         ),

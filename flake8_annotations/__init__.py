@@ -101,6 +101,7 @@ class Function:
         class_decorator_type: Union[ClassDecoratorType, None] = None,
         is_return_annotated: bool = False,
         has_type_comment: bool = False,
+        has_only_none_returns: bool = True,
         args: List[Argument] = None,
     ):
         self.name = name
@@ -111,6 +112,7 @@ class Function:
         self.class_decorator_type = class_decorator_type
         self.is_return_annotated = is_return_annotated
         self.has_type_comment = has_type_comment
+        self.has_only_none_returns = has_only_none_returns
         self.args = args
 
     def is_fully_annotated(self) -> bool:
@@ -147,7 +149,7 @@ class Function:
         return (
             f"Function({self.name!r}, {self.lineno}, {self.col_offset}, {self.function_type}, "
             f"{self.is_class_method}, {self.class_decorator_type}, {self.is_return_annotated}, "
-            f"{self.has_type_comment}, {self.args})"
+            f"{self.has_type_comment}, {self.has_only_none_returns}, {self.args})"
         )
 
     @classmethod
