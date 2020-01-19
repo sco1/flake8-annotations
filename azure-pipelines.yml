@@ -35,7 +35,7 @@ jobs:
   - script: python3 -m pip install poetry && poetry install
     displayName: 'Install Project Environment'
 
-  - script: python3 -m flake8
+  - script: flake8
     displayName: 'Lint flake8-annotations'
 
   - script: tox -e $(tox.env)
