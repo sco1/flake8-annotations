@@ -12,7 +12,7 @@ Note that contributions may be rejected on the basis of a contributor failing to
     * If PRing from your own fork, **ensure that "Allow edits from maintainers" is checked**. This gives permission for maintainers to commit changes directly to your fork, speeding up the review process.
 3. **Adhere to the prevailing code style**, which we enforce using [flake8](http://flake8.pycqa.org/en/latest/index.html).
     * Run `flake8` against your code **before** you push it. Your commit will be rejected by the build server if it fails to lint.
-    * [Git Hooks](https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks) are a powerful tool that can be a daunting to set up. Fortunately, [`pre-commit`](https://github.com/pre-commit/pre-commit) abstracts this process away from you and is provided as a dev dependency for this project. Run `pipenv run precommit` when setting up the project and you'll never have to worry about breaking the build for linting errors.
+    * [Git Hooks](https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks) are a powerful tool that can be a daunting to set up. Fortunately, [`pre-commit`](https://github.com/pre-commit/pre-commit) abstracts this process away from you and is provided as a dev dependency for this project. Run `pre-commit install` when setting up the project and you'll never have to worry about breaking the build for linting errors.
 4. **Make great commits**. A well structured git log is key to a project's maintainability; it efficiently provides insight into when and *why* things were done for future maintainers of the project.
     * Commits should be as narrow in scope as possible. Commits that span hundreds of lines across multiple unrelated functions and/or files are very hard for maintainers to follow. After about a week they'll probably be hard for you to follow too.
     * Try to avoid making minor commits for fixing typos or linting errors. Since you've already set up a pre-commit hook to run `flake8` before a commit, you shouldn't be committing linting issues anyway.
@@ -36,7 +36,7 @@ All projects evolve over time, and this contribution guide is no different. This
 
 ##  Supplemental Information
 ### Developer Environment
-When pulling down changes from GitHub, **remember to sync your environment** using `pipenv sync --dev` to ensure you're using the most up-to-date versions the project's dependencies.
+When pulling down changes from GitHub, **remember to sync your environment** using `poetry install` to ensure you're using the most up-to-date versions the project's dependencies.
 
 ### Type Hinting
 [PEP 484](https://www.python.org/dev/peps/pep-0484/) formally specifies type hints for Python functions, added to the Python Standard Library in version 3.5. Type hints are recognized by most modern code editing tools and provide useful insight into both the input and output types of a function, preventing the user from having to go through the codebase to determine these types. 

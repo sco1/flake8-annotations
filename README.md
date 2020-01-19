@@ -109,21 +109,15 @@ Will show `arg1` as missing a type hint.
 Please take some time to read through our [contributing guidelines](CONTRIBUTING.md) before helping us with this project.
 
 ### Development Environment
-This project uses [Pipenv](https://docs.pipenv.org/en/latest/) to manage dependencies. With your fork cloned to your local machine, you can create a developer environment using:
+This project uses [Poetry](https://python-poetry.org/) to manage dependencies. With your fork cloned to your local machine, you can create a developer environment using:
 
 ```bash
-$ pipenv sync --dev
+$ poetry install
 ```
 
 Note: flake8-annotations is included in the Pipfile as an editable dependency so it will be included when flake8 is invoked in your developer environment.
 
-A [pre-commit](https://pre-commit.com) installation script and configuration is also provided to create a pre-commit hook so linting errors aren't committed:
-
-```bash
-$ pipenv run precommit
-```
-
-or
+A [pre-commit](https://pre-commit.com) configuration is also provided to create a pre-commit hook so linting errors aren't committed:
 
 ```bash
 $ pre-commit install

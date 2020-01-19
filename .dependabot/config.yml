@@ -15,5 +15,3 @@ update_configs:
           dependency_name: "pytest*"
       - match:
           dependency_name: "tox"
-      - match:
-          dependency_name: "pipenv-setup"
