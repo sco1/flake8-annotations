@@ -361,4 +361,11 @@ class ReturnVisitor(ast.NodeVisitor):
     def visit_Return(self, node: ast.Return) -> None:
         """Check each Return node to see if it returns anything other than `None`."""
         if node.value is not None:
+            # In the event of an explicit `None` return (`return None`), the node body will be an
+            # instance of either `ast.Constant` (3.8+) or `ast.NameConstant`, which we need to check
+            # to see if it's actually `None`
+            if isinstance(node.value, (ast.Constant, ast.NameConstant)):
+                if node.value.value is None:
+                    return
+
             self.has_only_none_returns = False

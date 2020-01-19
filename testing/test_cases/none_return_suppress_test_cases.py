@@ -19,11 +19,20 @@ return_suppression_test_cases = {
         ),
         should_yield_TYP200=False,
     ),
-    "none_return": NoneReturnSuppressionTestCase(
+    "implicit_none_return": NoneReturnSuppressionTestCase(
         src=dedent(
             """\
             def foo():
                 return
+            """
+        ),
+        should_yield_TYP200=False,
+    ),
+    "explicit_none_return": NoneReturnSuppressionTestCase(
+        src=dedent(
+            """\
+            def foo():
+                return None
             """
         ),
         should_yield_TYP200=False,
@@ -35,6 +44,19 @@ return_suppression_test_cases = {
                 a = 2 + 2
                 if a == 4:
                     return
+                else:
+                    return
+            """
+        ),
+        should_yield_TYP200=False,
+    ),
+    "mixed_none_return": NoneReturnSuppressionTestCase(
+        src=dedent(
+            """\
+            def foo():
+                a = 2 + 2
+                if a == 4:
+                    return None
                 else:
                     return
             """
