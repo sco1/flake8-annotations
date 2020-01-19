@@ -1,9 +1,10 @@
 # Changelog
 Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (`<major>`.`<minor>`.`<patch>`)
 
-## Current
+## [v1.2.0]
 ### Added
 * Add test case for checking whether flake8 invokes our plugin
+* #41 Add `--suppress-none-returning` configuration option to suppress TYP200 level errors for functions that either lack a `return` statement or only explicitly return `None`.
 
 ## [v1.1.3]
 ### Fixed

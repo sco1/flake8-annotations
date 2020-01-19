@@ -4,7 +4,7 @@ from setuptools import setup
 setup(
     name="flake8-annotations",
     license="MIT",
-    version="1.1.3",
+    version="1.2.0",
     description="Flake8 Type Annotation Checks",
     long_description=open("README.md", encoding="utf-8").read(),
     long_description_content_type="text/markdown",
@@ -46,7 +46,7 @@ setup(
             "flake8-docstrings~=1.5",
             "flake8-formatter-junit-xml~=0.0",
             "flake8-import-order~=0.18",
-            "flake8-tidy-imports~=3.1",
+            "flake8-tidy-imports~=4.0",
             "flake8-todo~=0.7",
             "pipenv-setup~=2.2",
             "pre-commit~=1.21",
