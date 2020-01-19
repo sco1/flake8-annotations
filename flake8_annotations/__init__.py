@@ -214,6 +214,11 @@ class Function:
             new_function.has_type_comment = True
             new_function = cls.try_type_comment(new_function, node)
 
+        # Check for the presence of non-`None` returns using the special-case return node visitor
+        return_visitor = ReturnVisitor()
+        return_visitor.visit(node)
+        new_function.has_only_none_returns = return_visitor.has_only_none_returns
+
         return new_function
 
     @staticmethod
@@ -336,3 +341,24 @@ class FunctionVisitor(ast.NodeVisitor):
         # Use ast.NodeVisitor.generic_visit to start down the nested method chain
         for sub_node in node.body:
             self.generic_visit(sub_node)
+
+
+class ReturnVisitor(ast.NodeVisitor):
+    """
+    Special-case of `ast.NodeVisitor` for visiting return statements of a function node.
+
+    If the function node being visited has an explicit return statement of anything other than
+    `None`, the `instance.has_only_none_returns` flag will be set to `False`.
+
+    If the function node being visited has no return statement, or contains only return
+    statement(s) that explicitly return `None`, the `instance.has_only_none_returns` flag will be
+    set to `True`.
+    """
+
+    def __init__(self):
+        self.has_only_none_returns = True
+
+    def visit_Return(self, node: ast.Return) -> None:
+        """Check each Return node to see if it returns anything other than `None`."""
+        if node.value is not None:
+            self.has_only_none_returns = False

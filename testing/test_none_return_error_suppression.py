@@ -18,7 +18,7 @@ class TestNoneReturnErrorSuppression:
         params=return_suppression_test_cases.items(), ids=return_suppression_test_cases.keys()
     )
     def yielded_errors(
-        self, request    # noqa: TYP001
+        self, request  # noqa: TYP001
     ) -> Tuple[str, NoneReturnSuppressionTestCase, Tuple[Error]]:
         """
         Build a fixture for the error codes emitted from parsing the None return test code.
@@ -34,7 +34,6 @@ class TestNoneReturnErrorSuppression:
             tuple(check_source(test_case.src, suppress_none_returns=True)),
         )
 
-    @pytest.mark.xfail(reason="Parser Functionality Not Implemented")
     def test_suppressed_return_error(
         self, yielded_errors: Tuple[str, NoneReturnSuppressionTestCase, Tuple[Error]]
     ) -> None:
