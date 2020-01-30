@@ -67,7 +67,7 @@ class TypeHintChecker:
 
                 if has_type_comment and has_3107_annotation:
                     # Short-circuit check for mixing of type comments & 3107-style annotations
-                    yield error_codes.TYP301.from_function(function).to_flake8()
+                    yield error_codes.ANN301.from_function(function).to_flake8()
                     break
 
             # Yield explicit errors for arguments that are missing annotations
@@ -89,7 +89,7 @@ class TypeHintChecker:
             action="store_true",
             parse_from_config=True,
             help=(
-                "Suppress TYP200-level errors for functions that contain no return statement or "
+                "Suppress ANN200-level errors for functions that contain no return statement or "
                 "contain only bare return statements. (Default: False)"
             ),
         )
@@ -151,18 +151,18 @@ def _return_error_classifier(
     # Decorated class methods (@classmethod, @staticmethod) have a higher priority than the rest
     if is_class_method:
         if class_decorator_type == enums.ClassDecoratorType.CLASSMETHOD:
-            return error_codes.TYP206
+            return error_codes.ANN206
         elif class_decorator_type == enums.ClassDecoratorType.STATICMETHOD:
-            return error_codes.TYP205
+            return error_codes.ANN205
 
     if function_type == enums.FunctionType.SPECIAL:
-        return error_codes.TYP204
+        return error_codes.ANN204
     elif function_type == enums.FunctionType.PRIVATE:
-        return error_codes.TYP203
+        return error_codes.ANN203
     elif function_type == enums.FunctionType.PROTECTED:
-        return error_codes.TYP202
+        return error_codes.ANN202
     else:
-        return error_codes.TYP201
+        return error_codes.ANN201
 
 
 @lru_cache()
@@ -178,16 +178,16 @@ def _argument_error_classifier(
         # The first function argument here would be an instance of self or class
         if is_first_arg:
             if class_decorator_type == enums.ClassDecoratorType.CLASSMETHOD:
-                return error_codes.TYP102
+                return error_codes.ANN102
             elif class_decorator_type != enums.ClassDecoratorType.STATICMETHOD:
                 # Regular class method
-                return error_codes.TYP101
+                return error_codes.ANN101
 
     # Check for remaining codes
     if annotation_type == enums.AnnotationType.KWARG:
-        return error_codes.TYP003
+        return error_codes.ANN003
     elif annotation_type == enums.AnnotationType.VARARG:
-        return error_codes.TYP002
+        return error_codes.ANN002
     else:
         # Combine POSONLYARG, ARG, and KWONLYARGS
-        return error_codes.TYP001
+        return error_codes.ANN001

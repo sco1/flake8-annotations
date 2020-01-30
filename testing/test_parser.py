@@ -18,7 +18,7 @@ class TestArgumentParsing:
     """Test for proper argument parsing from source."""
 
     @pytest.fixture(params=argument_test_cases.items(), ids=argument_test_cases.keys())
-    def argument_lists(self, request) -> ARG_FIXTURE_TYPE:  # noqa: TYP001
+    def argument_lists(self, request) -> ARG_FIXTURE_TYPE:  # noqa: ANN001
         """
         Build a pair of lists of arguments to compare and return as a (truth, parsed) tuple.
 
@@ -88,7 +88,7 @@ class TestFunctionParsing:
     """Test for proper function parsing from source."""
 
     @pytest.fixture(params=function_test_cases.items(), ids=function_test_cases.keys())
-    def functions(self, request) -> FUNC_FIXTURE_TYPE:  # noqa: TYP001
+    def functions(self, request) -> FUNC_FIXTURE_TYPE:  # noqa: ANN001
         """
         Build a pair of Function objects to compare and return as a (truth, parsed) tuple.
 

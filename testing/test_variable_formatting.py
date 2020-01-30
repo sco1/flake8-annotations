@@ -12,8 +12,8 @@ ERROR_CODE_TYPE = Tuple[int, int, str, TypeHintChecker]
 SIMPLE_ERROR_CODE = Tuple[str, str]
 
 # Error type specific matching patterns
-TEST_ARG_NAMES = {"TYP001": "some_arg", "TYP002": "some_args", "TYP003": "some_kwargs"}
-RE_DICT = {"TYP001": r"'(\w+)'", "TYP002": r"\*(\w+)", "TYP003": r"\*\*(\w+)"}
+TEST_ARG_NAMES = {"ANN001": "some_arg", "ANN002": "some_args", "ANN003": "some_kwargs"}
+RE_DICT = {"ANN001": r"'(\w+)'", "ANN002": r"\*(\w+)", "ANN003": r"\*\*(\w+)"}
 
 
 def _simplify_error(error_code: ERROR_CODE_TYPE) -> SIMPLE_ERROR_CODE:
@@ -23,10 +23,10 @@ def _simplify_error(error_code: ERROR_CODE_TYPE) -> SIMPLE_ERROR_CODE:
     Input error codes are assumed to be tuples of the form:
     (line number, column number, error string, checker class)
 
-    Where the error string begins with "TYPxxx" and contains the arg name in the following form:
-    TYP001: '{arg name}'
-    TYP002: *{arg name}
-    TYP003: **{arg name}
+    Where the error string begins with "ANNxxx" and contains the arg name in the following form:
+    ANN001: '{arg name}'
+    ANN002: *{arg name}
+    ANN003: **{arg name}
     """
     error_type = error_code[2].split()[0]
     arg_name = re.findall(RE_DICT[error_type], error_code[2])[0]
@@ -39,7 +39,7 @@ class TestArgumentFormatting:
     @pytest.fixture(
         params=variable_formatting_test_cases.items(), ids=variable_formatting_test_cases.keys()
     )
-    def parsed_errors(self, request) -> Tuple[List[SIMPLE_ERROR_CODE], str]:  # noqa: TYP001
+    def parsed_errors(self, request) -> Tuple[List[SIMPLE_ERROR_CODE], str]:  # noqa: ANN001
         """
         Create a fixture for the error codes emitted by the test case source code.
 

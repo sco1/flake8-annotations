@@ -13,7 +13,7 @@ ERROR_CODE = Tuple[int, int, str, checker.TypeHintChecker]
 
 @pytest.fixture(params=parser_test_cases.items())
 def parsed_errors(
-    request,  # noqa: TYP001
+    request,  # noqa: ANN001
 ) -> Tuple[Generator[ERROR_CODE, None, None], ParserTestCase]:
     """
     Create a fixture for the error codes emitted by our testing code.
