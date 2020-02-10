@@ -23,7 +23,7 @@ You can verify it's being picked up by invoking the following in your shell:
 
 ```bash
 $ flake8 --version
-3.7.8 (flake8-annotations: 1.1.3, mccabe: 0.6.1, pycodestyle: 2.5.0, pyflakes: 2.1.1) CPython 3.7.4 on Darwin
+3.7.8 (flake8-annotations: 1.2.0, mccabe: 0.6.1, pycodestyle: 2.5.0, pyflakes: 2.1.1) CPython 3.7.4 on Darwin
 ```
 
 ## Table of Warnings
@@ -54,6 +54,16 @@ $ flake8 --version
 | ID       | Description                                               |
 |----------|-----------------------------------------------------------|
 | `TYP301` | PEP 484 disallows both type annotations and type comments |
+
+
+## Configuration Options
+### `--suppress-none-returning`: `bool`
+Suppress `TYP200`-level errors for functions that meet one of the following criteria:
+  * Contain no `return` statement, or
+  * Explicit `return` statement(s) all return `None` (explicitly or implicitly).
+
+Default: `False`
+
 
 ## Caveats for PEP 484-style Type Comments
 ### Function type comments
@@ -109,21 +119,15 @@ Will show `arg1` as missing a type hint.
 Please take some time to read through our [contributing guidelines](CONTRIBUTING.md) before helping us with this project.
 
 ### Development Environment
-This project uses [Pipenv](https://docs.pipenv.org/en/latest/) to manage dependencies. With your fork cloned to your local machine, you can create a developer environment using:
+This project uses [Poetry](https://python-poetry.org/) to manage dependencies. With your fork cloned to your local machine, you can create a developer environment using:
 
 ```bash
-$ pipenv sync --dev
+$ poetry install
 ```
 
 Note: flake8-annotations is included in the Pipfile as an editable dependency so it will be included when flake8 is invoked in your developer environment.
 
-A [pre-commit](https://pre-commit.com) installation script and configuration is also provided to create a pre-commit hook so linting errors aren't committed:
-
-```bash
-$ pipenv run precommit
-```
-
-or
+A [pre-commit](https://pre-commit.com) configuration is also provided to create a pre-commit hook so linting errors aren't committed:
 
 ```bash
 $ pre-commit install

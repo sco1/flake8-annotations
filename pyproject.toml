@@ -1,0 +1,59 @@
+[tool.poetry]
+name = "flake8-annotations"
+version = "1.2.0"
+description = "Flake8 Type Annotation Checks"
+license = "MIT"
+readme = "README.md"
+authors = ["Python Discord <staff@pythondiscord.com>"]
+homepage = "https://pythondiscord.com/"
+repository = "https://github.com/python-discord/flake8-annotations"
+classifiers = [
+    "Framework :: Flake8",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3 :: Only",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Software Development :: Quality Assurance",
+]
+include = ["CHANGELOG.md"]
+
+[tool.poetry.urls]
+"Issue Tracker" = "https://github.com/python-discord/flake8-annotations/issues"
+"Discord Server" = "https://discord.gg/python"
+
+[tool.poetry.dependencies]
+python = "^3.6"
+flake8 = "^3.7.9"
+typed-ast = {version="^1.4,<2.0", python="<3.8"}
+
+[tool.poetry.dev-dependencies]
+black = {version = "^19.10b0"}
+flake8-bugbear = "^20.1"
+flake8-docstrings = "^1.5"
+flake8-formatter-junit-xml = "^0.0"
+flake8-import-order = "^0.18"
+flake8-tidy-imports = "^4.0"
+flake8-todo = "^0.7"
+pre-commit = "^2.0"
+pytest = "^5.3"
+pytest-check = "^0.3"
+pytest-cov = "^2.8"
+tox = "^3.14"
+
+[tool.poetry.plugins]
+[tool.poetry.plugins."flake8.extension"]
+"TYP" = "flake8_annotations.checker:TypeHintChecker"
+
+[tool.black]
+line-length = 100
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"

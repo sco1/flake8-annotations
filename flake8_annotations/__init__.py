@@ -17,7 +17,7 @@ else:
 
     PY_GTE_38 = False
 
-__version__ = "1.1.3"
+__version__ = "1.2.0"
 
 AST_ARG_TYPES = ("args", "vararg", "kwonlyargs", "kwarg")
 if PY_GTE_38:
@@ -101,6 +101,7 @@ class Function:
         class_decorator_type: Union[ClassDecoratorType, None] = None,
         is_return_annotated: bool = False,
         has_type_comment: bool = False,
+        has_only_none_returns: bool = True,
         args: List[Argument] = None,
     ):
         self.name = name
@@ -111,6 +112,7 @@ class Function:
         self.class_decorator_type = class_decorator_type
         self.is_return_annotated = is_return_annotated
         self.has_type_comment = has_type_comment
+        self.has_only_none_returns = has_only_none_returns
         self.args = args
 
     def is_fully_annotated(self) -> bool:
@@ -147,7 +149,7 @@ class Function:
         return (
             f"Function({self.name!r}, {self.lineno}, {self.col_offset}, {self.function_type}, "
             f"{self.is_class_method}, {self.class_decorator_type}, {self.is_return_annotated}, "
-            f"{self.has_type_comment}, {self.args})"
+            f"{self.has_type_comment}, {self.has_only_none_returns}, {self.args})"
         )
 
     @classmethod
@@ -211,6 +213,11 @@ class Function:
         if node.type_comment:
             new_function.has_type_comment = True
             new_function = cls.try_type_comment(new_function, node)
+
+        # Check for the presence of non-`None` returns using the special-case return node visitor
+        return_visitor = ReturnVisitor()
+        return_visitor.visit(node)
+        new_function.has_only_none_returns = return_visitor.has_only_none_returns
 
         return new_function
 
@@ -334,3 +341,31 @@ class FunctionVisitor(ast.NodeVisitor):
         # Use ast.NodeVisitor.generic_visit to start down the nested method chain
         for sub_node in node.body:
             self.generic_visit(sub_node)
+
+
+class ReturnVisitor(ast.NodeVisitor):
+    """
+    Special-case of `ast.NodeVisitor` for visiting return statements of a function node.
+
+    If the function node being visited has an explicit return statement of anything other than
+    `None`, the `instance.has_only_none_returns` flag will be set to `False`.
+
+    If the function node being visited has no return statement, or contains only return
+    statement(s) that explicitly return `None`, the `instance.has_only_none_returns` flag will be
+    set to `True`.
+    """
+
+    def __init__(self):
+        self.has_only_none_returns = True
+
+    def visit_Return(self, node: ast.Return) -> None:
+        """Check each Return node to see if it returns anything other than `None`."""
+        if node.value is not None:
+            # In the event of an explicit `None` return (`return None`), the node body will be an
+            # instance of either `ast.Constant` (3.8+) or `ast.NameConstant`, which we need to check
+            # to see if it's actually `None`
+            if isinstance(node.value, (ast.Constant, ast.NameConstant)):
+                if node.value.value is None:
+                    return
+
+            self.has_only_none_returns = False

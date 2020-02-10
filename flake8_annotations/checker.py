@@ -1,6 +1,8 @@
+from argparse import Namespace
 from functools import lru_cache
 from typing import Generator, List
 
+from flake8.options.manager import OptionManager
 from flake8_annotations import (
     Argument,
     Function,
@@ -70,7 +72,32 @@ class TypeHintChecker:
 
             # Yield explicit errors for arguments that are missing annotations
             for arg in function.get_missed_annotations():
+                # Skip yielding return errors if the `--suppress-none-returning` flag is True and
+                # the function has only `None` returns (which includes the case of no returns)
+                if arg.argname == "return" and self.suppress_none_returning:
+                    if not arg.has_type_annotation and function.has_only_none_returns:
+                        continue
+
                 yield classify_error(function, arg).to_flake8()
+
+    @classmethod
+    def add_options(cls, parser: OptionManager) -> None:
+        """Add custom configuration option(s) to flake8."""
+        parser.add_option(
+            "--suppress-none-returning",
+            default=False,
+            action="store_true",
+            parse_from_config=True,
+            help=(
+                "Suppress TYP200-level errors for functions that contain no return statement or "
+                "contain only bare return statements. (Default: False)"
+            ),
+        )
+
+    @classmethod
+    def parse_options(cls, options: Namespace) -> None:
+        """Parse the custom configuration options given to flake8."""
+        cls.suppress_none_returning = options.suppress_none_returning
 
     @staticmethod
     def get_typed_tree(src: str) -> ast.Module:

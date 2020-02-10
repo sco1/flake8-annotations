@@ -1,6 +1,15 @@
 # Changelog
 Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (`<major>`.`<minor>`.`<patch>`)
 
+## [v1.2.0]
+### Added
+* Add test case for checking whether flake8 invokes our plugin
+* #41 Add `--suppress-none-returning` configuration option to suppress TYP200 level errors for functions that either lack a `return` statement or only explicitly return `None`.
+* Add `black` as an explicit developer requirement (codebase already adheres to `black` formatting)
+
+### Changed
+* #61 Migrate from Pipenv to Poetry for developer environment setup
+
 ## [v1.1.3]
 ### Fixed
 * Add missing classifier test cases for POSONLYARGS
