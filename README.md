@@ -119,13 +119,13 @@ Will show `arg1` as missing a type hint.
 Please take some time to read through our [contributing guidelines](CONTRIBUTING.md) before helping us with this project.
 
 ### Development Environment
-This project uses [Poetry](https://python-poetry.org/) to manage dependencies. With your fork cloned to your local machine, you can create a developer environment using:
+This project uses [Poetry](https://python-poetry.org/) to manage dependencies. With your fork cloned to your local machine, you can install the project and its dependencies to create a development environment using:
 
 ```bash
 $ poetry install
 ```
 
-Note: flake8-annotations is included in the Pipfile as an editable dependency so it will be included when flake8 is invoked in your developer environment.
+Note: An editable installation of `flake8-annotations` in the developer environment is required in order for the plugin to be registered for Flake8. By default, Poetry includes an editable install of the project itself when `poetry install` is invoked.
 
 A [pre-commit](https://pre-commit.com) configuration is also provided to create a pre-commit hook so linting errors aren't committed:
 
