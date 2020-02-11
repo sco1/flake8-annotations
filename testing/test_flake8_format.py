@@ -7,18 +7,18 @@ from flake8_annotations.checker import TypeHintChecker
 
 
 ALL_ERROR_CODES = (
-    error_codes.TYP001,
-    error_codes.TYP002,
-    error_codes.TYP003,
-    error_codes.TYP101,
-    error_codes.TYP102,
-    error_codes.TYP201,
-    error_codes.TYP202,
-    error_codes.TYP203,
-    error_codes.TYP204,
-    error_codes.TYP205,
-    error_codes.TYP206,
-    error_codes.TYP301,
+    error_codes.ANN001,
+    error_codes.ANN002,
+    error_codes.ANN003,
+    error_codes.ANN101,
+    error_codes.ANN102,
+    error_codes.ANN201,
+    error_codes.ANN202,
+    error_codes.ANN203,
+    error_codes.ANN204,
+    error_codes.ANN205,
+    error_codes.ANN206,
+    error_codes.ANN301,
 )
 
 
@@ -65,13 +65,13 @@ def test_emitted_message_prefix(error_objects: Tuple[Tuple, error_codes.Error]) 
     """
     Test that the emitted message is prefixed with a code that matches the error object's name.
 
-    The prefix should be of the form: TYPxxx
+    The prefix should be of the form: ANNxxx
     """
     error_tuple, error_code = error_objects
     error_message = error_tuple[2]
 
-    # Error message should start with "TYP"
-    check.is_true(error_message.startswith("TYP"))
+    # Error message should start with "ANN"
+    check.is_true(error_message.startswith("ANN"))
 
     # Error prefix should be followed by 3 digits
     check.is_true(all(char.isdigit() for char in error_message[3:6]))

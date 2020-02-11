@@ -55,7 +55,7 @@ class TestArgumentClassifier:
     dummy_arg = Argument(argname="DummyArg", lineno=0, col_offset=0, annotation_type=None)
 
     @pytest.fixture(params=classifier_object_attributes.argument_classifications.keys())
-    def function_builder(self, request) -> Tuple[Function, Argument, Error]:  # noqa: TYP001
+    def function_builder(self, request) -> Tuple[Function, Argument, Error]:  # noqa: ANN001
         """
         Build function and argument objects from the fixtured parameters.
 
@@ -100,7 +100,7 @@ class TestMixedTypeHintClassifier:
     """Test for correct classification of mixed type comments & type annotations."""
 
     @pytest.fixture(params=parser_test_cases.items(), ids=parser_test_cases.keys())
-    def yielded_errors(self, request) -> Tuple[str, ParserTestCase, Tuple[Error]]:  # noqa: TYP001
+    def yielded_errors(self, request) -> Tuple[str, ParserTestCase, Tuple[Error]]:  # noqa: ANN001
         """
         Build a fixture for the error codes emitted from parsing the type comments test code.
 
@@ -111,19 +111,19 @@ class TestMixedTypeHintClassifier:
 
         return test_case_name, test_case, tuple(check_source(test_case.src))
 
-    def test_TYP301_classification(
+    def test_ANN301_classification(
         self, yielded_errors: Tuple[str, ParserTestCase, Tuple[Error]]
     ) -> None:
         """Test for correct classification of mixed type comments & type annotations."""
         failure_msg = f"Check failed for case '{yielded_errors[0]}'"
 
-        yielded_TYP301 = any("TYP301" in error[2] for error in yielded_errors[2])
-        check.equal(yielded_errors[1].should_yield_TYP301, yielded_TYP301, msg=failure_msg)
+        yielded_ANN301 = any("ANN301" in error[2] for error in yielded_errors[2])
+        check.equal(yielded_errors[1].should_yield_ANN301, yielded_ANN301, msg=failure_msg)
 
-    def test_single_TYP301_yield(
+    def test_single_ANN301_yield(
         self, yielded_errors: Tuple[str, ParserTestCase, Tuple[Error]]
     ) -> None:
-        """Test that only one TYP301 error is yielded if a function mixes type comments."""
-        if yielded_errors[1].should_yield_TYP301:
-            n_yielded_TYP301_errors = sum("TYP301" in error[2] for error in yielded_errors[2])
-            assert n_yielded_TYP301_errors == 1
+        """Test that only one ANN301 error is yielded if a function mixes type comments."""
+        if yielded_errors[1].should_yield_ANN301:
+            n_yielded_ANN301_errors = sum("ANN301" in error[2] for error in yielded_errors[2])
+            assert n_yielded_ANN301_errors == 1

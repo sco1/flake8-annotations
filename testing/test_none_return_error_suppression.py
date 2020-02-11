@@ -18,7 +18,7 @@ class TestNoneReturnErrorSuppression:
         params=return_suppression_test_cases.items(), ids=return_suppression_test_cases.keys()
     )
     def yielded_errors(
-        self, request  # noqa: TYP001
+        self, request  # noqa: ANN001
     ) -> Tuple[str, NoneReturnSuppressionTestCase, Tuple[Error]]:
         """
         Build a fixture for the error codes emitted from parsing the None return test code.
@@ -37,8 +37,8 @@ class TestNoneReturnErrorSuppression:
     def test_suppressed_return_error(
         self, yielded_errors: Tuple[str, NoneReturnSuppressionTestCase, Tuple[Error]]
     ) -> None:
-        """Test that TYP200 level errors are suppressed if a function only returns None."""
+        """Test that ANN200 level errors are suppressed if a function only returns None."""
         failure_msg = f"Check failed for case '{yielded_errors[0]}'"
 
-        yielded_TYP200 = any("TYP2" in error[2] for error in yielded_errors[2])
-        check.equal(yielded_errors[1].should_yield_TYP200, yielded_TYP200, msg=failure_msg)
+        yielded_ANN200 = any("ANN2" in error[2] for error in yielded_errors[2])
+        check.equal(yielded_errors[1].should_yield_ANN200, yielded_ANN200, msg=failure_msg)

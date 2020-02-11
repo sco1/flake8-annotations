@@ -23,42 +23,42 @@ You can verify it's being picked up by invoking the following in your shell:
 
 ```bash
 $ flake8 --version
-3.7.8 (flake8-annotations: 1.2.0, mccabe: 0.6.1, pycodestyle: 2.5.0, pyflakes: 2.1.1) CPython 3.7.4 on Darwin
+3.7.8 (flake8-annotations: 2.0.0, mccabe: 0.6.1, pycodestyle: 2.5.0, pyflakes: 2.1.1) CPython 3.7.4 on Darwin
 ```
 
 ## Table of Warnings
 ### Function Annotations
 | ID       | Description                                   |
 |----------|-----------------------------------------------|
-| `TYP001` | Missing type annotation for function argument |
-| `TYP002` | Missing type annotation for `*args`           |
-| `TYP003` | Missing type annotation for `**kwargs`        |
+| `ANN001` | Missing type annotation for function argument |
+| `ANN002` | Missing type annotation for `*args`           |
+| `ANN003` | Missing type annotation for `**kwargs`        |
 
 ### Method Annotations
 | ID       | Description                                        |
 |----------|----------------------------------------------------|
-| `TYP101` | Missing type annotation for `self` in method       |
-| `TYP102` | Missing type annotation for `cls` in classmethod   |
+| `ANN101` | Missing type annotation for `self` in method       |
+| `ANN102` | Missing type annotation for `cls` in classmethod   |
 
 ### Return Annotations
 | ID       | Description                                           |
 |----------|-------------------------------------------------------|
-| `TYP201` | Missing return type annotation for public function    |
-| `TYP202` | Missing return type annotation for protected function |
-| `TYP203` | Missing return type annotation for secret function    |
-| `TYP204` | Missing return type annotation for special method     |
-| `TYP205` | Missing return type annotation for staticmethod       |
-| `TYP206` | Missing return type annotation for classmethod        |
+| `ANN201` | Missing return type annotation for public function    |
+| `ANN202` | Missing return type annotation for protected function |
+| `ANN203` | Missing return type annotation for secret function    |
+| `ANN204` | Missing return type annotation for special method     |
+| `ANN205` | Missing return type annotation for staticmethod       |
+| `ANN206` | Missing return type annotation for classmethod        |
 
 ### Type Comments
 | ID       | Description                                               |
 |----------|-----------------------------------------------------------|
-| `TYP301` | PEP 484 disallows both type annotations and type comments |
+| `ANN301` | PEP 484 disallows both type annotations and type comments |
 
 
 ## Configuration Options
 ### `--suppress-none-returning`: `bool`
-Suppress `TYP200`-level errors for functions that meet one of the following criteria:
+Suppress `ANN200`-level errors for functions that meet one of the following criteria:
   * Contain no `return` statement, or
   * Explicit `return` statement(s) all return `None` (explicitly or implicitly).
 
@@ -119,13 +119,13 @@ Will show `arg1` as missing a type hint.
 Please take some time to read through our [contributing guidelines](CONTRIBUTING.md) before helping us with this project.
 
 ### Development Environment
-This project uses [Poetry](https://python-poetry.org/) to manage dependencies. With your fork cloned to your local machine, you can create a developer environment using:
+This project uses [Poetry](https://python-poetry.org/) to manage dependencies. With your fork cloned to your local machine, you can install the project and its dependencies to create a development environment using:
 
 ```bash
 $ poetry install
 ```
 
-Note: flake8-annotations is included in the Pipfile as an editable dependency so it will be included when flake8 is invoked in your developer environment.
+Note: An editable installation of `flake8-annotations` in the developer environment is required in order for the plugin to be registered for Flake8. By default, Poetry includes an editable install of the project itself when `poetry install` is invoked.
 
 A [pre-commit](https://pre-commit.com) configuration is also provided to create a pre-commit hook so linting errors aren't committed:
 

@@ -12,7 +12,7 @@ class TestFunctionParsing:
     """Test for proper determinition of whether the parsed Function is fully annotated."""
 
     @pytest.fixture(params=annotation_test_cases.items(), ids=annotation_test_cases.keys())
-    def functions(self, request) -> Tuple[Function, AnnotationTestCase, str]:  # noqa: TYP001
+    def functions(self, request) -> Tuple[Function, AnnotationTestCase, str]:  # noqa: ANN001
         """Provide the Function object from the test case source & the TestCase instance."""
         test_case_name, test_case = request.param
         function_definitions = functions_from_source(test_case.src)

@@ -11,7 +11,7 @@ class ParserTestCase(NamedTuple):
 
     src: str
     args: List[Argument]
-    should_yield_TYP301: bool
+    should_yield_ANN301: bool
 
 
 untyped_arg = partial(
@@ -48,7 +48,7 @@ parser_test_cases = {
             typed_arg(argname="arg2"),
             typed_arg(argname="return", annotation_type=AnnotationType.RETURN),
         ],
-        should_yield_TYP301=False,
+        should_yield_ANN301=False,
     ),
     "partial_function_comment_no_ellipsis": ParserTestCase(
         src=dedent(
@@ -63,7 +63,7 @@ parser_test_cases = {
             untyped_arg(argname="arg2"),
             typed_arg(argname="return", annotation_type=AnnotationType.RETURN),
         ],
-        should_yield_TYP301=False,
+        should_yield_ANN301=False,
     ),
     "partial_function_comment_with_ellipsis": ParserTestCase(
         src=dedent(
@@ -78,7 +78,7 @@ parser_test_cases = {
             typed_arg(argname="arg2"),
             typed_arg(argname="return", annotation_type=AnnotationType.RETURN),
         ],
-        should_yield_TYP301=False,
+        should_yield_ANN301=False,
     ),
     "argument_comments_ellipsis_function_comment": ParserTestCase(
         src=dedent(
@@ -95,7 +95,7 @@ parser_test_cases = {
             typed_arg(argname="arg2"),
             typed_arg(argname="return", annotation_type=AnnotationType.RETURN),
         ],
-        should_yield_TYP301=False,
+        should_yield_ANN301=False,
     ),
     "argument_comments_no_function_comment": ParserTestCase(
         src=dedent(
@@ -112,7 +112,7 @@ parser_test_cases = {
             typed_arg(argname="arg2"),
             untyped_arg(argname="return", annotation_type=AnnotationType.RETURN),
         ],
-        should_yield_TYP301=False,
+        should_yield_ANN301=False,
     ),
     "mixed_argument_hint_types_case_1": ParserTestCase(  # Type comment before 3107 type annotation
         src=dedent(
@@ -129,7 +129,7 @@ parser_test_cases = {
             typed_arg(argname="arg2", has_type_comment=False, has_3107_annotation=True),
             untyped_arg(argname="return", annotation_type=AnnotationType.RETURN),
         ],
-        should_yield_TYP301=True,
+        should_yield_ANN301=True,
     ),
     "mixed_argument_hint_types_case_2": ParserTestCase(  # 3107 type annotation before type comment
         src=dedent(
@@ -146,9 +146,9 @@ parser_test_cases = {
             typed_arg(argname="arg2"),
             untyped_arg(argname="return", annotation_type=AnnotationType.RETURN),
         ],
-        should_yield_TYP301=True,
+        should_yield_ANN301=True,
     ),
-    "mixed_argument_hint_types_case_3": ParserTestCase(  # Should only yield TYP301 once
+    "mixed_argument_hint_types_case_3": ParserTestCase(  # Should only yield ANN301 once
         src=dedent(
             """\
             def foo(
@@ -165,7 +165,7 @@ parser_test_cases = {
             typed_arg(argname="arg3"),
             untyped_arg(argname="return", annotation_type=AnnotationType.RETURN),
         ],
-        should_yield_TYP301=True,
+        should_yield_ANN301=True,
     ),
     "duplicate_argument_hint_types": ParserTestCase(
         src=dedent(
@@ -182,7 +182,7 @@ parser_test_cases = {
             typed_arg(argname="arg2", has_type_comment=True, has_3107_annotation=True),
             untyped_arg(argname="return", annotation_type=AnnotationType.RETURN),
         ],
-        should_yield_TYP301=True,
+        should_yield_ANN301=True,
     ),
     "arg_comment_return_annotation_hint_types": ParserTestCase(
         src=dedent(
@@ -204,7 +204,7 @@ parser_test_cases = {
                 has_3107_annotation=True,
             ),
         ],
-        should_yield_TYP301=True,
+        should_yield_ANN301=True,
     ),
     "arg_annotation_return_comment_hint_types": ParserTestCase(
         src=dedent(
@@ -223,6 +223,6 @@ parser_test_cases = {
                 argname="return", annotation_type=AnnotationType.RETURN, has_type_comment=True
             ),
         ],
-        should_yield_TYP301=True,
+        should_yield_ANN301=True,
     ),
 }

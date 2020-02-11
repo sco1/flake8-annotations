@@ -6,7 +6,7 @@ class NoneReturnSuppressionTestCase(NamedTuple):
     """Helper container for tests for the suppression of `None` return errors."""
 
     src: str
-    should_yield_TYP200: bool
+    should_yield_ANN200: bool
 
 
 return_suppression_test_cases = {
@@ -17,7 +17,7 @@ return_suppression_test_cases = {
                 a = 2 + 2
             """
         ),
-        should_yield_TYP200=False,
+        should_yield_ANN200=False,
     ),
     "implicit_none_return": NoneReturnSuppressionTestCase(
         src=dedent(
@@ -26,7 +26,7 @@ return_suppression_test_cases = {
                 return
             """
         ),
-        should_yield_TYP200=False,
+        should_yield_ANN200=False,
     ),
     "explicit_none_return": NoneReturnSuppressionTestCase(
         src=dedent(
@@ -35,7 +35,7 @@ return_suppression_test_cases = {
                 return None
             """
         ),
-        should_yield_TYP200=False,
+        should_yield_ANN200=False,
     ),
     "branched_all_none_return": NoneReturnSuppressionTestCase(
         src=dedent(
@@ -48,7 +48,7 @@ return_suppression_test_cases = {
                     return
             """
         ),
-        should_yield_TYP200=False,
+        should_yield_ANN200=False,
     ),
     "mixed_none_return": NoneReturnSuppressionTestCase(
         src=dedent(
@@ -61,7 +61,7 @@ return_suppression_test_cases = {
                     return
             """
         ),
-        should_yield_TYP200=False,
+        should_yield_ANN200=False,
     ),
     "non_none_return": NoneReturnSuppressionTestCase(
         src=dedent(
@@ -70,7 +70,7 @@ return_suppression_test_cases = {
                 return True
             """
         ),
-        should_yield_TYP200=True,
+        should_yield_ANN200=True,
     ),
     "mixed_return": NoneReturnSuppressionTestCase(
         src=dedent(
@@ -83,6 +83,6 @@ return_suppression_test_cases = {
                     return
             """
         ),
-        should_yield_TYP200=True,
+        should_yield_ANN200=True,
     ),
 }

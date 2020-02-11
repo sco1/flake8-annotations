@@ -23,7 +23,7 @@ class TestArgumentParsing:
         following:
             * `src` - Source code for the test case to be parsed
             * `args` - A list of Argument objects to be used as the truth values
-            * `should_yield_TYP301` - Boolean flag indicating whether the source should yield TYP301
+            * `should_yield_ANN301` - Boolean flag indicating whether the source should yield ANN301
 
         A list of parsed Argument objects is taken from the class-level source parser
 

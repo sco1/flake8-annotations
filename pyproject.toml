@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "flake8-annotations"
-version = "1.2.0"
+version = "2.0.0"
 description = "Flake8 Type Annotation Checks"
 license = "MIT"
 readme = "README.md"
@@ -49,7 +49,7 @@ tox = "^3.14"
 
 [tool.poetry.plugins]
 [tool.poetry.plugins."flake8.extension"]
-"TYP" = "flake8_annotations.checker:TypeHintChecker"
+"ANN" = "flake8_annotations.checker:TypeHintChecker"
 
 [tool.black]
 line-length = 100
