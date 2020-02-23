@@ -173,6 +173,17 @@ setuptools = "*"
 
 [[package]]
 category = "dev"
+description = "Polyfill package for Flake8 plugins"
+name = "flake8-polyfill"
+optional = false
+python-versions = "*"
+version = "1.0.2"
+
+[package.dependencies]
+flake8 = "*"
+
+[[package]]
+category = "dev"
 description = "A flake8 plugin that helps you write tidier imports."
 name = "flake8-tidy-imports"
 optional = false
@@ -287,6 +298,17 @@ name = "pathspec"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 version = "0.7.0"
+
+[[package]]
+category = "dev"
+description = "Check PEP-8 naming conventions, plugin for flake8"
+name = "pep8-naming"
+optional = false
+python-versions = "*"
+version = "0.9.1"
+
+[package.dependencies]
+flake8-polyfill = ">=1.0.2,<2"
 
 [[package]]
 category = "dev"
@@ -545,7 +567,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "aa316762bae5c70ddddca712e7ec982584a6c51e13697640c7be81cd6a0b88d2"
+content-hash = "65f1ed80e47bcc5126d89790991c0945b5bc94c58217c39d35ab4281282fb4c0"
 python-versions = "^3.6"
 
 [metadata.files]
@@ -641,6 +663,10 @@ flake8-import-order = [
     {file = "flake8-import-order-0.18.1.tar.gz", hash = "sha256:a28dc39545ea4606c1ac3c24e9d05c849c6e5444a50fb7e9cdd430fc94de6e92"},
     {file = "flake8_import_order-0.18.1-py2.py3-none-any.whl", hash = "sha256:90a80e46886259b9c396b578d75c749801a41ee969a235e163cfe1be7afd2543"},
 ]
+flake8-polyfill = [
+    {file = "flake8-polyfill-1.0.2.tar.gz", hash = "sha256:e44b087597f6da52ec6393a709e7108b2905317d0c0b744cdca6208e670d8eda"},
+    {file = "flake8_polyfill-1.0.2-py2.py3-none-any.whl", hash = "sha256:12be6a34ee3ab795b19ca73505e7b55826d5f6ad7230d31b18e106400169b9e9"},
+]
 flake8-tidy-imports = [
     {file = "flake8-tidy-imports-4.0.0.tar.gz", hash = "sha256:8aa34384b45137d4cf33f5818b8e7897dc903b1d1e10a503fa7dd193a9a710ba"},
     {file = "flake8_tidy_imports-4.0.0-py3-none-any.whl", hash = "sha256:b26461561bcc80e8012e46846630ecf0aaa59314f362a94cb7800dfdb32fa413"},
@@ -681,6 +707,10 @@ packaging = [
 pathspec = [
     {file = "pathspec-0.7.0-py2.py3-none-any.whl", hash = "sha256:163b0632d4e31cef212976cf57b43d9fd6b0bac6e67c26015d611a647d5e7424"},
     {file = "pathspec-0.7.0.tar.gz", hash = "sha256:562aa70af2e0d434367d9790ad37aed893de47f1693e4201fd1d3dca15d19b96"},
+]
+pep8-naming = [
+    {file = "pep8-naming-0.9.1.tar.gz", hash = "sha256:a33d38177056321a167decd6ba70b890856ba5025f0a8eca6a3eda607da93caf"},
+    {file = "pep8_naming-0.9.1-py2.py3-none-any.whl", hash = "sha256:45f330db8fcfb0fba57458c77385e288e7a3be1d01e8ea4268263ef677ceea5f"},
 ]
 pluggy = [
     {file = "pluggy-0.13.1-py2.py3-none-any.whl", hash = "sha256:966c145cd83c96502c3c3868f50408687b38434af77734af1e9ca461a4081d2d"},
