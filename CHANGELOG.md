@@ -2,7 +2,8 @@
 Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (`<major>`.`<minor>`.`<patch>`)
 
 ## [v2.0.1]
-
+### Fixed
+* #70 Fix incorrect column index for missing return annotations when other annotations are present on the same line of source
 
 ## [v2.0.0]
 ### Changed

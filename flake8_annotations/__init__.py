@@ -192,7 +192,9 @@ class Function:
         while True:
             # To account for multiline docstrings, rewind through the lines until we find the line
             # containing the :
-            colon_loc = lines[def_end_lineno - 1].find(":")
+            # Use str.rfind() to account for annotations on the same line, definition closure should
+            # be the last : on the line
+            colon_loc = lines[def_end_lineno - 1].rfind(":")
             if colon_loc == -1:
                 def_end_lineno -= 1
             else:
