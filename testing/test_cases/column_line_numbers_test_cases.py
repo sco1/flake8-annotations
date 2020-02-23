@@ -64,4 +64,13 @@ parser_test_cases = {
         ),
         error_locations=((1, 11),),
     ),
+    "hinted_arg": ParserTestCase(
+        src=dedent(
+            """\
+            def foo(bar: bool):  # 1
+                return True      # 2
+            """
+        ),
+        error_locations=((1, 19),),
+    ),
 }

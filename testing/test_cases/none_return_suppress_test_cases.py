@@ -63,6 +63,18 @@ return_suppression_test_cases = {
         ),
         should_yield_ANN200=False,
     ),
+    "nested_return": NoneReturnSuppressionTestCase(
+        src=dedent(
+            """\
+            def foo():
+                def bar() -> bool:
+                    return True
+
+                bar()
+            """
+        ),
+        should_yield_ANN200=False,
+    ),
     "non_none_return": NoneReturnSuppressionTestCase(
         src=dedent(
             """\
