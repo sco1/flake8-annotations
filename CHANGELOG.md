@@ -1,6 +1,9 @@
 # Changelog
 Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (`<major>`.`<minor>`.`<patch>`)
 
+## [v2.0.1]
+
+
 ## [v2.0.0]
 ### Changed
 * #64 Change prefix from `TYP` to `ANN` in order to deconflict with `flake8-typing-imports`
