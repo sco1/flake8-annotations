@@ -60,8 +60,9 @@ class Argument:
     def __repr__(self) -> str:
         """Format the Argument object into its "official" representation."""
         return (
-            f"Argument({self.argname!r}, {self.lineno}, {self.col_offset}, {self.annotation_type}, "
-            f"{self.has_type_annotation}, {self.has_3107_annotation}, {self.has_type_comment})"
+            f"Argument(argname={self.argname!r}, lineno={self.lineno}, col_offset={self.col_offset}, "  # noqa: E501
+            f"annotation_type={self.annotation_type}, has_type_annotation={self.has_type_annotation}, "  # noqa: E501
+            f"has_3107_annotation={self.has_3107_annotation}, has_type_comment={self.has_type_comment})"  # noqa: E501
         )
 
     @classmethod
@@ -147,9 +148,12 @@ class Function:
     def __repr__(self) -> str:
         """Format the Function object into its "official" representation."""
         return (
-            f"Function({self.name!r}, {self.lineno}, {self.col_offset}, {self.function_type}, "
-            f"{self.is_class_method}, {self.class_decorator_type}, {self.is_return_annotated}, "
-            f"{self.has_type_comment}, {self.has_only_none_returns}, {self.args})"
+            f"Function(name={self.name!r}, lineno={self.lineno}, col_offset={self.col_offset}, "
+            f"function_type={self.function_type}, is_class_method={self.is_class_method}, "
+            f"class_decorator_type={self.class_decorator_type}, "
+            f"is_return_annotated={self.is_return_annotated}, "
+            f"has_type_comment={self.has_type_comment}, "
+            f"has_only_none_returns={self.has_only_none_returns}, args={self.args})"
         )
 
     @classmethod
