@@ -20,7 +20,7 @@ class TestReturnClassifier:
     )
 
     @pytest.fixture(params=classifier_object_attributes.return_classifications.keys())
-    def function_builder(self, request) -> Tuple[Function, Error]:  # noqa
+    def function_builder(self, request) -> Tuple[Function, Error]:  # noqa: ANN001
         """
         Build a Function object from the fixtured parameters.
 

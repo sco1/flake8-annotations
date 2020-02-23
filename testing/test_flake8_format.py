@@ -23,7 +23,7 @@ ALL_ERROR_CODES = (
 
 
 @pytest.fixture(params=ALL_ERROR_CODES)
-def error_objects(request) -> Tuple[Tuple, error_codes.Error]:  # noqa
+def error_objects(request) -> Tuple[Tuple, error_codes.Error]:  # noqa: ANN001
     """
     Create a fixture for the error object's tuple-formatted parameters emitted for flake8.
 

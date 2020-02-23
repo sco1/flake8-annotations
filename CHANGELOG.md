@@ -4,6 +4,17 @@ Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (`<ma
 ## [v2.0.1]
 ### Added
 * #71 Add `pep8-naming` to linting toolchain
+* Expand pre-commit hooks
+  * Add `black`
+  * Add `check-merge-conflict`
+  * Add `check-toml`
+  * Add `check-yaml`
+  * Add `end-of-file-fixer`
+  * Add `mixed-line-ending`
+  * Add `python-check-blanket-noqa`
+
+### Changed
+* Add argument names to `Argument` and `Function` `__repr__` methods to make the string more helpful to read
 
 ### Fixed
 * #70 Fix incorrect column index for missing return annotations when other annotations are present on the same line of source
