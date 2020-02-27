@@ -221,7 +221,7 @@ class Function:
             new_function = cls.try_type_comment(new_function, node)
 
         # Check for the presence of non-`None` returns using the special-case return node visitor
-        return_visitor = ReturnVisitor()
+        return_visitor = ReturnVisitor(node)
         return_visitor.visit(node)
         new_function.has_only_none_returns = return_visitor.has_only_none_returns
 
@@ -359,13 +359,29 @@ class ReturnVisitor(ast.NodeVisitor):
     If the function node being visited has no return statement, or contains only return
     statement(s) that explicitly return `None`, the `instance.has_only_none_returns` flag will be
     set to `True`.
+
+    Due to the generic visiting being done, we need to keep track of the context in which a
+    non-`None` return node is found. These functions are added to a set that is checked to see
+    whether nor not the parent node is present.
     """
 
-    def __init__(self):
-        self.has_only_none_returns = True
+    def __init__(self, parent_node: AST_FUNCTION_TYPES):
+        self.parent_node = parent_node
+        self._context = []
+        self._non_none_return_nodes = set()
+
+    @property
+    def has_only_none_returns(self) -> bool:
+        """Return `True` if the parent node isn't in the visited nodes that don't return `None`."""
+        return self.parent_node not in self._non_none_return_nodes
 
     def visit_Return(self, node: ast.Return) -> None:
-        """Check each Return node to see if it returns anything other than `None`."""
+        """
+        Check each Return node to see if it returns anything other than `None`.
+
+        If the node being visited returns anything other than `None`, its parent context is added to
+        the set of non-returning child nodes of the parent node.
+        """
         if node.value is not None:
             # In the event of an explicit `None` return (`return None`), the node body will be an
             # instance of either `ast.Constant` (3.8+) or `ast.NameConstant`, which we need to check
@@ -374,4 +390,17 @@ class ReturnVisitor(ast.NodeVisitor):
                 if node.value.value is None:
                     return
 
-            self.has_only_none_returns = False
+            self._non_none_return_nodes.add(self._context[-1])
+
+    def switch_context(self, node: AST_FUNCTION_TYPES) -> None:
+        """
+        Switch active context to prevent `ast.generic_visit` from walking to arbitrary depth.
+
+        Thank you @isidentical :)
+        """
+        self._context.append(node)
+        self.generic_visit(node)
+        self._context.pop()
+
+    visit_FunctionDef = switch_context
+    visit_AsyncFunctionDef = switch_context
