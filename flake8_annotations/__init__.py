@@ -25,6 +25,7 @@ if PY_GTE_38:
     AST_ARG_TYPES += ("posonlyargs",)
 
 AST_FUNCTION_TYPES = Union[ast.FunctionDef, ast.AsyncFunctionDef]
+AST_DEF_NODES = Union[ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef]
 
 
 class Argument:
@@ -307,7 +308,7 @@ class FunctionVisitor(ast.NodeVisitor):
         self.function_definitions = []
         self._context = []
 
-    def switch_context(self, node: AST_FUNCTION_TYPES) -> None:
+    def switch_context(self, node: AST_DEF_NODES) -> None:
         """
         Utilize a context switcher as a generic function visitor in order to track function context.
 
