@@ -19,6 +19,7 @@ Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (`<ma
 ### Fixed
 * #70 Fix incorrect column index for missing return annotations when other annotations are present on the same line of source
 * #69 Fix misclassification of `None` returning functions when they contained nested functions with non-`None` returns (thanks @isidentical!)
+* #67 Fix methods of nested classes being improperly classified as "regular" functions (thanks @isidentical!)
 
 ## [v2.0.0]
 ### Changed

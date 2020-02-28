@@ -494,8 +494,8 @@ function_test_cases = {
             """
         ),
         func=(
-            class_func(name="bar_init", function_type=FunctionType.PUBLIC),
-            class_func(name="foo_init", function_type=FunctionType.PUBLIC),
+            class_func(name="bar_method", function_type=FunctionType.PUBLIC),
+            class_func(name="foo_method", function_type=FunctionType.PUBLIC),
         ),
     ),
 }

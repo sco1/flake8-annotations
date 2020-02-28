@@ -305,48 +305,34 @@ class FunctionVisitor(ast.NodeVisitor):
     def __init__(self, lines: List[str]):
         self.lines = lines
         self.function_definitions = []
+        self._context = []
 
-    def visit_FunctionDef(self, node: ast.FunctionDef) -> None:
+    def switch_context(self, node: AST_FUNCTION_TYPES) -> None:
         """
-        Handle a visit to a function definition.
+        Utilize a context switcher as a generic function visitor in order to track function context.
 
-        Note: This will not contain class methods, these are included in the body of ClassDef
-        statements
+        Without keeping track of context, it's challenging to reliably differentiate class methods
+        from "regular" functions, especially in the case of nested classes.
+
+        Thank you for the inspiration @isidentical :)
         """
-        self.function_definitions.append(Function.from_function_node(node, self.lines))
-        self.generic_visit(node)  # Walk through any nested functions
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            # Check for non-empty context first to prevent IndexErrors for non-nested nodes
+            if self._context and isinstance(self._context[-1], ast.ClassDef):
+                # Check if current context is a ClassDef node & pass the appropriate flag
+                self.function_definitions.append(
+                    Function.from_function_node(node, self.lines, is_class_method=True)
+                )
+            else:
+                self.function_definitions.append(Function.from_function_node(node, self.lines))
 
-    def visit_AsyncFunctionDef(self, node: ast.AsyncFunctionDef) -> None:
-        """
-        Handle a visit to a coroutine definition.
+        self._context.append(node)
+        self.generic_visit(node)
+        self._context.pop()
 
-        Note: This will not contain class methods, these are included in the body of ClassDef
-        statements
-        """
-        self.function_definitions.append(Function.from_function_node(node, self.lines))
-        self.generic_visit(node)  # Walk through any nested functions
-
-    def visit_ClassDef(self, node: ast.ClassDef) -> None:
-        """
-        Handle a visit to a class definition.
-
-        Class methods will all be contained in the body of the node
-        """
-        method_nodes = [
-            child_node
-            for child_node in node.body
-            if isinstance(child_node, (ast.FunctionDef, ast.AsyncFunctionDef))
-        ]
-        self.function_definitions.extend(
-            [
-                Function.from_function_node(method_node, self.lines, is_class_method=True)
-                for method_node in method_nodes
-            ]
-        )
-
-        # Use ast.NodeVisitor.generic_visit to start down the nested method chain
-        for sub_node in node.body:
-            self.generic_visit(sub_node)
+    visit_FunctionDef = switch_context
+    visit_AsyncFunctionDef = switch_context
+    visit_ClassDef = switch_context
 
 
 class ReturnVisitor(ast.NodeVisitor):
@@ -394,9 +380,13 @@ class ReturnVisitor(ast.NodeVisitor):
 
     def switch_context(self, node: AST_FUNCTION_TYPES) -> None:
         """
-        Switch active context to prevent `ast.generic_visit` from walking to arbitrary depth.
+        Utilize a context switcher as a generic visitor in order to properly track function context.
 
-        Thank you @isidentical :)
+        Using a traditional `ast.generic_visit` setup, return nodes of nested functions are visited
+        without any knowledge of their context, causing the top-level function to potentially be
+        mis-classified.
+
+        Thank you for the inspiration @isidentical :)
         """
         self._context.append(node)
         self.generic_visit(node)
