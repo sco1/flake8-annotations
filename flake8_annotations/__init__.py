@@ -1,6 +1,6 @@
 import sys
 from itertools import zip_longest
-from typing import List, Union
+from typing import List, Set, Union
 
 from flake8_annotations.enums import AnnotationType, ClassDecoratorType, FunctionType
 
@@ -305,8 +305,8 @@ class FunctionVisitor(ast.NodeVisitor):
 
     def __init__(self, lines: List[str]):
         self.lines = lines
-        self.function_definitions = []
-        self._context = []
+        self.function_definitions: List[Function] = []
+        self._context: List[AST_DEF_NODES] = []
 
     def switch_context(self, node: AST_DEF_NODES) -> None:
         """
@@ -354,8 +354,8 @@ class ReturnVisitor(ast.NodeVisitor):
 
     def __init__(self, parent_node: AST_FUNCTION_TYPES):
         self.parent_node = parent_node
-        self._context = []
-        self._non_none_return_nodes = set()
+        self._context: List[AST_FUNCTION_TYPES] = []
+        self._non_none_return_nodes: Set[AST_FUNCTION_TYPES] = set()
 
     @property
     def has_only_none_returns(self) -> bool:

@@ -1,6 +1,6 @@
 from argparse import Namespace
 from functools import lru_cache
-from typing import Generator, List
+from typing import Generator, List, Tuple
 
 from flake8.options.manager import OptionManager
 from flake8_annotations import (
@@ -20,6 +20,8 @@ if PY_GTE_38:
 else:
     from typed_ast import ast3 as ast
 
+FORMATTED_ERROR = Tuple[int, int, str, error_codes.Error]
+
 
 class TypeHintChecker:
     """Top level checker for linting the presence of type hints in function definitions."""
@@ -32,8 +34,9 @@ class TypeHintChecker:
         # Request `lines` here and join to allow for correct handling of input from stdin
         self.lines = lines
         self.tree = self.get_typed_tree("".join(lines))  # flake8 doesn't strip newlines
+        self.suppress_none_returning: bool  # Set by flake8's config parser
 
-    def run(self) -> Generator[error_codes.Error, None, None]:
+    def run(self) -> Generator[FORMATTED_ERROR, None, None]:
         """
         This method is called by flake8 to perform the actual check(s) on the source code.
 
