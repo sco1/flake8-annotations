@@ -1,6 +1,26 @@
 # Changelog
 Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (`<major>`.`<minor>`.`<patch>`)
 
+## [v2.0.1]
+### Added
+* #71 Add `pep8-naming` to linting toolchain
+* Expand pre-commit hooks
+  * Add `black`
+  * Add `check-merge-conflict`
+  * Add `check-toml`
+  * Add `check-yaml`
+  * Add `end-of-file-fixer`
+  * Add `mixed-line-ending`
+  * Add `python-check-blanket-noqa`
+
+### Changed
+* Add argument names to `Argument` and `Function` `__repr__` methods to make the string more helpful to read
+
+### Fixed
+* #70 Fix incorrect column index for missing return annotations when other annotations are present on the same line of source
+* #69 Fix misclassification of `None` returning functions when they contained nested functions with non-`None` returns (thanks @isidentical!)
+* #67 Fix methods of nested classes being improperly classified as "regular" functions (thanks @isidentical!)
+
 ## [v2.0.0]
 ### Changed
 * #64 Change prefix from `TYP` to `ANN` in order to deconflict with `flake8-typing-imports`

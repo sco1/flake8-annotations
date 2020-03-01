@@ -15,7 +15,7 @@ class TestArgumentParsing:
     """Test for proper argument parsing from source."""
 
     @pytest.fixture(params=parser_test_cases.items())
-    def argument_lists(self, request) -> ARG_FIXTURE_TYPE:  # noqa
+    def argument_lists(self, request) -> ARG_FIXTURE_TYPE:  # noqa: ANN001
         """
         Build a pair of lists of arguments to compare and return as a (truth, parsed) tuple.
 

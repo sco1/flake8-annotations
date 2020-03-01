@@ -41,3 +41,6 @@ coverage.xml
 cov.xml
 htmlcov
 .pytest_cache/
+
+# mypy
+.mypy_cache/

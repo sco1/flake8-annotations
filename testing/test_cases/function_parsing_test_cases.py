@@ -481,4 +481,21 @@ function_test_cases = {
             nonclass_func(name="baz", function_type=FunctionType.PUBLIC),
         ),
     ),
+    "nested_classes": FunctionTestCase(
+        src=dedent(
+            """\
+            class Foo:
+                class Bar:
+                    def bar_method(self):
+                        pass
+
+                def foo_method(self):
+                    pass
+            """
+        ),
+        func=(
+            class_func(name="bar_method", function_type=FunctionType.PUBLIC),
+            class_func(name="foo_method", function_type=FunctionType.PUBLIC),
+        ),
+    ),
 }

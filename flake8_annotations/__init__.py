@@ -1,6 +1,6 @@
 import sys
 from itertools import zip_longest
-from typing import List, Union
+from typing import List, Set, Union
 
 from flake8_annotations.enums import AnnotationType, ClassDecoratorType, FunctionType
 
@@ -17,7 +17,7 @@ else:
 
     PY_GTE_38 = False
 
-__version__ = "2.0.0"
+__version__ = "2.0.1"
 
 AST_ARG_TYPES = ("args", "vararg", "kwonlyargs", "kwarg")
 if PY_GTE_38:
@@ -25,6 +25,7 @@ if PY_GTE_38:
     AST_ARG_TYPES += ("posonlyargs",)
 
 AST_FUNCTION_TYPES = Union[ast.FunctionDef, ast.AsyncFunctionDef]
+AST_DEF_NODES = Union[ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef]
 
 
 class Argument:
@@ -60,8 +61,9 @@ class Argument:
     def __repr__(self) -> str:
         """Format the Argument object into its "official" representation."""
         return (
-            f"Argument({self.argname!r}, {self.lineno}, {self.col_offset}, {self.annotation_type}, "
-            f"{self.has_type_annotation}, {self.has_3107_annotation}, {self.has_type_comment})"
+            f"Argument(argname={self.argname!r}, lineno={self.lineno}, col_offset={self.col_offset}, "  # noqa: E501
+            f"annotation_type={self.annotation_type}, has_type_annotation={self.has_type_annotation}, "  # noqa: E501
+            f"has_3107_annotation={self.has_3107_annotation}, has_type_comment={self.has_type_comment})"  # noqa: E501
         )
 
     @classmethod
@@ -147,9 +149,12 @@ class Function:
     def __repr__(self) -> str:
         """Format the Function object into its "official" representation."""
         return (
-            f"Function({self.name!r}, {self.lineno}, {self.col_offset}, {self.function_type}, "
-            f"{self.is_class_method}, {self.class_decorator_type}, {self.is_return_annotated}, "
-            f"{self.has_type_comment}, {self.has_only_none_returns}, {self.args})"
+            f"Function(name={self.name!r}, lineno={self.lineno}, col_offset={self.col_offset}, "
+            f"function_type={self.function_type}, is_class_method={self.is_class_method}, "
+            f"class_decorator_type={self.class_decorator_type}, "
+            f"is_return_annotated={self.is_return_annotated}, "
+            f"has_type_comment={self.has_type_comment}, "
+            f"has_only_none_returns={self.has_only_none_returns}, args={self.args})"
         )
 
     @classmethod
@@ -192,7 +197,9 @@ class Function:
         while True:
             # To account for multiline docstrings, rewind through the lines until we find the line
             # containing the :
-            colon_loc = lines[def_end_lineno - 1].find(":")
+            # Use str.rfind() to account for annotations on the same line, definition closure should
+            # be the last : on the line
+            colon_loc = lines[def_end_lineno - 1].rfind(":")
             if colon_loc == -1:
                 def_end_lineno -= 1
             else:
@@ -215,7 +222,7 @@ class Function:
             new_function = cls.try_type_comment(new_function, node)
 
         # Check for the presence of non-`None` returns using the special-case return node visitor
-        return_visitor = ReturnVisitor()
+        return_visitor = ReturnVisitor(node)
         return_visitor.visit(node)
         new_function.has_only_none_returns = return_visitor.has_only_none_returns
 
@@ -298,49 +305,35 @@ class FunctionVisitor(ast.NodeVisitor):
 
     def __init__(self, lines: List[str]):
         self.lines = lines
-        self.function_definitions = []
+        self.function_definitions: List[Function] = []
+        self._context: List[AST_DEF_NODES] = []
 
-    def visit_FunctionDef(self, node: ast.FunctionDef) -> None:
+    def switch_context(self, node: AST_DEF_NODES) -> None:
         """
-        Handle a visit to a function definition.
+        Utilize a context switcher as a generic function visitor in order to track function context.
 
-        Note: This will not contain class methods, these are included in the body of ClassDef
-        statements
+        Without keeping track of context, it's challenging to reliably differentiate class methods
+        from "regular" functions, especially in the case of nested classes.
+
+        Thank you for the inspiration @isidentical :)
         """
-        self.function_definitions.append(Function.from_function_node(node, self.lines))
-        self.generic_visit(node)  # Walk through any nested functions
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            # Check for non-empty context first to prevent IndexErrors for non-nested nodes
+            if self._context and isinstance(self._context[-1], ast.ClassDef):
+                # Check if current context is a ClassDef node & pass the appropriate flag
+                self.function_definitions.append(
+                    Function.from_function_node(node, self.lines, is_class_method=True)
+                )
+            else:
+                self.function_definitions.append(Function.from_function_node(node, self.lines))
 
-    def visit_AsyncFunctionDef(self, node: ast.AsyncFunctionDef) -> None:
-        """
-        Handle a visit to a coroutine definition.
+        self._context.append(node)
+        self.generic_visit(node)
+        self._context.pop()
 
-        Note: This will not contain class methods, these are included in the body of ClassDef
-        statements
-        """
-        self.function_definitions.append(Function.from_function_node(node, self.lines))
-        self.generic_visit(node)  # Walk through any nested functions
-
-    def visit_ClassDef(self, node: ast.ClassDef) -> None:
-        """
-        Handle a visit to a class definition.
-
-        Class methods will all be contained in the body of the node
-        """
-        method_nodes = [
-            child_node
-            for child_node in node.body
-            if isinstance(child_node, (ast.FunctionDef, ast.AsyncFunctionDef))
-        ]
-        self.function_definitions.extend(
-            [
-                Function.from_function_node(method_node, self.lines, is_class_method=True)
-                for method_node in method_nodes
-            ]
-        )
-
-        # Use ast.NodeVisitor.generic_visit to start down the nested method chain
-        for sub_node in node.body:
-            self.generic_visit(sub_node)
+    visit_FunctionDef = switch_context
+    visit_AsyncFunctionDef = switch_context
+    visit_ClassDef = switch_context
 
 
 class ReturnVisitor(ast.NodeVisitor):
@@ -353,13 +346,29 @@ class ReturnVisitor(ast.NodeVisitor):
     If the function node being visited has no return statement, or contains only return
     statement(s) that explicitly return `None`, the `instance.has_only_none_returns` flag will be
     set to `True`.
+
+    Due to the generic visiting being done, we need to keep track of the context in which a
+    non-`None` return node is found. These functions are added to a set that is checked to see
+    whether nor not the parent node is present.
     """
 
-    def __init__(self):
-        self.has_only_none_returns = True
+    def __init__(self, parent_node: AST_FUNCTION_TYPES):
+        self.parent_node = parent_node
+        self._context: List[AST_FUNCTION_TYPES] = []
+        self._non_none_return_nodes: Set[AST_FUNCTION_TYPES] = set()
+
+    @property
+    def has_only_none_returns(self) -> bool:
+        """Return `True` if the parent node isn't in the visited nodes that don't return `None`."""
+        return self.parent_node not in self._non_none_return_nodes
 
     def visit_Return(self, node: ast.Return) -> None:
-        """Check each Return node to see if it returns anything other than `None`."""
+        """
+        Check each Return node to see if it returns anything other than `None`.
+
+        If the node being visited returns anything other than `None`, its parent context is added to
+        the set of non-returning child nodes of the parent node.
+        """
         if node.value is not None:
             # In the event of an explicit `None` return (`return None`), the node body will be an
             # instance of either `ast.Constant` (3.8+) or `ast.NameConstant`, which we need to check
@@ -368,4 +377,21 @@ class ReturnVisitor(ast.NodeVisitor):
                 if node.value.value is None:
                     return
 
-            self.has_only_none_returns = False
+            self._non_none_return_nodes.add(self._context[-1])
+
+    def switch_context(self, node: AST_FUNCTION_TYPES) -> None:
+        """
+        Utilize a context switcher as a generic visitor in order to properly track function context.
+
+        Using a traditional `ast.generic_visit` setup, return nodes of nested functions are visited
+        without any knowledge of their context, causing the top-level function to potentially be
+        mis-classified.
+
+        Thank you for the inspiration @isidentical :)
+        """
+        self._context.append(node)
+        self.generic_visit(node)
+        self._context.pop()
+
+    visit_FunctionDef = switch_context
+    visit_AsyncFunctionDef = switch_context
