@@ -1,6 +1,10 @@
 # Changelog
 Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (`<major>`.`<minor>`.`<patch>`)
 
+## [v2.1.0]
+### Added
+* #68 Add `--suppress-dummy-args` configuration option to suppress ANN000 level errors for dummy arguments, defined as `"_"`
+
 ## [v2.0.1]
 ### Added
 * #71 Add `pep8-naming` to linting toolchain

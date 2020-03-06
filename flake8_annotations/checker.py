@@ -34,7 +34,10 @@ class TypeHintChecker:
         # Request `lines` here and join to allow for correct handling of input from stdin
         self.lines = lines
         self.tree = self.get_typed_tree("".join(lines))  # flake8 doesn't strip newlines
-        self.suppress_none_returning: bool  # Set by flake8's config parser
+
+        # Set by flake8's config parser
+        self.suppress_none_returning: bool
+        self.suppress_dummy_args: bool
 
     def run(self) -> Generator[FORMATTED_ERROR, None, None]:
         """
@@ -81,6 +84,10 @@ class TypeHintChecker:
                     if not arg.has_type_annotation and function.has_only_none_returns:
                         continue
 
+                # Skip yielding errors for dummy arguments, which are considered to be named '_'
+                if arg.argname == "_" and self.suppress_dummy_args:
+                    continue
+
                 yield classify_error(function, arg).to_flake8()
 
     @classmethod
@@ -97,10 +104,21 @@ class TypeHintChecker:
             ),
         )
 
+        parser.add_option(
+            "--suppress-dummy-args",
+            default=False,
+            action="store_true",
+            parse_from_config=True,
+            help=(
+                "Suppress ANN000-level errors for dummy arguments, defined as '_'. (Default: False)"
+            ),
+        )
+
     @classmethod
     def parse_options(cls, options: Namespace) -> None:
         """Parse the custom configuration options given to flake8."""
         cls.suppress_none_returning = options.suppress_none_returning
+        cls.suppress_dummy_args = options.suppress_dummy_args
 
     @staticmethod
     def get_typed_tree(src: str) -> ast.Module:

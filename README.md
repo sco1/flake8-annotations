@@ -23,7 +23,7 @@ You can verify it's being picked up by invoking the following in your shell:
 
 ```bash
 $ flake8 --version
-3.7.8 (flake8-annotations: 2.0.1, mccabe: 0.6.1, pycodestyle: 2.5.0, pyflakes: 2.1.1) CPython 3.7.4 on Darwin
+3.7.8 (flake8-annotations: 2.1.0, mccabe: 0.6.1, pycodestyle: 2.5.0, pyflakes: 2.1.1) CPython 3.7.4 on Darwin
 ```
 
 ## Table of Warnings
@@ -57,10 +57,17 @@ $ flake8 --version
 
 
 ## Configuration Options
+Some opinionated flags are provided to tailor the linting errors emitted:
+
 ### `--suppress-none-returning`: `bool`
 Suppress `ANN200`-level errors for functions that meet one of the following criteria:
   * Contain no `return` statement, or
   * Explicit `return` statement(s) all return `None` (explicitly or implicitly).
+
+Default: `False`
+
+### `--suppress-dummy-args`: `bool`
+Suppress `ANN000`-level errors for dummy arguments, defined as `_`.
 
 Default: `False`
 
