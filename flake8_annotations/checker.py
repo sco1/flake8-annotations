@@ -78,13 +78,14 @@ class TypeHintChecker:
 
             # Yield explicit errors for arguments that are missing annotations
             for arg in function.get_missed_annotations():
-                # Skip yielding return errors if the `--suppress-none-returning` flag is True and
+                # Skip yielding return errors if the `--suppress-none-returning` flag is `True` and
                 # the function has only `None` returns (which includes the case of no returns)
                 if arg.argname == "return" and self.suppress_none_returning:
                     if not arg.has_type_annotation and function.has_only_none_returns:
                         continue
 
-                # Skip yielding errors for dummy arguments, which are considered to be named '_'
+                # If the `--suppress-dummy-args` flag is `True`, skip yielding errors for any
+                # arguments named `_`
                 if arg.argname == "_" and self.suppress_dummy_args:
                     continue
 

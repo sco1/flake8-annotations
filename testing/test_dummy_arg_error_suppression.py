@@ -37,7 +37,7 @@ class TestDummyArgErrorSuppression:
     def test_suppressed_return_error(
         self, yielded_errors: Tuple[str, DummyArgSuppressionTestCase, Tuple[Error]]
     ) -> None:
-        """Test that ANN000 level errors are suppressed if a function only returns None."""
+        """Test that ANN000 level errors are suppressed if an annotation is named '_'."""
         failure_msg = f"Check failed for case '{yielded_errors[0]}'"
 
         yielded_ANN000 = any("ANN0" in error[2] for error in yielded_errors[2])
