@@ -21,6 +21,7 @@ jobs:
     PIP_CACHE_DIR: ".cache/pip"
     PIP_SRC: ".cache/src"
     POETRY_VIRTUALENVS_CREATE: false
+    PRE_COMMIT_HOME: $(Pipeline.Workspace)/pre-commit-cache
 
   steps:
   - task: UsePythonVersion@0
@@ -35,8 +36,11 @@ jobs:
   - script: python3 -m pip install poetry && poetry install
     displayName: 'Install Project Environment'
 
-  - script: flake8
-    displayName: 'Lint flake8-annotations'
+    # This will also take care of linting, as we utilize a flake8 hook
+    # Only run this in one python environment
+  - script: pre-commit run --all-files
+    condition: eq(variables['python.version'], '3.8')
+    displayName: 'Run pre-commit hooks'
 
   - script: tox -e $(tox.env)
     displayName: 'Test & generate coverage'
