@@ -26,6 +26,7 @@ jobs:
   steps:
   - task: UsePythonVersion@0
     displayName: 'Set Python version'
+    name: PythonVersion
     inputs:
       versionSpec: '$(python.version)'
       addToPath: true
