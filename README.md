@@ -27,6 +27,8 @@ $ flake8 --version
 ```
 
 ## Table of Warnings
+All warnings are enabled by default.
+
 ### Function Annotations
 | ID       | Description                                   |
 |----------|-----------------------------------------------|
@@ -35,10 +37,10 @@ $ flake8 --version
 | `ANN003` | Missing type annotation for `**kwargs`        |
 
 ### Method Annotations
-| ID       | Description                                        |
-|----------|----------------------------------------------------|
-| `ANN101` | Missing type annotation for `self` in method       |
-| `ANN102` | Missing type annotation for `cls` in classmethod   |
+| ID       | Description                                                  |
+|----------|--------------------------------------------------------------|
+| `ANN101` | Missing type annotation for `self` in method<sup>1</sup>     |
+| `ANN102` | Missing type annotation for `cls` in classmethod<sup>1</sup> |
 
 ### Return Annotations
 | ID       | Description                                           |
@@ -54,6 +56,9 @@ $ flake8 --version
 | ID       | Description                                               |
 |----------|-----------------------------------------------------------|
 | `ANN301` | PEP 484 disallows both type annotations and type comments |
+
+**Notes:**
+1. See: [PEP 484](https://www.python.org/dev/peps/pep-0484/#annotating-instance-and-class-methods) and [PEP 563](https://www.python.org/dev/peps/pep-0563/) for suggestions on annotating `self` and `cls` arguments.
 
 
 ## Configuration Options
