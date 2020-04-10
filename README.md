@@ -104,7 +104,7 @@ def foo(
     pass
 ```
 
-Ellipes are ignored by `flake8-annotations` parser.
+Ellipses are ignored by `flake8-annotations` parser.
 
 **Note:** If present, function type comments will override any argument type comments.
 
