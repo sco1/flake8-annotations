@@ -23,10 +23,12 @@ You can verify it's being picked up by invoking the following in your shell:
 
 ```bash
 $ flake8 --version
-3.7.8 (flake8-annotations: 2.0.1, mccabe: 0.6.1, pycodestyle: 2.5.0, pyflakes: 2.1.1) CPython 3.7.4 on Darwin
+3.7.8 (flake8-annotations: 2.1.0, mccabe: 0.6.1, pycodestyle: 2.5.0, pyflakes: 2.1.1) CPython 3.7.4 on Darwin
 ```
 
 ## Table of Warnings
+All warnings are enabled by default.
+
 ### Function Annotations
 | ID       | Description                                   |
 |----------|-----------------------------------------------|
@@ -35,10 +37,10 @@ $ flake8 --version
 | `ANN003` | Missing type annotation for `**kwargs`        |
 
 ### Method Annotations
-| ID       | Description                                        |
-|----------|----------------------------------------------------|
-| `ANN101` | Missing type annotation for `self` in method       |
-| `ANN102` | Missing type annotation for `cls` in classmethod   |
+| ID       | Description                                                  |
+|----------|--------------------------------------------------------------|
+| `ANN101` | Missing type annotation for `self` in method<sup>1</sup>     |
+| `ANN102` | Missing type annotation for `cls` in classmethod<sup>1</sup> |
 
 ### Return Annotations
 | ID       | Description                                           |
@@ -55,12 +57,22 @@ $ flake8 --version
 |----------|-----------------------------------------------------------|
 | `ANN301` | PEP 484 disallows both type annotations and type comments |
 
+**Notes:**
+1. See: [PEP 484](https://www.python.org/dev/peps/pep-0484/#annotating-instance-and-class-methods) and [PEP 563](https://www.python.org/dev/peps/pep-0563/) for suggestions on annotating `self` and `cls` arguments.
+
 
 ## Configuration Options
+Some opinionated flags are provided to tailor the linting errors emitted:
+
 ### `--suppress-none-returning`: `bool`
 Suppress `ANN200`-level errors for functions that meet one of the following criteria:
   * Contain no `return` statement, or
   * Explicit `return` statement(s) all return `None` (explicitly or implicitly).
+
+Default: `False`
+
+### `--suppress-dummy-args`: `bool`
+Suppress `ANN000`-level errors for dummy arguments, defined as `_`.
 
 Default: `False`
 
@@ -92,7 +104,7 @@ def foo(
     pass
 ```
 
-Ellipes are ignored by `flake8-annotations` parser.
+Ellipses are ignored by `flake8-annotations` parser.
 
 **Note:** If present, function type comments will override any argument type comments.
 
