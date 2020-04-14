@@ -193,19 +193,27 @@ class Function:
         # Create an Argument object for the return hint
         # Get the line number from the line before where the body of the function starts to account
         # for the presence of decorators
-        def_end_lineno = node.body[0].lineno - 1
-        while True:
+
+        # For differences between python3.8+
+        if hasattr(node.body[0], "end_lineno"):
+            def_end_lineno = node.body[0].end_lineno - 1
+        else:
+            def_end_lineno = node.body[0].lineno - 1
+
+        docstring_loc = lines[def_end_lineno].find('"""')
+        if docstring_loc > 0 and docstring_loc == lines[def_end_lineno].rfind('"""'):
             # To account for multiline docstrings, rewind through the lines until we find the line
-            # containing the :
-            # Use str.rfind() to account for annotations on the same line, definition closure should
-            # be the last : on the line
-            colon_loc = lines[def_end_lineno - 1].rfind(":")
-            if colon_loc == -1:
+            # containing the starting """
+            while True:
+                docstring_loc = lines[def_end_lineno - 1].find('"""')
                 def_end_lineno -= 1
-            else:
-                # Lineno is 1-indexed, the line string is 0-indexed
-                def_end_col_offset = colon_loc + 1
-                break
+                if docstring_loc != -1:
+                    break
+
+        # Use str.rfind() to account for annotations on the same line, definition closure should
+        # be the last : on the line
+        # Lineno is 1-indexed, the line string is 0-indexed
+        def_end_col_offset = lines[def_end_lineno - 1].rfind(":") + 1
 
         return_arg = Argument("return", def_end_lineno, def_end_col_offset, AnnotationType.RETURN)
         if node.returns:

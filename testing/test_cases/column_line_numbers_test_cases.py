@@ -43,26 +43,26 @@ parser_test_cases = {
     "single_line_docstring": ParserTestCase(
         src=dedent(
             """\
-            def baz():                    # 1
+            def baz(foo: int):            # 1
                 \"\"\"A docstring.\"\"\"  # 2
                 pass                      # 3
             """
         ),
-        error_locations=((1, 10),),
+        error_locations=((1, 18),),
     ),
     "multi_line_docstring": ParserTestCase(
         src=dedent(
             """\
-            def snek():
-                \"\"\"               # 1
-                Some.                # 2
-                                     # 3
-                Multiline docstring  # 4
-                \"\"\"               # 5
-                pass                 # 6
+            def snek(bar: bool):     # 1
+                \"\"\"               # 2
+                Some:                # 3
+                                     # 4
+                Multiline docstring  # 5
+                \"\"\"               # 6
+                pass                 # 7
             """
         ),
-        error_locations=((1, 11),),
+        error_locations=((1, 20),),
     ),
     "hinted_arg": ParserTestCase(
         src=dedent(
