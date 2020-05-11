@@ -73,4 +73,28 @@ parser_test_cases = {
         ),
         error_locations=((1, 19),),
     ),
+    "docstring_with_colon": ParserTestCase(
+        src=dedent(
+            """\
+            def baz():                     # 1
+                \"\"\"A: docstring.\"\"\"  # 2
+                pass                       # 3
+            """
+        ),
+        error_locations=((1, 10),),
+    ),
+    "multi_line_docstring_with_colon": ParserTestCase(
+        src=dedent(
+            """\
+            def snek():
+                \"\"\"                # 1
+                Some.                 # 2
+                                      # 3
+                Multiline: docstring  # 4
+                \"\"\"                # 5
+                pass                  # 6
+            """
+        ),
+        error_locations=((1, 11),),
+    ),
 }
