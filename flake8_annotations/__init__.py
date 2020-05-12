@@ -1,6 +1,6 @@
 import sys
 from itertools import zip_longest
-from typing import List, Set, Union
+from typing import List, Set, Tuple, Union
 
 from flake8_annotations.enums import AnnotationType, ClassDecoratorType, FunctionType
 
@@ -191,22 +191,7 @@ class Function:
                 )
 
         # Create an Argument object for the return hint
-        # Get the line number from the line before where the body of the function starts to account
-        # for the presence of decorators
-        def_end_lineno = node.body[0].lineno - 1
-        while True:
-            # To account for multiline docstrings, rewind through the lines until we find the line
-            # containing the :
-            # Use str.rfind() to account for annotations on the same line, definition closure should
-            # be the last : on the line
-            colon_loc = lines[def_end_lineno - 1].rfind(":")
-            if colon_loc == -1:
-                def_end_lineno -= 1
-            else:
-                # Lineno is 1-indexed, the line string is 0-indexed
-                def_end_col_offset = colon_loc + 1
-                break
-
+        def_end_lineno, def_end_col_offset = cls.colon_seeker(node, lines)
         return_arg = Argument("return", def_end_lineno, def_end_col_offset, AnnotationType.RETURN)
         if node.returns:
             return_arg.has_type_annotation = True
@@ -227,6 +212,27 @@ class Function:
         new_function.has_only_none_returns = return_visitor.has_only_none_returns
 
         return new_function
+
+    @staticmethod
+    def colon_seeker(node: AST_FUNCTION_TYPES, lines: List[str]) -> Tuple[int, int]:
+        """Find the line & column indices of the function definition's closing colon."""
+        # Get the line number from the line before where the body of the function starts to account
+        # for the presence of decorators
+        def_end_lineno = node.body[0].lineno - 1
+        while True:
+            # To account for multiline docstrings, rewind through the lines until we find the line
+            # containing the :
+            # Use str.rfind() to account for annotations on the same line, definition closure should
+            # be the last : on the line
+            colon_loc = lines[def_end_lineno - 1].rfind(":")
+            if colon_loc == -1:
+                def_end_lineno -= 1
+            else:
+                # Lineno is 1-indexed, the line string is 0-indexed
+                def_end_col_offset = colon_loc + 1
+                break
+
+        return def_end_lineno, def_end_col_offset
 
     @staticmethod
     def try_type_comment(func_obj: "Function", node: AST_FUNCTION_TYPES) -> "Function":

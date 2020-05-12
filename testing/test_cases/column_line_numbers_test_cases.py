@@ -53,13 +53,13 @@ parser_test_cases = {
     "multi_line_docstring": ParserTestCase(
         src=dedent(
             """\
-            def snek():
-                \"\"\"               # 1
-                Some.                # 2
-                                     # 3
-                Multiline docstring  # 4
-                \"\"\"               # 5
-                pass                 # 6
+            def snek():              # 1
+                \"\"\"               # 2
+                Some.                # 3
+                                     # 4
+                Multiline docstring  # 5
+                \"\"\"               # 6
+                pass                 # 7
             """
         ),
         error_locations=((1, 11),),
@@ -86,13 +86,13 @@ parser_test_cases = {
     "multi_line_docstring_with_colon": ParserTestCase(
         src=dedent(
             """\
-            def snek():
-                \"\"\"                # 1
-                Some.                 # 2
-                                      # 3
-                Multiline: docstring  # 4
-                \"\"\"                # 5
-                pass                  # 6
+            def snek():               # 1
+                \"\"\"                # 2
+                Some.                 # 3
+                                      # 4
+                Multiline: docstring  # 5
+                \"\"\"                # 6
+                pass                  # 7
             """
         ),
         error_locations=((1, 11),),
