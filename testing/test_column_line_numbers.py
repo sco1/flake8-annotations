@@ -11,7 +11,7 @@ from .test_cases.column_line_numbers_test_cases import ParserTestCase, parser_te
 ERROR_CODE = Tuple[int, int, str, checker.TypeHintChecker]
 
 
-@pytest.fixture(params=parser_test_cases.items())
+@pytest.fixture(params=parser_test_cases.items(), ids=parser_test_cases.keys())
 def parsed_errors(
     request,  # noqa: ANN001
 ) -> Tuple[Generator[ERROR_CODE, None, None], ParserTestCase]:

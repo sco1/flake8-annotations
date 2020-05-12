@@ -97,4 +97,20 @@ parser_test_cases = {
         ),
         error_locations=((1, 11),),
     ),
+    "single_line_def": ParserTestCase(
+        src=dedent(
+            """\
+            def lol(): \"\"\"Some docstring.\"\"\"  # 1
+            """
+        ),
+        error_locations=((1, 10),),
+    ),
+    "single_line_def_docstring_with_colon": ParserTestCase(
+        src=dedent(
+            """\
+            def lol(): \"\"\"Some: docstring.\"\"\"  # 1
+            """
+        ),
+        error_locations=((1, 10),),
+    ),
 }
