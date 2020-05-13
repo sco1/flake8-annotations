@@ -1,6 +1,12 @@
 # Changelog
 Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (`<major>`.`<minor>`.`<patch>`)
 
+## [v2.1.1]
+### Fixed
+* #77, #81 Fix incorrect return error locations in the presence of a multiline docstring containing colon(s)
+* #81 Fix incorrect return error locations for single-line function definitions
+* Fix incorrectly pinned project specifications
+
 ## [v2.1.0]
 ### Added
 * #68 Add `--suppress-dummy-args` configuration option to suppress ANN000 level errors for dummy arguments, defined as `"_"`
