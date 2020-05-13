@@ -222,26 +222,36 @@ class Function:
         docstring is placed in the AST:
             * Python >= 3.8, docstrings are contained in the body of the function node
             * Python < 3.8, docstrings are contained in the function node
+
+        NOTE: AST's line numbers are 1-indexed, column offsets are 0-indexed. Since `lines` is a
+        list, it will be 0-indexed.
         """
         # Special case single line function definitions
         if node.lineno == node.body[0].lineno:
             return Function._single_line_colon_seeker(node, lines[node.lineno - 1])
 
-        # Get the line number from the line before where the body of the function starts to account
-        # for the presence of decorators
         def_end_lineno = node.body[0].lineno - 1
-        while True:
-            # To account for multiline docstrings, rewind through the lines until we find the line
-            # containing the :
-            # Use str.rfind() to account for annotations on the same line, definition closure should
-            # be the last : on the line
-            colon_loc = lines[def_end_lineno - 1].rfind(":")
-            if colon_loc == -1:
-                def_end_lineno -= 1
-            else:
-                # Lineno is 1-indexed, the line string is 0-indexed
-                def_end_col_offset = colon_loc + 1
-                break
+
+        # With Python < 3.8, the function node includes the docstring & the body does not, so
+        # we have rewind through any docstrings, if present, before looking for the def colon
+        if not PY_GTE_38:
+            # This list index is a little funky, since we've already subtracted 1 outside of this
+            # context, we can leave it as-is since it will index the list to the line prior to where
+            # the function node's body begins.
+            # If the docstring is on one line then no rewinding is necessary.
+            n_triple_quotes = lines[def_end_lineno].count('"""')
+            if n_triple_quotes == 1:
+                # Docstring closure, rewind until the opening is found & take the line prior
+                while True:
+                    def_end_lineno -= 1
+                    if '"""' in lines[def_end_lineno - 1]:
+                        # Docstring has closed
+                        def_end_lineno -= 1
+                        break
+
+        # Use str.rfind() to account for annotations on the same line, definition closure should
+        # be the last : on the line
+        def_end_col_offset = lines[def_end_lineno - 1].rfind(":") + 1
 
         return def_end_lineno, def_end_col_offset
 
