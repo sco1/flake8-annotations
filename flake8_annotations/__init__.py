@@ -215,7 +215,18 @@ class Function:
 
     @staticmethod
     def colon_seeker(node: AST_FUNCTION_TYPES, lines: List[str]) -> Tuple[int, int]:
-        """Find the line & column indices of the function definition's closing colon."""
+        """
+        Find the line & column indices of the function definition's closing colon.
+
+        Processing paths are Python version-dependent, as there are differences in where the
+        docstring is placed in the AST:
+            * Python >= 3.8, docstrings are contained in the body of the function node
+            * Python < 3.8, docstrings are contained in the function node
+        """
+        # Special case single line function definitions
+        if node.lineno == node.body[0].lineno:
+            return Function._single_line_colon_seeker(node, lines[node.lineno - 1])
+
         # Get the line number from the line before where the body of the function starts to account
         # for the presence of decorators
         def_end_lineno = node.body[0].lineno - 1
@@ -233,6 +244,15 @@ class Function:
                 break
 
         return def_end_lineno, def_end_col_offset
+
+    @staticmethod
+    def _single_line_colon_seeker(node: AST_FUNCTION_TYPES, line: str) -> Tuple[int, int]:
+        """Locate the closing colon for a single-line function definition."""
+        col_start = node.col_offset
+        col_end = node.body[0].col_offset
+        def_end_col_offset = line.rfind(":", col_start, col_end) + 1
+
+        return node.lineno, def_end_col_offset
 
     @staticmethod
     def try_type_comment(func_obj: "Function", node: AST_FUNCTION_TYPES) -> "Function":

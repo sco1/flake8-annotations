@@ -113,4 +113,12 @@ parser_test_cases = {
         ),
         error_locations=((1, 10),),
     ),
+    "single_line_hinted_def": ParserTestCase(
+        src=dedent(
+            """\
+            def lol(x: int): \"\"\"Some: docstring.\"\"\"  # 1
+            """
+        ),
+        error_locations=((1, 16),),
+    ),
 }
