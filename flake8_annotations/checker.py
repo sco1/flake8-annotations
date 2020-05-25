@@ -56,7 +56,7 @@ class TypeHintChecker:
         # Flake8 handles all noqa and error code ignore configurations after the error is yielded
         for function in visitor.function_definitions:
             # Skip yielding any errors from dynamically typed functions (function has no type hints)
-            if self.allow_untyped_defs and function.is_dynamically_typed:
+            if self.allow_untyped_defs and function.is_dynamically_typed():
                 continue
 
             # Create sentinels to check for mixed hint styles

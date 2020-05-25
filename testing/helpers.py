@@ -1,8 +1,9 @@
-from typing import Generator, Iterable, List, Optional, Tuple
+from typing import Generator, Iterable, List, Optional, Sequence, Tuple
 
 from flake8_annotations import Function, FunctionVisitor, PY_GTE_38
 from flake8_annotations.checker import TypeHintChecker
 from flake8_annotations.error_codes import Error
+from pytest_check import check_func
 
 if PY_GTE_38:
     import ast
@@ -59,3 +60,15 @@ def find_matching_function(func_list: Iterable[Function], match_name: str) -> Op
     protection if a match isn't found & will raise an `IndexError`.
     """
     return [function for function in func_list if function.name == match_name][0]
+
+
+@check_func
+def check_is_empty(in_sequence: Sequence, msg: str = "") -> None:
+    """Check whether the input sequence is empty."""
+    assert not in_sequence
+
+
+@check_func
+def check_is_not_empty(in_sequence: Sequence, msg: str = "") -> None:
+    """Check whether the input sequence is not empty."""
+    assert in_sequence
