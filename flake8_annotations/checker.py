@@ -38,6 +38,7 @@ class TypeHintChecker:
         # Set by flake8's config parser
         self.suppress_none_returning: bool
         self.suppress_dummy_args: bool
+        self.allow_untyped_defs: bool
 
     def run(self) -> Generator[FORMATTED_ERROR, None, None]:
         """
@@ -54,6 +55,10 @@ class TypeHintChecker:
         #
         # Flake8 handles all noqa and error code ignore configurations after the error is yielded
         for function in visitor.function_definitions:
+            # Skip yielding any errors from dynamically typed functions (function has no type hints)
+            if self.allow_untyped_defs and function.is_dynamically_typed:
+                continue
+
             # Create sentinels to check for mixed hint styles
             if function.has_type_comment:
                 has_type_comment = True
@@ -115,11 +120,20 @@ class TypeHintChecker:
             ),
         )
 
+        parser.add_option(
+            "--allow-untyped-defs",
+            default=False,
+            action="store_true",
+            parse_from_config=True,
+            help=("Suppress all errors for dynamically typed functions. (Default: False)"),
+        )
+
     @classmethod
     def parse_options(cls, options: Namespace) -> None:
         """Parse the custom configuration options given to flake8."""
         cls.suppress_none_returning = options.suppress_none_returning
         cls.suppress_dummy_args = options.suppress_dummy_args
+        cls.allow_untyped_defs = options.allow_untyped_defs
 
     @staticmethod
     def get_typed_tree(src: str) -> ast.Module:

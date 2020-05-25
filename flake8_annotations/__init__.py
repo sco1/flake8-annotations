@@ -61,9 +61,15 @@ class Argument:
     def __repr__(self) -> str:
         """Format the Argument object into its "official" representation."""
         return (
-            f"Argument(argname={self.argname!r}, lineno={self.lineno}, col_offset={self.col_offset}, "  # noqa: E501
-            f"annotation_type={self.annotation_type}, has_type_annotation={self.has_type_annotation}, "  # noqa: E501
-            f"has_3107_annotation={self.has_3107_annotation}, has_type_comment={self.has_type_comment})"  # noqa: E501
+            f"Argument("
+            f"argname={self.argname!r}, "
+            f"lineno={self.lineno}, "
+            f"col_offset={self.col_offset}, "
+            f"annotation_type={self.annotation_type}, "
+            f"has_type_annotation={self.has_type_annotation}, "
+            f"has_3107_annotation={self.has_3107_annotation}, "
+            f"has_type_comment={self.has_type_comment}"
+            ")"
         )
 
     @classmethod
@@ -125,6 +131,10 @@ class Function:
         """
         return all(arg.has_type_annotation for arg in self.args)
 
+    def is_dynamically_typed(self) -> bool:
+        """Determine if the function is dynamically typed, defined as completely lacking hints."""
+        return not any(arg.has_type_annotation for arg in self.args)
+
     def get_missed_annotations(self) -> List:
         """Provide a list of arguments with missing type annotations."""
         return [arg for arg in self.args if not arg.has_type_annotation]
@@ -149,12 +159,18 @@ class Function:
     def __repr__(self) -> str:
         """Format the Function object into its "official" representation."""
         return (
-            f"Function(name={self.name!r}, lineno={self.lineno}, col_offset={self.col_offset}, "
-            f"function_type={self.function_type}, is_class_method={self.is_class_method}, "
+            f"Function("
+            f"name={self.name!r}, "
+            f"lineno={self.lineno}, "
+            f"col_offset={self.col_offset}, "
+            f"function_type={self.function_type}, "
+            f"is_class_method={self.is_class_method}, "
             f"class_decorator_type={self.class_decorator_type}, "
             f"is_return_annotated={self.is_return_annotated}, "
             f"has_type_comment={self.has_type_comment}, "
-            f"has_only_none_returns={self.has_only_none_returns}, args={self.args})"
+            f"has_only_none_returns={self.has_only_none_returns}, "
+            f"args={self.args}"
+            ")"
         )
 
     @classmethod
