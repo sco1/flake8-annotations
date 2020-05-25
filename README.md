@@ -76,6 +76,11 @@ Suppress `ANN000`-level errors for dummy arguments, defined as `_`.
 
 Default: `False`
 
+### `--allow-untyped-defs`: `bool`
+Suppress all errors for dynamically typed functions. A function is considered dynamically typed if it does not contain any type hints.
+
+Default: `False`
+
 
 ## Caveats for PEP 484-style Type Comments
 ### Function type comments
