@@ -23,7 +23,7 @@ You can verify it's being picked up by invoking the following in your shell:
 
 ```bash
 $ flake8 --version
-3.7.8 (flake8-annotations: 2.1.0, mccabe: 0.6.1, pycodestyle: 2.5.0, pyflakes: 2.1.1) CPython 3.7.4 on Darwin
+3.8.2 (flake8-annotations: 2.2.0, mccabe: 0.6.1, pycodestyle: 5.0.2, pyflakes: 2.2.0) CPython 3.8.2 on Darwin
 ```
 
 ## Table of Warnings
@@ -73,6 +73,11 @@ Default: `False`
 
 ### `--suppress-dummy-args`: `bool`
 Suppress `ANN000`-level errors for dummy arguments, defined as `_`.
+
+Default: `False`
+
+### `--allow-untyped-defs`: `bool`
+Suppress all errors for dynamically typed functions. A function is considered dynamically typed if it does not contain any type hints.
 
 Default: `False`
 

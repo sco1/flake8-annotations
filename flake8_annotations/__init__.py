@@ -1,6 +1,6 @@
 import sys
 from itertools import zip_longest
-from typing import List, Set, Union
+from typing import List, Set, Tuple, Union
 
 from flake8_annotations.enums import AnnotationType, ClassDecoratorType, FunctionType
 
@@ -17,7 +17,7 @@ else:
 
     PY_GTE_38 = False
 
-__version__ = "2.1.0"
+__version__ = "2.2.0"
 
 AST_ARG_TYPES = ("args", "vararg", "kwonlyargs", "kwarg")
 if PY_GTE_38:
@@ -61,9 +61,15 @@ class Argument:
     def __repr__(self) -> str:
         """Format the Argument object into its "official" representation."""
         return (
-            f"Argument(argname={self.argname!r}, lineno={self.lineno}, col_offset={self.col_offset}, "  # noqa: E501
-            f"annotation_type={self.annotation_type}, has_type_annotation={self.has_type_annotation}, "  # noqa: E501
-            f"has_3107_annotation={self.has_3107_annotation}, has_type_comment={self.has_type_comment})"  # noqa: E501
+            f"Argument("
+            f"argname={self.argname!r}, "
+            f"lineno={self.lineno}, "
+            f"col_offset={self.col_offset}, "
+            f"annotation_type={self.annotation_type}, "
+            f"has_type_annotation={self.has_type_annotation}, "
+            f"has_3107_annotation={self.has_3107_annotation}, "
+            f"has_type_comment={self.has_type_comment}"
+            ")"
         )
 
     @classmethod
@@ -125,6 +131,10 @@ class Function:
         """
         return all(arg.has_type_annotation for arg in self.args)
 
+    def is_dynamically_typed(self) -> bool:
+        """Determine if the function is dynamically typed, defined as completely lacking hints."""
+        return not any(arg.has_type_annotation for arg in self.args)
+
     def get_missed_annotations(self) -> List:
         """Provide a list of arguments with missing type annotations."""
         return [arg for arg in self.args if not arg.has_type_annotation]
@@ -149,12 +159,18 @@ class Function:
     def __repr__(self) -> str:
         """Format the Function object into its "official" representation."""
         return (
-            f"Function(name={self.name!r}, lineno={self.lineno}, col_offset={self.col_offset}, "
-            f"function_type={self.function_type}, is_class_method={self.is_class_method}, "
+            f"Function("
+            f"name={self.name!r}, "
+            f"lineno={self.lineno}, "
+            f"col_offset={self.col_offset}, "
+            f"function_type={self.function_type}, "
+            f"is_class_method={self.is_class_method}, "
             f"class_decorator_type={self.class_decorator_type}, "
             f"is_return_annotated={self.is_return_annotated}, "
             f"has_type_comment={self.has_type_comment}, "
-            f"has_only_none_returns={self.has_only_none_returns}, args={self.args})"
+            f"has_only_none_returns={self.has_only_none_returns}, "
+            f"args={self.args}"
+            ")"
         )
 
     @classmethod
@@ -191,22 +207,7 @@ class Function:
                 )
 
         # Create an Argument object for the return hint
-        # Get the line number from the line before where the body of the function starts to account
-        # for the presence of decorators
-        def_end_lineno = node.body[0].lineno - 1
-        while True:
-            # To account for multiline docstrings, rewind through the lines until we find the line
-            # containing the :
-            # Use str.rfind() to account for annotations on the same line, definition closure should
-            # be the last : on the line
-            colon_loc = lines[def_end_lineno - 1].rfind(":")
-            if colon_loc == -1:
-                def_end_lineno -= 1
-            else:
-                # Lineno is 1-indexed, the line string is 0-indexed
-                def_end_col_offset = colon_loc + 1
-                break
-
+        def_end_lineno, def_end_col_offset = cls.colon_seeker(node, lines)
         return_arg = Argument("return", def_end_lineno, def_end_col_offset, AnnotationType.RETURN)
         if node.returns:
             return_arg.has_type_annotation = True
@@ -227,6 +228,57 @@ class Function:
         new_function.has_only_none_returns = return_visitor.has_only_none_returns
 
         return new_function
+
+    @staticmethod
+    def colon_seeker(node: AST_FUNCTION_TYPES, lines: List[str]) -> Tuple[int, int]:
+        """
+        Find the line & column indices of the function definition's closing colon.
+
+        Processing paths are Python version-dependent, as there are differences in where the
+        docstring is placed in the AST:
+            * Python >= 3.8, docstrings are contained in the body of the function node
+            * Python < 3.8, docstrings are contained in the function node
+
+        NOTE: AST's line numbers are 1-indexed, column offsets are 0-indexed. Since `lines` is a
+        list, it will be 0-indexed.
+        """
+        # Special case single line function definitions
+        if node.lineno == node.body[0].lineno:
+            return Function._single_line_colon_seeker(node, lines[node.lineno - 1])
+
+        def_end_lineno = node.body[0].lineno - 1
+
+        # With Python < 3.8, the function node includes the docstring & the body does not, so
+        # we have rewind through any docstrings, if present, before looking for the def colon
+        if not PY_GTE_38:
+            # This list index is a little funky, since we've already subtracted 1 outside of this
+            # context, we can leave it as-is since it will index the list to the line prior to where
+            # the function node's body begins.
+            # If the docstring is on one line then no rewinding is necessary.
+            n_triple_quotes = lines[def_end_lineno].count('"""')
+            if n_triple_quotes == 1:
+                # Docstring closure, rewind until the opening is found & take the line prior
+                while True:
+                    def_end_lineno -= 1
+                    if '"""' in lines[def_end_lineno - 1]:
+                        # Docstring has closed
+                        def_end_lineno -= 1
+                        break
+
+        # Use str.rfind() to account for annotations on the same line, definition closure should
+        # be the last : on the line
+        def_end_col_offset = lines[def_end_lineno - 1].rfind(":") + 1
+
+        return def_end_lineno, def_end_col_offset
+
+    @staticmethod
+    def _single_line_colon_seeker(node: AST_FUNCTION_TYPES, line: str) -> Tuple[int, int]:
+        """Locate the closing colon for a single-line function definition."""
+        col_start = node.col_offset
+        col_end = node.body[0].col_offset
+        def_end_col_offset = line.rfind(":", col_start, col_end) + 1
+
+        return node.lineno, def_end_col_offset
 
     @staticmethod
     def try_type_comment(func_obj: "Function", node: AST_FUNCTION_TYPES) -> "Function":

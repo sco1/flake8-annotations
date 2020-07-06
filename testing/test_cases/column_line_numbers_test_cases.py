@@ -53,13 +53,13 @@ parser_test_cases = {
     "multi_line_docstring": ParserTestCase(
         src=dedent(
             """\
-            def snek():
-                \"\"\"               # 1
-                Some.                # 2
-                                     # 3
-                Multiline docstring  # 4
-                \"\"\"               # 5
-                pass                 # 6
+            def snek():              # 1
+                \"\"\"               # 2
+                Some.                # 3
+                                     # 4
+                Multiline docstring  # 5
+                \"\"\"               # 6
+                pass                 # 7
             """
         ),
         error_locations=((1, 11),),
@@ -72,5 +72,53 @@ parser_test_cases = {
             """
         ),
         error_locations=((1, 19),),
+    ),
+    "docstring_with_colon": ParserTestCase(
+        src=dedent(
+            """\
+            def baz():                     # 1
+                \"\"\"A: docstring.\"\"\"  # 2
+                pass                       # 3
+            """
+        ),
+        error_locations=((1, 10),),
+    ),
+    "multi_line_docstring_with_colon": ParserTestCase(
+        src=dedent(
+            """\
+            def snek():               # 1
+                \"\"\"                # 2
+                Some.                 # 3
+                                      # 4
+                Multiline: docstring  # 5
+                \"\"\"                # 6
+                pass                  # 7
+            """
+        ),
+        error_locations=((1, 11),),
+    ),
+    "single_line_def": ParserTestCase(
+        src=dedent(
+            """\
+            def lol(): \"\"\"Some docstring.\"\"\"  # 1
+            """
+        ),
+        error_locations=((1, 10),),
+    ),
+    "single_line_def_docstring_with_colon": ParserTestCase(
+        src=dedent(
+            """\
+            def lol(): \"\"\"Some: docstring.\"\"\"  # 1
+            """
+        ),
+        error_locations=((1, 10),),
+    ),
+    "single_line_hinted_def": ParserTestCase(
+        src=dedent(
+            """\
+            def lol(x: int): \"\"\"Some: docstring.\"\"\"  # 1
+            """
+        ),
+        error_locations=((1, 16),),
     ),
 }
