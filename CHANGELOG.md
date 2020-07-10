@@ -3,7 +3,7 @@ Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (`<ma
 
 ## [v2.3.0]
 ### Added
-* #87 Add `--mypy-style-init-return` to allow omission of a return type hint for `__init__` if at least one argument is annotated. See [mypy's documentation](https://mypy.readthedocs.io/en/stable/class_basics.html?#annotating-init-methods) for additional details.
+* #87 Add `--mypy-init-return` to allow omission of a return type hint for `__init__` if at least one argument is annotated. See [mypy's documentation](https://mypy.readthedocs.io/en/stable/class_basics.html?#annotating-init-methods) for additional details.
 
 ## [v2.2.1]
 ### Fixed
