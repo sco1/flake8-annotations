@@ -4,13 +4,11 @@
 [![Build Status](https://dev.azure.com/python-discord/Python%20Discord/_apis/build/status/python-discord.flake8-annotations?branchName=master)](https://dev.azure.com/python-discord/Python%20Discord/_build/latest?definitionId=16&branchName=master)
 [![Discord](https://img.shields.io/static/v1?label=Python%20Discord&logo=discord&message=%3E30k%20members&color=%237289DA&logoColor=white)](https://discord.gg/2B963hn)
 
-
 `flake8-annotations` is a plugin for [Flake8](http://flake8.pycqa.org/en/latest/) that detects the absence of [PEP 3107-style](https://www.python.org/dev/peps/pep-3107/) function annotations and [PEP 484-style](https://www.python.org/dev/peps/pep-0484/#type-comments) type comments  (see: [Caveats](#Caveats-for-PEP-484-style-Type-Comments)).
 
 What this won't do: Check variable annotations (see: [PEP 526](https://www.python.org/dev/peps/pep-0526/)), respect stub files, or replace [mypy](http://mypy-lang.org/).
 
 ## Installation
-
 Install from PyPi with your favorite `pip` invocation:
 
 ```bash
@@ -23,7 +21,7 @@ You can verify it's being picked up by invoking the following in your shell:
 
 ```bash
 $ flake8 --version
-3.8.2 (flake8-annotations: 2.2.1, mccabe: 0.6.1, pycodestyle: 5.0.2, pyflakes: 2.2.0) CPython 3.8.2 on Darwin
+3.8.3 (flake8-annotations: 2.3.0, mccabe: 0.6.1, pycodestyle: 2.6.2, pyflakes: 2.2.0) CPython 3.8.2 on Darwin
 ```
 
 ## Table of Warnings
@@ -60,7 +58,6 @@ All warnings are enabled by default.
 **Notes:**
 1. See: [PEP 484](https://www.python.org/dev/peps/pep-0484/#annotating-instance-and-class-methods) and [PEP 563](https://www.python.org/dev/peps/pep-0563/) for suggestions on annotating `self` and `cls` arguments.
 
-
 ## Configuration Options
 Some opinionated flags are provided to tailor the linting errors emitted:
 
@@ -81,6 +78,10 @@ Suppress all errors for dynamically typed functions. A function is considered dy
 
 Default: `False`
 
+### `--mypy-init-return`: `bool`
+Allow omission of a return type hint for `__init__` if at least one argument is annotated. See [mypy's documentation](https://mypy.readthedocs.io/en/stable/class_basics.html?#annotating-init-methods) for additional details.
+
+Default: `False`
 
 ## Caveats for PEP 484-style Type Comments
 ### Function type comments

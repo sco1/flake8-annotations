@@ -41,10 +41,7 @@ class TestDynamicallyTypedFunctionErrorSuppression:
         test_case_name, test_case, errors = yielded_errors
         failure_msg = f"Check failed for case '{test_case_name}'"
 
-        print(errors)
         if test_case.should_yield_error:
-            print("Should yield error")
             check_is_not_empty(errors, msg=failure_msg)
         else:
-            print("Should not yield error")
             check_is_empty(errors, msg=failure_msg)

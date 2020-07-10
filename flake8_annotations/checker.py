@@ -39,6 +39,7 @@ class TypeHintChecker:
         self.suppress_none_returning: bool
         self.suppress_dummy_args: bool
         self.allow_untyped_defs: bool
+        self.mypy_init_return: bool
 
     def run(self) -> Generator[FORMATTED_ERROR, None, None]:
         """
@@ -55,8 +56,8 @@ class TypeHintChecker:
         #
         # Flake8 handles all noqa and error code ignore configurations after the error is yielded
         for function in visitor.function_definitions:
-            # Skip yielding any errors from dynamically typed functions (function has no type hints)
             if self.allow_untyped_defs and function.is_dynamically_typed():
+                # Skip yielding errors from dynamically typed functions
                 continue
 
             # Create sentinels to check for mixed hint styles
@@ -83,11 +84,21 @@ class TypeHintChecker:
 
             # Yield explicit errors for arguments that are missing annotations
             for arg in function.get_missed_annotations():
-                # Skip yielding return errors if the `--suppress-none-returning` flag is `True` and
-                # the function has only `None` returns (which includes the case of no returns)
-                if arg.argname == "return" and self.suppress_none_returning:
-                    if not arg.has_type_annotation and function.has_only_none_returns:
-                        continue
+                if arg.argname == "return":
+                    # return annotations have multiple possible short-circuit paths
+                    if self.suppress_none_returning:
+                        # Skip yielding return errors if the function has only `None` returns
+                        # This includes the case of no returns.
+                        if not arg.has_type_annotation and function.has_only_none_returns:
+                            continue
+                    if self.mypy_init_return:
+                        # Skip yielding return errors for `__init__` if at least one argument is
+                        # annotated
+                        if function.is_class_method and function.name == "__init__":
+                            # If we've gotten here, then `function.get_annotated_arguments` won't
+                            # contain `return`, since we're iterating over missing annotations
+                            if function.get_annotated_arguments():
+                                continue
 
                 # If the `--suppress-dummy-args` flag is `True`, skip yielding errors for any
                 # arguments named `_`
@@ -97,7 +108,7 @@ class TypeHintChecker:
                 yield classify_error(function, arg).to_flake8()
 
     @classmethod
-    def add_options(cls, parser: OptionManager) -> None:
+    def add_options(cls, parser: OptionManager) -> None:  # pragma: no cover
         """Add custom configuration option(s) to flake8."""
         parser.add_option(
             "--suppress-none-returning",
@@ -125,18 +136,30 @@ class TypeHintChecker:
             default=False,
             action="store_true",
             parse_from_config=True,
-            help=("Suppress all errors for dynamically typed functions. (Default: False)"),
+            help="Suppress all errors for dynamically typed functions. (Default: False)",
+        )
+
+        parser.add_option(
+            "--mypy-init-return",
+            default=False,
+            action="store_true",
+            parse_from_config=True,
+            help=(
+                "Allow omission of a return type hint for __init__ if at least one argument is "
+                "annotated. (Default: False)"
+            ),
         )
 
     @classmethod
-    def parse_options(cls, options: Namespace) -> None:
+    def parse_options(cls, options: Namespace) -> None:  # pragma: no cover
         """Parse the custom configuration options given to flake8."""
         cls.suppress_none_returning = options.suppress_none_returning
         cls.suppress_dummy_args = options.suppress_dummy_args
         cls.allow_untyped_defs = options.allow_untyped_defs
+        cls.mypy_init_return = options.mypy_init_return
 
     @staticmethod
-    def get_typed_tree(src: str) -> ast.Module:
+    def get_typed_tree(src: str) -> ast.Module:  # pragma: no cover
         """Parse the provided source into a typed AST."""
         if PY_GTE_38:
             # Built-in ast requires a flag to parse type comments
