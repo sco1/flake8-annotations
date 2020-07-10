@@ -1,6 +1,10 @@
 # Changelog
 Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (`<major>`.`<minor>`.`<patch>`)
 
+## [v2.2.1]
+### Fixed
+* #89 Revert change to Python version pinning to prevent unnecessary locking headaches
+
 ## [v2.2.0]
 ### Added
 * #87 Add `--allow-untyped-defs` to suppress all errors from dynamically typed functions. A function is considered dynamically typed if it does not contain any type hints.

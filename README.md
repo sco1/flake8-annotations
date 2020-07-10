@@ -23,7 +23,7 @@ You can verify it's being picked up by invoking the following in your shell:
 
 ```bash
 $ flake8 --version
-3.8.2 (flake8-annotations: 2.2.0, mccabe: 0.6.1, pycodestyle: 5.0.2, pyflakes: 2.2.0) CPython 3.8.2 on Darwin
+3.8.2 (flake8-annotations: 2.2.1, mccabe: 0.6.1, pycodestyle: 5.0.2, pyflakes: 2.2.0) CPython 3.8.2 on Darwin
 ```
 
 ## Table of Warnings
