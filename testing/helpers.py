@@ -30,6 +30,7 @@ def check_source(
     suppress_none_returns: bool = False,
     suppress_dummy_args: bool = False,
     allow_untyped_defs: bool = False,
+    mypy_init_return: bool = False,
 ) -> Generator[Error, None, None]:
     """Helper for generating linting errors from the provided source code."""
     _, lines = parse_source(src)
@@ -39,6 +40,7 @@ def check_source(
     checker_instance.suppress_none_returning = suppress_none_returns
     checker_instance.suppress_dummy_args = suppress_dummy_args
     checker_instance.allow_untyped_defs = allow_untyped_defs
+    checker_instance.mypy_init_return = mypy_init_return
 
     return checker_instance.run()
 

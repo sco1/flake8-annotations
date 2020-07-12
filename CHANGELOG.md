@@ -1,6 +1,10 @@
 # Changelog
 Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (`<major>`.`<minor>`.`<patch>`)
 
+## [v2.3.0]
+### Added
+* #87 Add `--mypy-init-return` to allow omission of a return type hint for `__init__` if at least one argument is annotated. See [mypy's documentation](https://mypy.readthedocs.io/en/stable/class_basics.html?#annotating-init-methods) for additional details.
+
 ## [v2.2.1]
 ### Fixed
 * #89 Revert change to Python version pinning to prevent unnecessary locking headaches
