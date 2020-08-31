@@ -34,7 +34,7 @@ flake8 = "^3.7, <3.9"
 typed-ast = {version="^1.4,<2.0", python="<3.8"}
 
 [tool.poetry.dev-dependencies]
-black = {version = "^19.10b0"}
+black = {version = "^20.8b1"}
 flake8-bugbear = "^20.1"
 flake8-docstrings = "^1.5"
 flake8-formatter-junit-xml = "^0.0"
