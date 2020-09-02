@@ -38,7 +38,11 @@ function_test_cases = {
             """
         ),
         func=(
-            nonclass_func(name="foo", function_type=FunctionType.PUBLIC, is_return_annotated=True,),
+            nonclass_func(
+                name="foo",
+                function_type=FunctionType.PUBLIC,
+                is_return_annotated=True,
+            ),
         ),
     ),
     "protected_fun": FunctionTestCase(
@@ -85,7 +89,11 @@ function_test_cases = {
             """
         ),
         func=(
-            nonclass_func(name="foo", function_type=FunctionType.PUBLIC, is_return_annotated=True,),
+            nonclass_func(
+                name="foo",
+                function_type=FunctionType.PUBLIC,
+                is_return_annotated=True,
+            ),
         ),
     ),
     "async_protected_fun": FunctionTestCase(
@@ -185,7 +193,11 @@ function_test_cases = {
             """
         ),
         func=(
-            class_func(name="foo", function_type=FunctionType.PUBLIC, class_decorator_type=None,),
+            class_func(
+                name="foo",
+                function_type=FunctionType.PUBLIC,
+                class_decorator_type=None,
+            ),
         ),
     ),
     "decorated_callable_method": FunctionTestCase(
@@ -198,7 +210,11 @@ function_test_cases = {
             """
         ),
         func=(
-            class_func(name="foo", function_type=FunctionType.PUBLIC, class_decorator_type=None,),
+            class_func(
+                name="foo",
+                function_type=FunctionType.PUBLIC,
+                class_decorator_type=None,
+            ),
         ),
     ),
     "decorated_noncallable_async_method": FunctionTestCase(
@@ -211,7 +227,11 @@ function_test_cases = {
             """
         ),
         func=(
-            class_func(name="foo", function_type=FunctionType.PUBLIC, class_decorator_type=None,),
+            class_func(
+                name="foo",
+                function_type=FunctionType.PUBLIC,
+                class_decorator_type=None,
+            ),
         ),
     ),
     "decorated_callable_async_method": FunctionTestCase(
@@ -224,7 +244,11 @@ function_test_cases = {
             """
         ),
         func=(
-            class_func(name="foo", function_type=FunctionType.PUBLIC, class_decorator_type=None,),
+            class_func(
+                name="foo",
+                function_type=FunctionType.PUBLIC,
+                class_decorator_type=None,
+            ),
         ),
     ),
     "decorated_classmethod": FunctionTestCase(

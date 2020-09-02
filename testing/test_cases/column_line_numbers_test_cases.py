@@ -23,7 +23,10 @@ parser_test_cases = {
                 pass     # 2
             """
         ),
-        error_locations=((1, 8), (1, 11),),
+        error_locations=(
+            (1, 8),
+            (1, 11),
+        ),
     ),
     "decorated_def": ParserTestCase(
         src=dedent(
@@ -38,7 +41,11 @@ parser_test_cases = {
                 pass               # 8
             """
         ),
-        error_locations=((5, 4), (6, 4), (7, 2),),
+        error_locations=(
+            (5, 4),
+            (6, 4),
+            (7, 2),
+        ),
     ),
     "single_line_docstring": ParserTestCase(
         src=dedent(
