@@ -113,9 +113,23 @@ Ellipses are ignored by `flake8-annotations` parser.
 **Note:** If present, function type comments will override any argument type comments.
 
 ### Partial type comments
-Partially type hinted functions are supported
+Partially type hinted functions are supported for non-static class methods.
 
 For example:
+
+```py
+class Foo:
+    def __init__(self):
+        # type: () -> None
+        ...
+
+    def bar(self, a):
+        # type: (int) -> int
+        ...
+```
+Will consider `bar`'s `self` argument as unannotated and use the `int` type hint for `a`.
+
+Partial type comments utilizing ellipses as placeholders is also supported:
 
 ```py
 def foo(arg1, arg2):
@@ -130,6 +144,8 @@ def foo(arg1, arg2):
     pass
 ```
 Will show `arg1` as missing a type hint.
+
+**Deprecation notice**: Explicit support for utilization of ellipses as placeholders will be removed in version `3.0`. See [this issue](https://github.com/sco1/flake8-annotations/issues/95) for more information.
 
 ## Contributing
 
