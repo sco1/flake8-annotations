@@ -1,6 +1,10 @@
 # Changelog
 Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (`<major>`.`<minor>`.`<patch>`)
 
+## [v2.4.0]
+### Fixed
+* #92 Fix inconsistent linting behavior between function-level type comments and their equivalent PEP 3107-style function annotations of class methods and classmethods.
+
 ## [v2.3.0]
 ### Added
 * #87 Add `--mypy-init-return` to allow omission of a return type hint for `__init__` if at least one argument is annotated. See [mypy's documentation](https://mypy.readthedocs.io/en/stable/class_basics.html?#annotating-init-methods) for additional details.
