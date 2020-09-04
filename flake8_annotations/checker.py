@@ -1,6 +1,6 @@
 from argparse import Namespace
 from functools import lru_cache
-from typing import Generator, List, Tuple
+from typing import Generator, List, Optional, Tuple
 
 from flake8.options.manager import OptionManager
 from flake8_annotations import (
@@ -51,6 +51,11 @@ class TypeHintChecker:
         visitor = FunctionVisitor(self.lines)
         visitor.visit(self.tree)
 
+        # Keep track of the last encountered function decorated by `typing.overload`, if any.
+        # Per the `typing` module documentation, a series of overload-decorated definitions must be
+        # followed by exactly one non-overload-decorated definition of the same function.
+        last_overload_decorated_function_name: Optional[str] = None
+
         # Iterate over the arguments with missing type hints, by function, and yield linting errors
         # to flake8
         #
@@ -81,6 +86,15 @@ class TypeHintChecker:
                     # Short-circuit check for mixing of type comments & 3107-style annotations
                     yield error_codes.ANN301.from_function(function).to_flake8()
                     break
+
+            # Before we iterate over the function's missing annotations, check to see if it's the
+            # closing function def in a series of `typing.overload` decorated functions.
+            if last_overload_decorated_function_name == function.name:
+                continue
+
+            # If it's not, and it is overload decorated, store it for the next iteration
+            if function.is_overload_decorated:
+                last_overload_decorated_function_name = function.name
 
             # Yield explicit errors for arguments that are missing annotations
             for arg in function.get_missed_annotations():
