@@ -289,6 +289,7 @@ class Function:
         will fail to parse the hint
         """
         hint_tree = ast.parse(node.type_comment, "<func_type>", "func_type")
+        hint_tree = Function._maybe_inject_class_argument(hint_tree, func_obj)
 
         for arg, hint_comment in zip_longest(func_obj.args, hint_tree.argtypes):
             if isinstance(hint_comment, ast_Ellipsis):
@@ -304,6 +305,44 @@ class Function:
         func_obj.is_return_annotated = True
 
         return func_obj
+
+    @staticmethod
+    def _maybe_inject_class_argument(
+        hint_tree: ast.FunctionType, func_obj: "Function"
+    ) -> ast.FunctionType:
+        """
+        Inject `self` or `cls` args into a type comment to align with PEP 3107-style annotations.
+
+        Because PEP 484 does not describe a method to provide partial function-level type comments,
+        there is a potential for ambiguity in the context of both class methods and classmethods
+        when aligning type comments to method arguments.
+
+        These two class methods, for example, should lint equivalently:
+
+            def bar(self, a):
+                # type: (int) -> int
+                ...
+
+            def bar(self, a: int) -> int
+                ...
+
+        When this example type comment is parsed by `ast` and then matched with the method's
+        arguments, it associates the `int` hint to `self` rather than `a`, so a dummy hint needs to
+        be provided in situations where `self` or `class` are not hinted in the type comment in
+        order to achieve equivalent linting results to PEP-3107 style annotations.
+
+        A dummy `ast.Ellipses` constant is injected if the following criteria are met:
+            1. The function node is either a class method or classmethod
+            2. The number of hinted args is at least 1 less than the number of function args
+        """
+        if (
+            func_obj.is_class_method
+            or func_obj.class_decorator_type != ClassDecoratorType.STATICMETHOD
+        ):
+            if len(hint_tree.argtypes) < (len(func_obj.args) - 1):  # Subtract 1 to skip return arg
+                hint_tree.argtypes = [ast.Ellipsis()] + hint_tree.argtypes
+
+        return hint_tree
 
     @staticmethod
     def get_function_type(function_name: str) -> FunctionType:
