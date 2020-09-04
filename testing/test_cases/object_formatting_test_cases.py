@@ -47,6 +47,7 @@ formatting_test_cases = {
             "is_return_annotated=False, "
             "has_type_comment=False, "
             "has_only_none_returns=True, "
+            "is_overload_decorated=False, "
             "args=[Argument(argname='return', lineno=0, col_offset=0, annotation_type=AnnotationType.ARGS, "  # noqa: E501
             "has_type_annotation=False, has_3107_annotation=False, has_type_comment=False)]"
             ")"
@@ -66,6 +67,7 @@ formatting_test_cases = {
             "is_return_annotated=False, "
             "has_type_comment=False, "
             "has_only_none_returns=True, "
+            "is_overload_decorated=False, "
             "args=[Argument(argname='foo', lineno=0, col_offset=0, annotation_type=AnnotationType.ARGS, "  # noqa: E501
             "has_type_annotation=False, has_3107_annotation=False, has_type_comment=False), "
             "Argument(argname='return', lineno=0, col_offset=0, annotation_type=AnnotationType.ARGS, "  # noqa: E501

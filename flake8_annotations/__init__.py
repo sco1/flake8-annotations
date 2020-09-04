@@ -110,6 +110,7 @@ class Function:
         is_return_annotated: bool = False,
         has_type_comment: bool = False,
         has_only_none_returns: bool = True,
+        is_overload_decorated: bool = False,
         args: List[Argument] = None,
     ):
         self.name = name
@@ -121,6 +122,7 @@ class Function:
         self.is_return_annotated = is_return_annotated
         self.has_type_comment = has_type_comment
         self.has_only_none_returns = has_only_none_returns
+        self.is_overload_decorated = is_overload_decorated
         self.args = args
 
     def is_fully_annotated(self) -> bool:
@@ -169,6 +171,7 @@ class Function:
             f"is_return_annotated={self.is_return_annotated}, "
             f"has_type_comment={self.has_type_comment}, "
             f"has_only_none_returns={self.has_only_none_returns}, "
+            f"is_overload_decorated={self.is_overload_decorated}, "
             f"args={self.args}"
             ")"
         )
@@ -185,12 +188,18 @@ class Function:
         following kwargs will be overridden:
           * function_type
           * class_decorator_type
+          * is_overload_decorated
           * args
         """
         # Extract function types from function name
         kwargs["function_type"] = cls.get_function_type(node.name)
+
+        # Identify type of class method, if applicable
         if kwargs.get("is_class_method", False):
             kwargs["class_decorator_type"] = cls.get_class_decorator_type(node)
+
+        # Check for `typing.overload` decorator
+        kwargs["is_overload_decorated"] = cls.has_overload_decorator(node)
 
         new_function = cls(node.name, node.lineno, node.col_offset, **kwargs)
 
@@ -377,12 +386,13 @@ class Function:
 
         If @classmethod or @staticmethod decorators are not present, this function will return None
         """
-        decorators = []
-        for decorator in function_node.decorator_list:
-            # @classmethod and @staticmethod will show up as ast.Name objects, where callable
-            # decorators will show up as ast.Call, which we can ignore
-            if isinstance(decorator, ast.Name):
-                decorators.append(decorator.id)
+        # @classmethod and @staticmethod will show up as ast.Name objects, where callable decorators
+        # will show up as ast.Call, which we can ignore
+        decorators = [
+            decorator.id
+            for decorator in function_node.decorator_list
+            if isinstance(decorator, ast.Name)
+        ]
 
         if "classmethod" in decorators:
             return ClassDecoratorType.CLASSMETHOD
@@ -390,6 +400,29 @@ class Function:
             return ClassDecoratorType.STATICMETHOD
         else:
             return None
+
+    @staticmethod
+    def has_overload_decorator(function_node: AST_FUNCTION_TYPES) -> bool:
+        """
+        Determine whether the provided function node is decorated by `typing.overload`.
+
+        NOTE: For simplicity, this check will not identify the `typing.overload` decorator if it has
+        been aliased (e.g. `from typing import overload as please_dont_do_this`).
+        """
+        # Depending on how the decorator is imported, it will appear in the function node's
+        # decorator list as an instance of either `ast.Name` (e.g. `@overload`) or `ast.Attribute`
+        # (e.g. `@typing.overload`)
+        # It assumed that the overload decorator will never be present as a callable
+        # (e.g. `@overload()`)
+        for decorator in function_node.decorator_list:
+            if isinstance(decorator, ast.Name):
+                if decorator.id == "overload":
+                    return True
+            elif isinstance(decorator, ast.Attribute):
+                if decorator.attr == "overload":
+                    return True
+        else:
+            return False
 
 
 class FunctionVisitor(ast.NodeVisitor):

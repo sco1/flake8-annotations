@@ -522,4 +522,32 @@ function_test_cases = {
             class_func(name="foo_method", function_type=FunctionType.PUBLIC),
         ),
     ),
+    "overload_decorated_non_alias": FunctionTestCase(
+        src=dedent(
+            """\
+            @overload
+            def foo():
+                pass
+            """
+        ),
+        func=(
+            nonclass_func(
+                name="foo", function_type=FunctionType.PUBLIC, is_overload_decorated=True,
+            ),
+        ),
+    ),
+    "overload_decorated_attribute": FunctionTestCase(
+        src=dedent(
+            """\
+            @typing.overload
+            def foo():
+                pass
+            """
+        ),
+        func=(
+            nonclass_func(
+                name="foo", function_type=FunctionType.PUBLIC, is_overload_decorated=True,
+            ),
+        ),
+    ),
 }
