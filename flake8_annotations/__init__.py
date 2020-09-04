@@ -335,10 +335,11 @@ class Function:
             1. The function node is either a class method or classmethod
             2. The number of hinted args is at least 1 less than the number of function args
         """
-        if (
-            func_obj.is_class_method
-            or func_obj.class_decorator_type != ClassDecoratorType.STATICMETHOD
-        ):
+        if not func_obj.is_class_method:
+            # Short circuit
+            return hint_tree
+
+        if func_obj.class_decorator_type != ClassDecoratorType.STATICMETHOD:
             if len(hint_tree.argtypes) < (len(func_obj.args) - 1):  # Subtract 1 to skip return arg
                 hint_tree.argtypes = [ast.Ellipsis()] + hint_tree.argtypes
 
