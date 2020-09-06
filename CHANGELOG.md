@@ -4,6 +4,7 @@ Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (`<ma
 ## [v2.4.0]
 ### Fixed
 * #92 Fix inconsistent linting behavior between function-level type comments and their equivalent PEP 3107-style function annotations of class methods and classmethods.
+* #94 Fix improper handling of the closing definition in a series of `typing.overload` decorated functions.
 
 ## [v2.3.0]
 ### Added

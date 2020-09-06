@@ -35,6 +35,19 @@ type_comment_arg_inject_test_cases = {
         ),
         should_yield_ANN100=True,
     ),
+    "untyped_staticmethod": TypeCommentArgInjectTestCase(
+        src=dedent(
+            """\
+            class Foo:
+
+                @staticmethod
+                def bar(a):
+                    # type: (...) -> float
+                    ...
+            """
+        ),
+        should_yield_ANN100=False,
+    ),
     "typed_self_arg": TypeCommentArgInjectTestCase(
         src=dedent(
             """\

@@ -50,6 +50,20 @@ parser_test_cases = {
         ],
         should_yield_ANN301=False,
     ),
+    "no_arg_comment": ParserTestCase(
+        src=dedent(
+            """\
+            def foo(arg1):
+                # type: (...) -> int
+                pass
+            """
+        ),
+        args=[
+            untyped_arg(argname="arg1"),
+            typed_arg(argname="return", annotation_type=AnnotationType.RETURN),
+        ],
+        should_yield_ANN301=False,
+    ),
     "partial_function_comment_no_ellipsis": ParserTestCase(
         src=dedent(
             """\
