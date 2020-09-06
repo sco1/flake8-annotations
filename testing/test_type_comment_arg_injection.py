@@ -35,10 +35,10 @@ class TestTypeCommentArgInject:
             tuple(check_source(test_case.src)),
         )
 
-    def test_suppressed_return_error(
+    def test_type_comment_arg_injection(
         self, yielded_errors: Tuple[str, TypeCommentArgInjectTestCase, Tuple[Error]]
     ) -> None:
-        """Test that ANN101 error is yielded where necessary."""
+        """Test that ANN100 errors are yielded appropriately for type comment annotated defs."""
         failure_msg = f"Check failed for case '{yielded_errors[0]}'"
 
         yielded_ANN100 = any("ANN1" in error[2] for error in yielded_errors[2])
