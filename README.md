@@ -13,13 +13,13 @@ Install from PyPi with your favorite `pip` invocation:
 $ pip install flake8-annotations
 ```
 
-It will then be run automatically as part of Flake8.
+It will then be run automatically as part of flake8.
 
 You can verify it's being picked up by invoking the following in your shell:
 
 ```bash
 $ flake8 --version
-3.8.3 (flake8-annotations: 2.3.0, mccabe: 0.6.1, pycodestyle: 2.6.2, pyflakes: 2.2.0) CPython 3.8.2 on Darwin
+3.8.3 (flake8-annotations: 2.4.0, mccabe: 0.6.1, pycodestyle: 2.6.0, pyflakes: 2.2.0) CPython 3.8.2 on Darwin
 ```
 
 ## Table of Warnings
@@ -57,7 +57,7 @@ All warnings are enabled by default.
 1. See: [PEP 484](https://www.python.org/dev/peps/pep-0484/#annotating-instance-and-class-methods) and [PEP 563](https://www.python.org/dev/peps/pep-0563/) for suggestions on annotating `self` and `cls` arguments.
 
 ## Configuration Options
-Some opinionated flags are provided to tailor the linting errors emitted:
+Some opinionated flags are provided to tailor the linting errors emitted.
 
 ### `--suppress-none-returning`: `bool`
 Suppress `ANN200`-level errors for functions that meet one of the following criteria:
@@ -81,24 +81,35 @@ Allow omission of a return type hint for `__init__` if at least one argument is 
 
 Default: `False`
 
+## The `typing.overload` Decorator
+Per the [`typing`](https://docs.python.org/3/library/typing.html#typing.overload) documentation:
+
+> The `@overload` decorator allows describing functions and methods that support multiple different combinations of argument types. A series of `@overload`-decorated definitions must be followed by exactly one non-`@overload`-decorated definition (for the same function/method).
+
+In the spirit of the purpose of this decorator, errors for missing annotations for non-`@overload`-decorated functions are ignored if they meet this criteria.
+
+For example, this code:
+
+```py
+import typing
+
+
+@typing.overload
+def foo(a: int) -> int:
+    ...
+
+def foo(a):
+    ...
+```
+
+Will not raise linting errors for missing annotations for the arguments & return of the non-decorated `foo` definition.
+
+**NOTE:** If importing directly, the `typing.overload` decorator will not be recognized if it is imported with an alias (e.g. `from typing import overload as please_dont_do_this`). Aliasing of the `typing` module is supported (e.g. `import typing as t; @t.overload`).
+
 ## Caveats for PEP 484-style Type Comments
-### Function type comments
-Function type comments are assumed to contain both argument and return type hints
 
-Yes:
-```py
-# type: (int, int) -> bool
-```
-
-No:
-```py
-# type: (int, int)
-```
-
-Python cannot parse the latter and will raise `SyntaxError: unexpected EOF while parsing`
-
-### Mixing argument type comments and function type comments
-Support is provided for mixing argument and function type comments, provided that the function type comment use an Ellipsis for the arguments.
+### Mixing argument-level and function-level type comments
+Support is provided for mixing argument-level and function-level type comments.
 
 ```py
 def foo(
@@ -108,14 +119,26 @@ def foo(
     pass
 ```
 
-Ellipses are ignored by `flake8-annotations` parser.
-
-**Note:** If present, function type comments will override any argument type comments.
+**Note:** If present, function-level type comments will override any argument-level type comments.
 
 ### Partial type comments
-Partially type hinted functions are supported
+Partially type hinted functions are supported for non-static class methods.
 
 For example:
+
+```py
+class Foo:
+    def __init__(self):
+        # type: () -> None
+        ...
+
+    def bar(self, a):
+        # type: (int) -> int
+        ...
+```
+Will consider `bar`'s `self` argument as unannotated and use the `int` type hint for `a`.
+
+Partial type comments utilizing ellipses as placeholders is also supported:
 
 ```py
 def foo(arg1, arg2):
@@ -130,6 +153,8 @@ def foo(arg1, arg2):
     pass
 ```
 Will show `arg1` as missing a type hint.
+
+**Deprecation notice**: Explicit support for utilization of ellipses as placeholders will be removed in version `3.0`. See [this issue](https://github.com/sco1/flake8-annotations/issues/95) for more information.
 
 ## Contributing
 

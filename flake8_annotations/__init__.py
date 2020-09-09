@@ -17,7 +17,7 @@ else:
 
     PY_GTE_38 = False
 
-__version__ = "2.3.0"
+__version__ = "2.4.0"
 
 AST_ARG_TYPES = ("args", "vararg", "kwonlyargs", "kwarg")
 if PY_GTE_38:
@@ -110,6 +110,7 @@ class Function:
         is_return_annotated: bool = False,
         has_type_comment: bool = False,
         has_only_none_returns: bool = True,
+        is_overload_decorated: bool = False,
         args: List[Argument] = None,
     ):
         self.name = name
@@ -121,6 +122,7 @@ class Function:
         self.is_return_annotated = is_return_annotated
         self.has_type_comment = has_type_comment
         self.has_only_none_returns = has_only_none_returns
+        self.is_overload_decorated = is_overload_decorated
         self.args = args
 
     def is_fully_annotated(self) -> bool:
@@ -169,6 +171,7 @@ class Function:
             f"is_return_annotated={self.is_return_annotated}, "
             f"has_type_comment={self.has_type_comment}, "
             f"has_only_none_returns={self.has_only_none_returns}, "
+            f"is_overload_decorated={self.is_overload_decorated}, "
             f"args={self.args}"
             ")"
         )
@@ -185,12 +188,18 @@ class Function:
         following kwargs will be overridden:
           * function_type
           * class_decorator_type
+          * is_overload_decorated
           * args
         """
         # Extract function types from function name
         kwargs["function_type"] = cls.get_function_type(node.name)
+
+        # Identify type of class method, if applicable
         if kwargs.get("is_class_method", False):
             kwargs["class_decorator_type"] = cls.get_class_decorator_type(node)
+
+        # Check for `typing.overload` decorator
+        kwargs["is_overload_decorated"] = cls.has_overload_decorator(node)
 
         new_function = cls(node.name, node.lineno, node.col_offset, **kwargs)
 
@@ -289,6 +298,7 @@ class Function:
         will fail to parse the hint
         """
         hint_tree = ast.parse(node.type_comment, "<func_type>", "func_type")
+        hint_tree = Function._maybe_inject_class_argument(hint_tree, func_obj)
 
         for arg, hint_comment in zip_longest(func_obj.args, hint_tree.argtypes):
             if isinstance(hint_comment, ast_Ellipsis):
@@ -304,6 +314,45 @@ class Function:
         func_obj.is_return_annotated = True
 
         return func_obj
+
+    @staticmethod
+    def _maybe_inject_class_argument(
+        hint_tree: ast.FunctionType, func_obj: "Function"
+    ) -> ast.FunctionType:
+        """
+        Inject `self` or `cls` args into a type comment to align with PEP 3107-style annotations.
+
+        Because PEP 484 does not describe a method to provide partial function-level type comments,
+        there is a potential for ambiguity in the context of both class methods and classmethods
+        when aligning type comments to method arguments.
+
+        These two class methods, for example, should lint equivalently:
+
+            def bar(self, a):
+                # type: (int) -> int
+                ...
+
+            def bar(self, a: int) -> int
+                ...
+
+        When this example type comment is parsed by `ast` and then matched with the method's
+        arguments, it associates the `int` hint to `self` rather than `a`, so a dummy hint needs to
+        be provided in situations where `self` or `class` are not hinted in the type comment in
+        order to achieve equivalent linting results to PEP-3107 style annotations.
+
+        A dummy `ast.Ellipses` constant is injected if the following criteria are met:
+            1. The function node is either a class method or classmethod
+            2. The number of hinted args is at least 1 less than the number of function args
+        """
+        if not func_obj.is_class_method:
+            # Short circuit
+            return hint_tree
+
+        if func_obj.class_decorator_type != ClassDecoratorType.STATICMETHOD:
+            if len(hint_tree.argtypes) < (len(func_obj.args) - 1):  # Subtract 1 to skip return arg
+                hint_tree.argtypes = [ast.Ellipsis()] + hint_tree.argtypes
+
+        return hint_tree
 
     @staticmethod
     def get_function_type(function_name: str) -> FunctionType:
@@ -337,12 +386,13 @@ class Function:
 
         If @classmethod or @staticmethod decorators are not present, this function will return None
         """
-        decorators = []
-        for decorator in function_node.decorator_list:
-            # @classmethod and @staticmethod will show up as ast.Name objects, where callable
-            # decorators will show up as ast.Call, which we can ignore
-            if isinstance(decorator, ast.Name):
-                decorators.append(decorator.id)
+        # @classmethod and @staticmethod will show up as ast.Name objects, where callable decorators
+        # will show up as ast.Call, which we can ignore
+        decorators = [
+            decorator.id
+            for decorator in function_node.decorator_list
+            if isinstance(decorator, ast.Name)
+        ]
 
         if "classmethod" in decorators:
             return ClassDecoratorType.CLASSMETHOD
@@ -350,6 +400,29 @@ class Function:
             return ClassDecoratorType.STATICMETHOD
         else:
             return None
+
+    @staticmethod
+    def has_overload_decorator(function_node: AST_FUNCTION_TYPES) -> bool:
+        """
+        Determine whether the provided function node is decorated by `typing.overload`.
+
+        NOTE: For simplicity, this check will not identify the `typing.overload` decorator if it has
+        been aliased (e.g. `from typing import overload as please_dont_do_this`).
+        """
+        # Depending on how the decorator is imported, it will appear in the function node's
+        # decorator list as an instance of either `ast.Name` (e.g. `@overload`) or `ast.Attribute`
+        # (e.g. `@typing.overload`)
+        # It assumed that the overload decorator will never be present as a callable
+        # (e.g. `@overload()`)
+        for decorator in function_node.decorator_list:
+            if isinstance(decorator, ast.Name):
+                if decorator.id == "overload":
+                    return True
+            elif isinstance(decorator, ast.Attribute):
+                if decorator.attr == "overload":
+                    return True
+        else:
+            return False
 
 
 class FunctionVisitor(ast.NodeVisitor):
