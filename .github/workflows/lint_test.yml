@@ -50,3 +50,41 @@ jobs:
 
     - name: Run tests w/tox
       run: tox
+
+    - name: Cache coverage for ${{ matrix.python-version }}
+      uses: actions/upload-artifact@v2
+      with:
+        name: cov_py${{ matrix.python-version }}
+        path: .coverage
+
+  combine-cov:
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+
+    - name: Pull coverage workflow artifacts
+      uses: actions/download-artifact@v2
+      with:
+        path: cov_cache/
+
+    - name: Install cov & combine
+      run: |
+        pip install coverage
+        coverage combine ./cov_cache/**/.coverage
+
+    - name: Report coverage
+      run: |
+        coverage report -m --skip-covered
+        coverage html
+
+    - name: Publish cov HTML
+      uses: actions/upload-artifact@v2
+      with:
+        path: htmlcov/
+        name: cov_report_html
