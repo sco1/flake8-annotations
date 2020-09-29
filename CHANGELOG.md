@@ -1,6 +1,10 @@
 # Changelog
 Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (`<major>`.`<minor>`.`<patch>`)
 
+## [v2.4.1]
+### Fixed
+* #100 Fix incorrect positioning of posonlyargs in the `Function` argument list, causing incorrect classification of the type of missing argument.
+
 ## [v2.4.0]
 ### Fixed
 * #92 Fix inconsistent linting behavior between function-level type comments and their equivalent PEP 3107-style function annotations of class methods and classmethods.

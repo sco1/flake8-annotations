@@ -17,7 +17,7 @@ else:
 
     PY_GTE_38 = False
 
-__version__ = "2.4.0"
+__version__ = "2.4.1"
 
 # The order of AST_ARG_TYPES must match Python's grammar
 # See: https://docs.python.org/3/library/ast.html#abstract-grammar
