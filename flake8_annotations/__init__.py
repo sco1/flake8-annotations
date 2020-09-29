@@ -17,12 +17,15 @@ else:
 
     PY_GTE_38 = False
 
-__version__ = "2.4.0"
+__version__ = "2.4.1"
 
+# The order of AST_ARG_TYPES must match Python's grammar
+# See: https://docs.python.org/3/library/ast.html#abstract-grammar
 AST_ARG_TYPES = ("args", "vararg", "kwonlyargs", "kwarg")
 if PY_GTE_38:
     # Positional-only args introduced in Python 3.8
-    AST_ARG_TYPES += ("posonlyargs",)
+    # If posonlyargs are present, they will be before other argument types
+    AST_ARG_TYPES = ("posonlyargs",) + AST_ARG_TYPES
 
 AST_FUNCTION_TYPES = Union[ast.FunctionDef, ast.AsyncFunctionDef]
 AST_DEF_NODES = Union[ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef]

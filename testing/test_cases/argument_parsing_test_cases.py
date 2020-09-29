@@ -83,4 +83,18 @@ argument_test_cases = {
         ),
         py38_only=True,
     ),
+    "posonly_and_arg_args": ArgumentTestCase(
+        src=dedent(
+            """\
+            def foo(posonlyarg: int, /, bar: int) -> int:
+                pass
+            """
+        ),
+        args=(
+            typed_arg(argname="posonlyarg", annotation_type=AnnotationType.POSONLYARGS),
+            typed_arg(argname="bar", annotation_type=AnnotationType.ARGS),
+            typed_arg(argname="return", annotation_type=AnnotationType.RETURN),
+        ),
+        py38_only=True,
+    ),
 }
