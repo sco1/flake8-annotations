@@ -39,6 +39,7 @@ class TypeHintChecker:
         self.suppress_none_returning: bool
         self.suppress_dummy_args: bool
         self.allow_untyped_defs: bool
+        self.allow_untyped_nested: bool
         self.mypy_init_return: bool
 
     def run(self) -> Generator[FORMATTED_ERROR, None, None]:
@@ -61,9 +62,13 @@ class TypeHintChecker:
         #
         # Flake8 handles all noqa and error code ignore configurations after the error is yielded
         for function in visitor.function_definitions:
-            if self.allow_untyped_defs and function.is_dynamically_typed():
-                # Skip yielding errors from dynamically typed functions
-                continue
+            if function.is_dynamically_typed():
+                if self.allow_untyped_defs:
+                    # Skip yielding errors from dynamically typed functions
+                    continue
+                elif function.is_nested and self.allow_untyped_nested:
+                    # Skip yielding errors from dynamically typed nested functions
+                    continue
 
             # Create sentinels to check for mixed hint styles
             if function.has_type_comment:
@@ -154,6 +159,14 @@ class TypeHintChecker:
         )
 
         parser.add_option(
+            "--allow-untyped-nested",
+            default=False,
+            action="store_true",
+            parse_from_config=True,
+            help="Suppress all errors for dynamically typed nested functions. (Default: False)",
+        )
+
+        parser.add_option(
             "--mypy-init-return",
             default=False,
             action="store_true",
@@ -170,6 +183,7 @@ class TypeHintChecker:
         cls.suppress_none_returning = options.suppress_none_returning
         cls.suppress_dummy_args = options.suppress_dummy_args
         cls.allow_untyped_defs = options.allow_untyped_defs
+        cls.allow_untyped_nested = options.allow_untyped_nested
         cls.mypy_init_return = options.mypy_init_return
 
     @staticmethod

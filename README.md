@@ -76,6 +76,11 @@ Suppress all errors for dynamically typed functions. A function is considered dy
 
 Default: `False`
 
+### `--allow-untyped-nested`: `bool`
+Suppress all errors for dynamically typed nested functions. A function is considered dynamically typed if it does not contain any type hints.
+
+Default: `False`
+
 ### `--mypy-init-return`: `bool`
 Allow omission of a return type hint for `__init__` if at least one argument is annotated. See [mypy's documentation](https://mypy.readthedocs.io/en/stable/class_basics.html?#annotating-init-methods) for additional details.
 
