@@ -114,6 +114,7 @@ class Function:
         has_type_comment: bool = False,
         has_only_none_returns: bool = True,
         is_overload_decorated: bool = False,
+        is_nested: bool = False,
         args: List[Argument] = None,
     ):
         self.name = name
@@ -126,6 +127,7 @@ class Function:
         self.has_type_comment = has_type_comment
         self.has_only_none_returns = has_only_none_returns
         self.is_overload_decorated = is_overload_decorated
+        self.is_nested = is_nested
         self.args = args
 
     def is_fully_annotated(self) -> bool:
@@ -175,6 +177,7 @@ class Function:
             f"has_type_comment={self.has_type_comment}, "
             f"has_only_none_returns={self.has_only_none_returns}, "
             f"is_overload_decorated={self.is_overload_decorated}, "
+            f"is_nested={self.is_nested}, "
             f"args={self.args}"
             ")"
         )
