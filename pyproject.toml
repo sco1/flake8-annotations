@@ -37,14 +37,14 @@ typed-ast = {version="^1.4,<2.0", python="<3.8"}
 black = {version = "^20.8b1"}
 flake8-bugbear = "^20.1"
 flake8-docstrings = "^1.5"
+flake8-fixme = "^1.1"
 flake8-formatter-junit-xml = "^0.0"
 flake8-import-order = "^0.18"
 flake8-tidy-imports = "^4.1"
-flake8-todo = "^0.7"
-pep8-naming = "^0.10"
+pep8-naming = "^0.11"
 pre-commit = "^2.7"
 pytest = "^6.0"
-pytest-check = "^0.3"
+pytest-check = "^1.0"
 pytest-cov = "^2.10"
 tox = "^3.19"
 
