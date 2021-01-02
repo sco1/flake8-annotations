@@ -271,7 +271,7 @@ class Function:
             # the function node's body begins.
             # If the docstring is on one line then no rewinding is necessary.
             n_triple_quotes = lines[def_end_lineno].count('"""')
-            if n_triple_quotes == 1:
+            if n_triple_quotes == 1:  # pragma: no branch
                 # Docstring closure, rewind until the opening is found & take the line prior
                 while True:
                     def_end_lineno -= 1
@@ -434,6 +434,8 @@ class Function:
 class FunctionVisitor(ast.NodeVisitor):
     """An ast.NodeVisitor instance for walking the AST and describing all contained functions."""
 
+    AST_FUNC_TYPES = (ast.FunctionDef, ast.AsyncFunctionDef)
+
     def __init__(self, lines: List[str]):
         self.lines = lines
         self.function_definitions: List[Function] = []
@@ -448,7 +450,7 @@ class FunctionVisitor(ast.NodeVisitor):
 
         Thank you for the inspiration @isidentical :)
         """
-        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+        if isinstance(node, self.AST_FUNC_TYPES):
             # Check for non-empty context first to prevent IndexErrors for non-nested nodes
             if self._context:
                 if isinstance(self._context[-1], ast.ClassDef):
@@ -456,7 +458,7 @@ class FunctionVisitor(ast.NodeVisitor):
                     self.function_definitions.append(
                         Function.from_function_node(node, self.lines, is_class_method=True)
                     )
-                elif isinstance(self._context[-1], (ast.FunctionDef, ast.AsyncFunctionDef)):
+                elif isinstance(self._context[-1], self.AST_FUNC_TYPES):  # pragma: no branch
                     # Check for nested function & pass the appropriate flag
                     self.function_definitions.append(
                         Function.from_function_node(node, self.lines, is_nested=True)
@@ -510,7 +512,7 @@ class ReturnVisitor(ast.NodeVisitor):
             # In the event of an explicit `None` return (`return None`), the node body will be an
             # instance of either `ast.Constant` (3.8+) or `ast.NameConstant`, which we need to check
             # to see if it's actually `None`
-            if isinstance(node.value, (ast.Constant, ast.NameConstant)):
+            if isinstance(node.value, (ast.Constant, ast.NameConstant)):  # pragma: no branch
                 if node.value.value is None:
                     return
 
