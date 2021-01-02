@@ -450,11 +450,17 @@ class FunctionVisitor(ast.NodeVisitor):
         """
         if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
             # Check for non-empty context first to prevent IndexErrors for non-nested nodes
-            if self._context and isinstance(self._context[-1], ast.ClassDef):
-                # Check if current context is a ClassDef node & pass the appropriate flag
-                self.function_definitions.append(
-                    Function.from_function_node(node, self.lines, is_class_method=True)
-                )
+            if self._context:
+                if isinstance(self._context[-1], ast.ClassDef):
+                    # Check if current context is a ClassDef node & pass the appropriate flag
+                    self.function_definitions.append(
+                        Function.from_function_node(node, self.lines, is_class_method=True)
+                    )
+                elif isinstance(self._context[-1], (ast.FunctionDef, ast.AsyncFunctionDef)):
+                    # Check for nested function & pass the appropriate flag
+                    self.function_definitions.append(
+                        Function.from_function_node(node, self.lines, is_nested=True)
+                    )
             else:
                 self.function_definitions.append(Function.from_function_node(node, self.lines))
 
