@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "flake8-annotations"
-version = "2.4.1"
+version = "2.5.0"
 description = "Flake8 Type Annotation Checks"
 license = "MIT"
 readme = "README.md"
