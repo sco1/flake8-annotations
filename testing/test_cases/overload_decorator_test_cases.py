@@ -1,5 +1,7 @@
 from textwrap import dedent
-from typing import NamedTuple
+from typing import AbstractSet, NamedTuple
+
+from flake8_annotations.checker import _DEFAULT_OVERLOAD_DECORATORS
 
 
 class OverloadDecoratorTestCase(NamedTuple):
@@ -7,6 +9,7 @@ class OverloadDecoratorTestCase(NamedTuple):
 
     src: str
     should_yield_error: bool
+    overload_decorators: AbstractSet[str] = frozenset(_DEFAULT_OVERLOAD_DECORATORS)
 
 
 overload_decorator_test_cases = {
@@ -49,7 +52,7 @@ overload_decorator_test_cases = {
         ),
         should_yield_error=False,
     ),
-    "overload_decorated_aliased_import": OverloadDecoratorTestCase(  # Aliased import not suppoerted
+    "overload_decorated_aliased_import": OverloadDecoratorTestCase(
         src=dedent(
             """\
             @ovrld
@@ -61,6 +64,22 @@ overload_decorator_test_cases = {
             """
         ),
         should_yield_error=True,
+    ),
+    "overload_decorated_aliased_import_configured": OverloadDecoratorTestCase(
+        src=dedent(
+            """\
+            @ovrld
+            def foo(a: int) -> int:
+                ...
+
+            def foo(a):
+                ...
+            """
+        ),
+        should_yield_error=False,
+        overload_decorators={
+            "ovrld",
+        },
     ),
     "overload_decorated_name_mismatch": OverloadDecoratorTestCase(
         src=dedent(
