@@ -1,20 +1,10 @@
 version: 2
 
 updates:
-  - package_manager: "pip"
+  - package-ecosystem: "pip"
     directory: "/"
-    update_schedule: "weekly"
     target-branch: "dev-next"
-    ignored_updates:
-      # Ignore dev dependencies, these are pinned fairly liberally so they don't need to be
-      # rigorously tracked for updates
-      - match:
-          dependency_name: "flake8-*"
-      - match:
-          dependency_name: "pre-commit"
-      - match:
-          dependency_name: "pytest*"
-      - match:
-          dependency_name: "tox"
-      - match:
-          dependency_name: "pep8-naming"
+    schedule:
+        interval: "weekly"
+    allow:
+        - dependency-name: "flake8"

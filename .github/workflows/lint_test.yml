@@ -1,6 +1,10 @@
 name: lint-and-test
 
-on: [push, pull_request]
+on:
+  push:
+    tags-ignore:
+      - "**"  # Skip re-linting when tags are added
+  pull_request:
 
 jobs:
   lint:
