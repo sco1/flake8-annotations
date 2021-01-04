@@ -19,11 +19,6 @@ dispatch_decorator_test_cases = {
             @functools.singledispatch
             def foo(a):
                 print(a)
-
-            @foo.register
-            def _(a: list) -> None:
-                for idx, thing in enumerate(a):
-                    print(idx, thing)
             """
         ),
         should_yield_error=False,
@@ -34,11 +29,6 @@ dispatch_decorator_test_cases = {
             @fnctls.singledispatch
             def foo(a):
                 print(a)
-
-            @foo.register
-            def _(a: list) -> None:
-                for idx, thing in enumerate(a):
-                    print(idx, thing)
             """
         ),
         should_yield_error=False,
@@ -49,11 +39,6 @@ dispatch_decorator_test_cases = {
             @singledispatch
             def foo(a):
                 print(a)
-
-            @foo.register
-            def _(a: list) -> None:
-                for idx, thing in enumerate(a):
-                    print(idx, thing)
             """
         ),
         should_yield_error=False,
@@ -64,11 +49,6 @@ dispatch_decorator_test_cases = {
             @sngldsptch
             def foo(a):
                 print(a)
-
-            @foo.register
-            def _(a: list) -> None:
-                for idx, thing in enumerate(a):
-                    print(idx, thing)
             """
         ),
         should_yield_error=True,
@@ -79,11 +59,6 @@ dispatch_decorator_test_cases = {
             @sngldsptch
             def foo(a):
                 print(a)
-
-            @foo.register
-            def _(a: list) -> None:
-                for idx, thing in enumerate(a):
-                    print(idx, thing)
             """
         ),
         should_yield_error=False,
@@ -96,11 +71,6 @@ dispatch_decorator_test_cases = {
                 @functools.singledispatchmethod
                 def foo(self, a):
                     print(a)
-
-                @foo.register
-                def _(self: "Foo", a: list) -> None:
-                    for idx, thing in enumerate(a):
-                        print(idx, thing)
             """
         ),
         should_yield_error=False,
@@ -112,11 +82,6 @@ dispatch_decorator_test_cases = {
                 @fnctls.singledispatchmethod
                 def foo(self, a):
                     print(a)
-
-                @foo.register
-                def _(self: "Foo", a: list) -> None:
-                    for idx, thing in enumerate(a):
-                        print(idx, thing)
             """
         ),
         should_yield_error=False,
@@ -128,11 +93,6 @@ dispatch_decorator_test_cases = {
                 @singledispatchmethod
                 def foo(self, a):
                     print(a)
-
-                @foo.register
-                def _(self: "Foo", a: list) -> None:
-                    for idx, thing in enumerate(a):
-                        print(idx, thing)
             """
         ),
         should_yield_error=False,
@@ -144,11 +104,6 @@ dispatch_decorator_test_cases = {
                 @sngldsptchmthd
                 def foo(self, a):
                     print(a)
-
-                @foo.register
-                def _(self: "Foo", a: list) -> None:
-                    for idx, thing in enumerate(a):
-                        print(idx, thing)
             """
         ),
         should_yield_error=True,
@@ -160,14 +115,29 @@ dispatch_decorator_test_cases = {
                 @sngldsptchmthd
                 def foo(self, a):
                     print(a)
-
-                @foo.register
-                def _(self: "Foo", a: list) -> None:
-                    for idx, thing in enumerate(a):
-                        print(idx, thing)
             """
         ),
         should_yield_error=False,
         dispatch_decorators={"sngldsptchmthd"},
+    ),
+    "singledispatch_attribute_callable": DispatchDecoratorTestCase(
+        src=dedent(
+            """\
+            @functools.singledispatch()
+            def foo(a):
+                print(a)
+            """
+        ),
+        should_yield_error=False,
+    ),
+    "singledispatch_import_callable": DispatchDecoratorTestCase(
+        src=dedent(
+            """\
+            @singledispatch()
+            def foo(a):
+                print(a)
+            """
+        ),
+        should_yield_error=False,
     ),
 }

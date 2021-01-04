@@ -94,7 +94,7 @@ Decorators are matched based on their attribute name. For example, `"singledispa
   * `import functools as fnctls; @fnctls.singledispatch`
   * `from functools import singledispatch; @singledispatch`
 
-**NOTE:** Callable decorators are currently not considered.
+**NOTE:** Deeper imports, such as `a.b.singledispatch` are not supported.
 
 See [Generic Functions](#generic-functions) for additional information.
 
@@ -108,7 +108,7 @@ Decorators are matched based on their attribute name. For example, `"overload"` 
   * `import typing as t; @t.overload`
   * `from typing import overload; @overload`
 
-**NOTE:** Callable decorators are currently not considered.
+**NOTE:** Deeper imports, such as `a.b.overload` are not supported.
 
 See [The `typing.overload` Decorator](#the-typingoverload-decorator) for additional information.
 

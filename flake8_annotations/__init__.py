@@ -158,21 +158,41 @@ class Function:
         Decorator matching is done against the provided `check_decorators` set, allowing the user
         to specify any expected aliasing in the relevant flake8 configuration option. Decorators are
         assumed to be either a module attribute (e.g. `@typing.overload`) or name
-        (e.g. `@overload`), and never as a callable (`@typing.overload()`). For the case of a module
-        attribute, only the attribute is checked against `overload_decorators`.
+        (e.g. `@overload`). For the case of a module attribute, only the attribute is checked
+        against `overload_decorators`.
+
+        NOTE: Deeper decorator imports (e.g. `a.b.overload`) are not explicitly supported
         """
-        # Depending on how the decorator is imported, it will appear in the function node's
-        # decorator list as an instance of either `ast.Name` (e.g. `@overload`) or `ast.Attribute`
-        # (e.g. `@typing.overload`)
         for decorator in self.decorator_list:
-            if isinstance(decorator, ast.Name):
-                if decorator.id in check_decorators:
-                    return True
-            elif isinstance(decorator, ast.Attribute):  # pragma: no branch
-                if decorator.attr in check_decorators:
-                    return True
+            # Drop to a helper to allow for simpler handling of callable decorators
+            return self._decorator_checker(decorator, check_decorators)
         else:
             return False
+
+    def _decorator_checker(
+        self, decorator: AST_DECORATOR_NODES, check_decorators: Set[str]
+    ) -> bool:
+        """
+        Check the provided decorator for a match against the provided set of check names.
+
+        Decorators are assumed to be of the following form:
+            * `a.name` or `a.name()`
+            * `name` or `name()`
+
+        NOTE: Deeper imports (e.g. `a.b.name`) are not explicitly supported.
+        """
+        if isinstance(decorator, ast.Name):
+            # e.g. `@overload`, where `decorator.id` will be the name
+            if decorator.id in check_decorators:
+                return True
+        elif isinstance(decorator, ast.Attribute):
+            # e.g. `@typing.overload`, where `decorator.attr` will be the name
+            if decorator.attr in check_decorators:
+                return True
+        elif isinstance(decorator, ast.Call):  # pragma: no branch
+            # e.g. `@overload()` or `@typing.overload()`, where `decorator.func` will be `ast.Name`
+            # or `ast.Attribute`, which we can check recursively
+            return self._decorator_checker(decorator.func, check_decorators)
 
     def __str__(self) -> str:
         """

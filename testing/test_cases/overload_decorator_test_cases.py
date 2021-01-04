@@ -92,4 +92,30 @@ overload_decorator_test_cases = {
         ),
         should_yield_error=True,
     ),
+    "overload_decorated_attribute_callable": OverloadDecoratorTestCase(
+        src=dedent(
+            """\
+            @typing.overload()
+            def foo(a: int) -> int:
+                ...
+
+            def foo(a):
+                ...
+            """
+        ),
+        should_yield_error=False,
+    ),
+    "overload_decorated_direct_import_callable": OverloadDecoratorTestCase(
+        src=dedent(
+            """\
+            @overload()
+            def foo(a: int) -> int:
+                ...
+
+            def foo(a):
+                ...
+            """
+        ),
+        should_yield_error=False,
+    ),
 }
