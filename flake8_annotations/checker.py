@@ -81,6 +81,11 @@ class TypeHintChecker:
                     # Skip yielding errors from dynamically typed nested functions
                     continue
 
+            # Skip yielding errors for configured dispatch functions, such as
+            # `functools.singledispatch` and `functools.singledispatchmethod`
+            if function.has_decorator(self.dispatch_decorators):
+                continue
+
             # Create sentinels to check for mixed hint styles
             if function.has_type_comment:
                 has_type_comment = True
@@ -109,7 +114,7 @@ class TypeHintChecker:
                 continue
 
             # If it's not, and it is overload decorated, store it for the next iteration
-            if function.is_overload_decorated(self.overload_decorators):
+            if function.has_decorator(self.overload_decorators):
                 last_overload_decorated_function_name = function.name
 
             # Yield explicit errors for arguments that are missing annotations

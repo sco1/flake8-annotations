@@ -151,12 +151,12 @@ class Function:
         """Provide a list of arguments with type annotations."""
         return [arg for arg in self.args if arg.has_type_annotation]
 
-    def is_overload_decorated(self, overload_decorators: Set[str]) -> bool:
+    def has_decorator(self, check_decorators: Set[str]) -> bool:
         """
-        Determine whether the provided function node is decorated by `typing.overload`.
+        Determine whether the function node is decorated by any of the provided decorators.
 
-        Decorator matching is done against the provided `overload_decorators` set, allowing the user
-        to specify any expected aliasing in their flake8 configuration options. Decorators are
+        Decorator matching is done against the provided `check_decorators` set, allowing the user
+        to specify any expected aliasing in the relevant flake8 configuration option. Decorators are
         assumed to be either a module attribute (e.g. `@typing.overload`) or name
         (e.g. `@overload`), and never as a callable (`@typing.overload()`). For the case of a module
         attribute, only the attribute is checked against `overload_decorators`.
@@ -166,10 +166,10 @@ class Function:
         # (e.g. `@typing.overload`)
         for decorator in self.decorator_list:
             if isinstance(decorator, ast.Name):
-                if decorator.id in overload_decorators:
+                if decorator.id in check_decorators:
                     return True
-            elif isinstance(decorator, ast.Attribute):
-                if decorator.attr in overload_decorators:
+            elif isinstance(decorator, ast.Attribute):  # pragma: no branch
+                if decorator.attr in check_decorators:
                     return True
         else:
             return False
