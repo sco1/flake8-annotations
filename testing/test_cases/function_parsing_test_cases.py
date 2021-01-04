@@ -534,7 +534,6 @@ function_test_cases = {
             nonclass_func(
                 name="foo",
                 function_type=FunctionType.PUBLIC,
-                is_overload_decorated=True,
             ),
         ),
     ),
@@ -550,7 +549,6 @@ function_test_cases = {
             nonclass_func(
                 name="foo",
                 function_type=FunctionType.PUBLIC,
-                is_overload_decorated=True,
             ),
         ),
     ),

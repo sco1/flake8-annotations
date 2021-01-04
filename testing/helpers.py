@@ -1,7 +1,11 @@
-from typing import Generator, Iterable, List, Optional, Sequence, Tuple
+import typing as t
 
 from flake8_annotations import Function, FunctionVisitor, PY_GTE_38
-from flake8_annotations.checker import TypeHintChecker
+from flake8_annotations.checker import (
+    TypeHintChecker,
+    _DEFAULT_DISPATCH_DECORATORS,
+    _DEFAULT_OVERLOAD_DECORATORS,
+)
 from flake8_annotations.error_codes import Error
 from pytest_check import check_func
 
@@ -11,7 +15,7 @@ else:
     from typed_ast import ast3 as ast
 
 
-def parse_source(src: str) -> Tuple[ast.Module, List[str]]:
+def parse_source(src: str) -> t.Tuple[ast.Module, t.List[str]]:
     """Parse the provided Python source string and return an (typed AST, source) tuple."""
     if PY_GTE_38:
         # Built-in ast requires a flag to parse type comments
@@ -32,7 +36,9 @@ def check_source(
     allow_untyped_defs: bool = False,
     allow_untyped_nested: bool = False,
     mypy_init_return: bool = False,
-) -> Generator[Error, None, None]:
+    dispatch_decorators: t.AbstractSet[str] = frozenset(_DEFAULT_DISPATCH_DECORATORS),
+    overload_decorators: t.AbstractSet[str] = frozenset(_DEFAULT_OVERLOAD_DECORATORS),
+) -> t.Generator[Error, None, None]:
     """Helper for generating linting errors from the provided source code."""
     _, lines = parse_source(src)
     checker_instance = TypeHintChecker(None, lines)
@@ -43,11 +49,13 @@ def check_source(
     checker_instance.allow_untyped_defs = allow_untyped_defs
     checker_instance.allow_untyped_nested = allow_untyped_nested
     checker_instance.mypy_init_return = mypy_init_return
+    checker_instance.dispatch_decorators = dispatch_decorators
+    checker_instance.overload_decorators = overload_decorators
 
     return checker_instance.run()
 
 
-def functions_from_source(src: str) -> List[Function]:
+def functions_from_source(src: str) -> t.List[Function]:
     """Helper for obtaining a list of Function objects from the provided source code."""
     tree, lines = parse_source(src)
     visitor = FunctionVisitor(lines)
@@ -56,7 +64,9 @@ def functions_from_source(src: str) -> List[Function]:
     return visitor.function_definitions
 
 
-def find_matching_function(func_list: Iterable[Function], match_name: str) -> Optional[Function]:
+def find_matching_function(
+    func_list: t.Iterable[Function], match_name: str
+) -> t.Optional[Function]:
     """
     Iterate over a list of Function objects & find the first matching named function.
 
@@ -67,12 +77,12 @@ def find_matching_function(func_list: Iterable[Function], match_name: str) -> Op
 
 
 @check_func
-def check_is_empty(in_sequence: Sequence, msg: str = "") -> None:
+def check_is_empty(in_sequence: t.Sequence, msg: str = "") -> None:
     """Check whether the input sequence is empty."""
     assert not in_sequence
 
 
 @check_func
-def check_is_not_empty(in_sequence: Sequence, msg: str = "") -> None:
+def check_is_not_empty(in_sequence: t.Sequence, msg: str = "") -> None:
     """Check whether the input sequence is not empty."""
     assert in_sequence

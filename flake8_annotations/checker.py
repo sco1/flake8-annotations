@@ -109,7 +109,7 @@ class TypeHintChecker:
                 continue
 
             # If it's not, and it is overload decorated, store it for the next iteration
-            if function.is_overload_decorated:
+            if function.is_overload_decorated(self.overload_decorators):
                 last_overload_decorated_function_name = function.name
 
             # Yield explicit errors for arguments that are missing annotations
