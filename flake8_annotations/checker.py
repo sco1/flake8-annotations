@@ -1,6 +1,6 @@
 from argparse import Namespace
 from functools import lru_cache
-from typing import Generator, List, Optional, Tuple
+from typing import Generator, List, Optional, Set, Tuple
 
 from flake8.options.manager import OptionManager
 from flake8_annotations import (
@@ -22,6 +22,15 @@ else:
 
 FORMATTED_ERROR = Tuple[int, int, str, error_codes.Error]
 
+_DEFAULT_DISPATCH_DECORATORS = [
+    "singledispatch",
+    "singledispatchmethod",
+]
+
+_DEFAULT_OVERLOAD_DECORATORS = [
+    "overload",
+]
+
 
 class TypeHintChecker:
     """Top level checker for linting the presence of type hints in function definitions."""
@@ -41,6 +50,8 @@ class TypeHintChecker:
         self.allow_untyped_defs: bool
         self.allow_untyped_nested: bool
         self.mypy_init_return: bool
+        self.dispatch_decorators: Set[str]
+        self.overload_decorators: Set[str]
 
     def run(self) -> Generator[FORMATTED_ERROR, None, None]:
         """
@@ -177,6 +188,32 @@ class TypeHintChecker:
             ),
         )
 
+        parser.add_option(
+            "--dispatch-decorators",
+            default=_DEFAULT_DISPATCH_DECORATORS,
+            action="store",
+            type="string",
+            parse_from_config=True,
+            comma_separated_list=True,
+            help=(
+                "List of decorators flake8-annotations should consider as dispatch decorators. "
+                "(Default: %default)"
+            ),
+        )
+
+        parser.add_option(
+            "--overload-decorators",
+            default=_DEFAULT_OVERLOAD_DECORATORS,
+            action="store",
+            type="string",
+            parse_from_config=True,
+            comma_separated_list=True,
+            help=(
+                "List of decorators flake8-annotations should consider as typing.overload "
+                "decorators. (Default: %default)"
+            ),
+        )
+
     @classmethod
     def parse_options(cls, options: Namespace) -> None:  # pragma: no cover
         """Parse the custom configuration options given to flake8."""
@@ -185,6 +222,10 @@ class TypeHintChecker:
         cls.allow_untyped_defs = options.allow_untyped_defs
         cls.allow_untyped_nested = options.allow_untyped_nested
         cls.mypy_init_return = options.mypy_init_return
+
+        # Store decorator lists as sets for better lookup
+        cls.dispatch_decorators = set(options.dispatch_decorators)
+        cls.overload_decorators = set(options.overload_decorators)
 
     @staticmethod
     def get_typed_tree(src: str) -> ast.Module:  # pragma: no cover
