@@ -81,7 +81,7 @@ class TypeHintChecker:
                     # Skip yielding errors from dynamically typed nested functions
                     continue
 
-            # Skip yielding errors for configured dispatch functions, such as
+            # Skip yielding errors for configured dispatch functions, such as (by default)
             # `functools.singledispatch` and `functools.singledispatchmethod`
             if function.has_decorator(self.dispatch_decorators):
                 continue

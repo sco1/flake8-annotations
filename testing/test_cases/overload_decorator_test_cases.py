@@ -77,9 +77,7 @@ overload_decorator_test_cases = {
             """
         ),
         should_yield_error=False,
-        overload_decorators={
-            "ovrld",
-        },
+        overload_decorators={"ovrld"},
     ),
     "overload_decorated_name_mismatch": OverloadDecoratorTestCase(
         src=dedent(
