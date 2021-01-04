@@ -1,9 +1,10 @@
-version: 1
+version: 2
 
-update_configs:
-  - package_manager: "python"
+updates:
+  - package_manager: "pip"
     directory: "/"
     update_schedule: "weekly"
+    target-branch: "dev-next"
     ignored_updates:
       # Ignore dev dependencies, these are pinned fairly liberally so they don't need to be
       # rigorously tracked for updates

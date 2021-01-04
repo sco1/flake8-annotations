@@ -1,6 +1,10 @@
 # Changelog
 Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (`<major>`.`<minor>`.`<patch>`)
 
+## [v2.5.0]
+### Added
+* #103 add `--allow-untyped-nested` to suppress all errors from dynamically typted nested functions. A function is considered dynamically typed if it does not contain any type hints.
+
 ## [v2.4.1]
 ### Fixed
 * #100 Fix incorrect positioning of posonlyargs in the `Function` argument list, causing incorrect classification of the type of missing argument.
