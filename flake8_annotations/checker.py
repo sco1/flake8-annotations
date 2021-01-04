@@ -201,8 +201,8 @@ class TypeHintChecker:
             parse_from_config=True,
             comma_separated_list=True,
             help=(
-                "List of decorators flake8-annotations should consider as dispatch decorators. "
-                "(Default: %default)"
+                "Comma-separated list of decorators flake8-annotations should consider as dispatch "
+                "decorators. (Default: %default)"
             ),
         )
 
@@ -214,8 +214,8 @@ class TypeHintChecker:
             parse_from_config=True,
             comma_separated_list=True,
             help=(
-                "List of decorators flake8-annotations should consider as typing.overload "
-                "decorators. (Default: %default)"
+                "Comma-separated list of decorators flake8-annotations should consider as "
+                "typing.overload decorators. (Default: %default)"
             ),
         )
 
