@@ -35,6 +35,16 @@ AST_DECORATOR_NODES = Union[ast.Attribute, ast.Call, ast.Name]
 class Argument:
     """Represent a function argument & its metadata."""
 
+    __slots__ = [
+        "argname",
+        "lineno",
+        "col_offset",
+        "annotation_type",
+        "has_type_annotation",
+        "has_3107_annotation",
+        "has_type_comment",
+    ]
+
     def __init__(
         self,
         argname: str,
@@ -102,6 +112,21 @@ class Function:
     tool, both will be referred to as functions outside of any class-specific context. This also
     aligns with ast's naming convention.
     """
+
+    __slots__ = [
+        "name",
+        "lineno",
+        "col_offset",
+        "function_type",
+        "is_class_method",
+        "class_decorator_type",
+        "is_return_annotated",
+        "has_type_comment",
+        "has_only_none_returns",
+        "is_nested",
+        "decorator_list",
+        "args",
+    ]
 
     def __init__(
         self,
