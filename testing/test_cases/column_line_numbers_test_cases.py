@@ -12,7 +12,7 @@ class ParserTestCase(NamedTuple):
     """
 
     src: str
-    error_locations: Tuple[Tuple[int, int]]
+    error_locations: Tuple[Tuple[int, int], ...]
 
 
 parser_test_cases = {

@@ -10,7 +10,7 @@ class FunctionTestCase(NamedTuple):
     """Helper container for Function parsing test cases."""
 
     src: str
-    func: Tuple[Function]
+    func: Tuple[Function, ...]
 
 
 # Note: For testing purposes, lineno and col_offset are ignored so these are set to dummy values

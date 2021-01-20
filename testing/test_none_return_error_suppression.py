@@ -2,6 +2,7 @@ from typing import Tuple
 
 import pytest
 import pytest_check as check
+from flake8_annotations.checker import FORMATTED_ERROR
 from flake8_annotations.error_codes import Error
 from testing.helpers import check_source
 
@@ -35,7 +36,7 @@ class TestNoneReturnErrorSuppression:
         )
 
     def test_suppressed_return_error(
-        self, yielded_errors: Tuple[str, NoneReturnSuppressionTestCase, Tuple[Error]]
+        self, yielded_errors: Tuple[str, NoneReturnSuppressionTestCase, Tuple[FORMATTED_ERROR]]
     ) -> None:
         """Test that ANN200 level errors are suppressed if a function only returns None."""
         failure_msg = f"Check failed for case '{yielded_errors[0]}'"

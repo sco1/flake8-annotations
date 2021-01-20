@@ -3,7 +3,7 @@ from typing import Tuple
 import pytest
 import pytest_check as check
 from flake8_annotations import Argument, Function
-from flake8_annotations.checker import classify_error
+from flake8_annotations.checker import FORMATTED_ERROR, classify_error
 from flake8_annotations.enums import AnnotationType
 from flake8_annotations.error_codes import Error
 from testing.helpers import check_source
@@ -100,7 +100,9 @@ class TestMixedTypeHintClassifier:
     """Test for correct classification of mixed type comments & type annotations."""
 
     @pytest.fixture(params=parser_test_cases.items(), ids=parser_test_cases.keys())
-    def yielded_errors(self, request) -> Tuple[str, ParserTestCase, Tuple[Error]]:  # noqa: ANN001
+    def yielded_errors(
+        self, request  # noqa: ANN001
+    ) -> Tuple[str, ParserTestCase, Tuple[FORMATTED_ERROR]]:
         """
         Build a fixture for the error codes emitted from parsing the type comments test code.
 
@@ -112,7 +114,7 @@ class TestMixedTypeHintClassifier:
         return test_case_name, test_case, tuple(check_source(test_case.src))
 
     def test_ANN301_classification(
-        self, yielded_errors: Tuple[str, ParserTestCase, Tuple[Error]]
+        self, yielded_errors: Tuple[str, ParserTestCase, Tuple[FORMATTED_ERROR]]
     ) -> None:
         """Test for correct classification of mixed type comments & type annotations."""
         failure_msg = f"Check failed for case '{yielded_errors[0]}'"
@@ -121,7 +123,7 @@ class TestMixedTypeHintClassifier:
         check.equal(yielded_errors[1].should_yield_ANN301, yielded_ANN301, msg=failure_msg)
 
     def test_single_ANN301_yield(
-        self, yielded_errors: Tuple[str, ParserTestCase, Tuple[Error]]
+        self, yielded_errors: Tuple[str, ParserTestCase, Tuple[FORMATTED_ERROR]]
     ) -> None:
         """Test that only one ANN301 error is yielded if a function mixes type comments."""
         if yielded_errors[1].should_yield_ANN301:

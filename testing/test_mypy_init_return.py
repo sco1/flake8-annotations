@@ -2,7 +2,7 @@ from typing import Tuple
 
 import pytest
 import pytest_check as check
-from flake8_annotations.error_codes import Error
+from flake8_annotations.checker import FORMATTED_ERROR
 from testing.helpers import check_source
 
 from .test_cases.mypy_init_return_test_cases import (
@@ -17,7 +17,7 @@ class TestMypyStyleInitReturnErrorSuppression:
     @pytest.fixture(params=mypy_init_test_cases.items(), ids=mypy_init_test_cases.keys())
     def yielded_errors(
         self, request  # noqa: ANN001
-    ) -> Tuple[str, MypyInitReturnTestCase, Tuple[Error]]:
+    ) -> Tuple[str, MypyInitReturnTestCase, Tuple[FORMATTED_ERROR]]:
         """
         Build a fixture for the error codes emitted from parsing the Mypy __init__ return test code.
 
@@ -33,7 +33,7 @@ class TestMypyStyleInitReturnErrorSuppression:
         )
 
     def test_suppressed_return_error(
-        self, yielded_errors: Tuple[str, MypyInitReturnTestCase, Tuple[Error]]
+        self, yielded_errors: Tuple[str, MypyInitReturnTestCase, Tuple[FORMATTED_ERROR]]
     ) -> None:
         """
         Test that ANN200 level errors are suppressed in class __init__ according to Mypy's behavior.
@@ -44,5 +44,5 @@ class TestMypyStyleInitReturnErrorSuppression:
         test_case_name, test_case, errors = yielded_errors
         failure_msg = f"Check failed for case '{test_case_name}'"
 
-        yielded_ANN200 = any("ANN2" in error[2] for error in yielded_errors[2])
+        yielded_ANN200 = any("ANN2" in error[2] for error in errors)
         check.equal(test_case.should_yield_return_error, yielded_ANN200, msg=failure_msg)

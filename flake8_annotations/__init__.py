@@ -21,7 +21,7 @@ __version__ = "2.6.0"
 
 # The order of AST_ARG_TYPES must match Python's grammar
 # See: https://docs.python.org/3/library/ast.html#abstract-grammar
-AST_ARG_TYPES = ("args", "vararg", "kwonlyargs", "kwarg")
+AST_ARG_TYPES: Tuple[str, ...] = ("args", "vararg", "kwonlyargs", "kwarg")
 if PY_GTE_38:
     # Positional-only args introduced in Python 3.8
     # If posonlyargs are present, they will be before other argument types
@@ -168,11 +168,11 @@ class Function:
         """Determine if the function is dynamically typed, defined as completely lacking hints."""
         return not any(arg.has_type_annotation for arg in self.args)
 
-    def get_missed_annotations(self) -> List:
+    def get_missed_annotations(self) -> List[Argument]:
         """Provide a list of arguments with missing type annotations."""
         return [arg for arg in self.args if not arg.has_type_annotation]
 
-    def get_annotated_arguments(self) -> List:
+    def get_annotated_arguments(self) -> List[Argument]:
         """Provide a list of arguments with type annotations."""
         return [arg for arg in self.args if arg.has_type_annotation]
 

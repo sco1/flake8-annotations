@@ -15,7 +15,7 @@ class ArgumentTestCase(NamedTuple):
     """
 
     src: str
-    args: Tuple[Argument]
+    args: Tuple[Argument, ...]
     py38_only: bool = False
 
 

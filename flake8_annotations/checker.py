@@ -1,6 +1,6 @@
+import typing as t
 from argparse import Namespace
 from functools import lru_cache
-from typing import Generator, List, Optional, Set, Tuple
 
 from flake8.options.manager import OptionManager
 from flake8_annotations import (
@@ -20,7 +20,7 @@ if PY_GTE_38:
 else:
     from typed_ast import ast3 as ast
 
-FORMATTED_ERROR = Tuple[int, int, str, error_codes.Error]
+FORMATTED_ERROR = t.Tuple[int, int, str, t.Type[t.Any]]
 
 _DEFAULT_DISPATCH_DECORATORS = [
     "singledispatch",
@@ -38,7 +38,7 @@ class TypeHintChecker:
     name = "flake8-annotations"
     version = __version__
 
-    def __init__(self, tree: ast.Module, lines: List[str]):
+    def __init__(self, tree: t.Optional[ast.Module], lines: t.List[str]):
         # Request `tree` in order to ensure flake8 will run the plugin, even though we don't use it
         # Request `lines` here and join to allow for correct handling of input from stdin
         self.lines = lines
@@ -50,10 +50,10 @@ class TypeHintChecker:
         self.allow_untyped_defs: bool
         self.allow_untyped_nested: bool
         self.mypy_init_return: bool
-        self.dispatch_decorators: Set[str]
-        self.overload_decorators: Set[str]
+        self.dispatch_decorators: t.Set[str]
+        self.overload_decorators: t.Set[str]
 
-    def run(self) -> Generator[FORMATTED_ERROR, None, None]:
+    def run(self) -> t.Generator[FORMATTED_ERROR, None, None]:
         """
         This method is called by flake8 to perform the actual check(s) on the source code.
 
@@ -66,7 +66,7 @@ class TypeHintChecker:
         # Keep track of the last encountered function decorated by `typing.overload`, if any.
         # Per the `typing` module documentation, a series of overload-decorated definitions must be
         # followed by exactly one non-overload-decorated definition of the same function.
-        last_overload_decorated_function_name: Optional[str] = None
+        last_overload_decorated_function_name: t.Optional[str] = None
 
         # Iterate over the arguments with missing type hints, by function, and yield linting errors
         # to flake8
@@ -228,7 +228,7 @@ class TypeHintChecker:
         cls.allow_untyped_nested = options.allow_untyped_nested
         cls.mypy_init_return = options.mypy_init_return
 
-        # Store decorator lists as sets for better lookup
+        # Store decorator lists as sets for easier lookup
         cls.dispatch_decorators = set(options.dispatch_decorators)
         cls.overload_decorators = set(options.overload_decorators)
 

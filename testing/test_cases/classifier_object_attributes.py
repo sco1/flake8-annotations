@@ -1,4 +1,4 @@
-from typing import NamedTuple
+from typing import NamedTuple, Optional
 
 from flake8_annotations import error_codes
 from flake8_annotations.enums import AnnotationType, ClassDecoratorType, FunctionType
@@ -11,7 +11,7 @@ class RT(NamedTuple):
 
     function_type: FunctionType
     is_class_method: bool
-    class_decorator_type: ClassDecoratorType
+    class_decorator_type: Optional[ClassDecoratorType]
 
 
 return_classifications = {
@@ -48,7 +48,7 @@ class AT(NamedTuple):
 
     is_class_method: bool
     is_first_arg: bool
-    class_decorator_type: ClassDecoratorType
+    class_decorator_type: Optional[ClassDecoratorType]
     annotation_type: AnnotationType
 
 

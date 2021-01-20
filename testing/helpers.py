@@ -2,11 +2,11 @@ import typing as t
 
 from flake8_annotations import Function, FunctionVisitor, PY_GTE_38
 from flake8_annotations.checker import (
+    FORMATTED_ERROR,
     TypeHintChecker,
     _DEFAULT_DISPATCH_DECORATORS,
     _DEFAULT_OVERLOAD_DECORATORS,
 )
-from flake8_annotations.error_codes import Error
 from pytest_check import check_func
 
 if PY_GTE_38:
@@ -38,7 +38,7 @@ def check_source(
     mypy_init_return: bool = False,
     dispatch_decorators: t.AbstractSet[str] = frozenset(_DEFAULT_DISPATCH_DECORATORS),
     overload_decorators: t.AbstractSet[str] = frozenset(_DEFAULT_OVERLOAD_DECORATORS),
-) -> t.Generator[Error, None, None]:
+) -> t.Generator[FORMATTED_ERROR, None, None]:
     """Helper for generating linting errors from the provided source code."""
     _, lines = parse_source(src)
     checker_instance = TypeHintChecker(None, lines)
@@ -64,9 +64,7 @@ def functions_from_source(src: str) -> t.List[Function]:
     return visitor.function_definitions
 
 
-def find_matching_function(
-    func_list: t.Iterable[Function], match_name: str
-) -> t.Optional[Function]:
+def find_matching_function(func_list: t.Iterable[Function], match_name: str) -> Function:
     """
     Iterate over a list of Function objects & find the first matching named function.
 
