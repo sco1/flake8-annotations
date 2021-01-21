@@ -279,7 +279,7 @@ def _return_error_classifier(
     is_class_method: bool,
     class_decorator_type: enums.ClassDecoratorType,
     function_type: enums.FunctionType,
-) -> error_codes.Error:
+) -> t.Type[error_codes.Error]:
     """Classify return type annotation error."""
     # Decorated class methods (@classmethod, @staticmethod) have a higher priority than the rest
     if is_class_method:
@@ -304,7 +304,7 @@ def _argument_error_classifier(
     is_first_arg: bool,
     class_decorator_type: enums.ClassDecoratorType,
     annotation_type: enums.AnnotationType,
-) -> error_codes.Error:
+) -> t.Type[error_codes.Error]:
     """Classify argument type annotation error."""
     # Check for regular class methods and @classmethod, @staticmethod is deferred to final check
     if is_class_method:
