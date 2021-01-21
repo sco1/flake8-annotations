@@ -1,8 +1,11 @@
 # flake8-annotations
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/flake8-annotations)](https://pypi.org/project/flake8-annotations/)
 [![PyPI](https://img.shields.io/pypi/v/flake8-annotations)](https://pypi.org/project/flake8-annotations/)
+[![PyPI - License](https://img.shields.io/pypi/l/flake8-annotations?color=magenta)](https://github.com/sco1/flake8-annotations/blob/master/LICENSE)
+[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-black)](https://github.com/psf/black)
 
-`flake8-annotations` is a plugin for [Flake8](http://flake8.pycqa.org/en/latest/) that detects the absence of [PEP 3107-style](https://www.python.org/dev/peps/pep-3107/) function annotations and [PEP 484-style](https://www.python.org/dev/peps/pep-0484/#type-comments) type comments  (see: [Caveats](#Caveats-for-PEP-484-style-Type-Comments)).
+`flake8-annotations` is a plugin for [Flake8](http://flake8.pycqa.org/en/latest/) that detects the absence of [PEP 3107-style](https://www.python.org/dev/peps/pep-3107/) function annotations and [PEP 484-style](https://www.python.org/dev/peps/pep-0484/#type-comments) type comments (see: [Caveats](#Caveats-for-PEP-484-style-Type-Comments)).
 
 What this won't do: Check variable annotations (see: [PEP 526](https://www.python.org/dev/peps/pep-0526/)), respect stub files, or replace [mypy](http://mypy-lang.org/).
 
@@ -96,7 +99,7 @@ Decorators are matched based on their attribute name. For example, `"singledispa
 
 **NOTE:** Deeper imports, such as `a.b.singledispatch` are not supported.
 
-See [Generic Functions](#generic-functions) for additional information.
+See: [Generic Functions](#generic-functions) for additional information.
 
 Default: `"singledispatch, singledispatchmethod"`
 
@@ -110,7 +113,7 @@ Decorators are matched based on their attribute name. For example, `"overload"` 
 
 **NOTE:** Deeper imports, such as `a.b.overload` are not supported.
 
-See [The `typing.overload` Decorator](#the-typingoverload-decorator) for additional information.
+See: [The `typing.overload` Decorator](#the-typingoverload-decorator) for additional information.
 
 Default: `"overload"`
 
