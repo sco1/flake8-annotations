@@ -10,7 +10,7 @@ class FunctionTestCase(NamedTuple):
     """Helper container for Function parsing test cases."""
 
     src: str
-    func: Tuple[Function]
+    func: Tuple[Function, ...]
 
 
 # Note: For testing purposes, lineno and col_offset are ignored so these are set to dummy values
@@ -534,7 +534,6 @@ function_test_cases = {
             nonclass_func(
                 name="foo",
                 function_type=FunctionType.PUBLIC,
-                is_overload_decorated=True,
             ),
         ),
     ),
@@ -550,7 +549,6 @@ function_test_cases = {
             nonclass_func(
                 name="foo",
                 function_type=FunctionType.PUBLIC,
-                is_overload_decorated=True,
             ),
         ),
     ),

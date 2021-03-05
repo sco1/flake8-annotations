@@ -2,13 +2,12 @@ import re
 from typing import List, Tuple
 
 import pytest
-from flake8_annotations.checker import TypeHintChecker
+from flake8_annotations.checker import FORMATTED_ERROR
 from testing.helpers import check_source
 
 from .test_cases.variable_formatting_test_cases import variable_formatting_test_cases
 
 
-ERROR_CODE_TYPE = Tuple[int, int, str, TypeHintChecker]
 SIMPLE_ERROR_CODE = Tuple[str, str]
 
 # Error type specific matching patterns
@@ -16,7 +15,7 @@ TEST_ARG_NAMES = {"ANN001": "some_arg", "ANN002": "some_args", "ANN003": "some_k
 RE_DICT = {"ANN001": r"'(\w+)'", "ANN002": r"\*(\w+)", "ANN003": r"\*\*(\w+)"}
 
 
-def _simplify_error(error_code: ERROR_CODE_TYPE) -> SIMPLE_ERROR_CODE:
+def _simplify_error(error_code: FORMATTED_ERROR) -> SIMPLE_ERROR_CODE:
     """
     Simplify the error yielded by the flake8 checker into an (error type, argument name) tuple.
 

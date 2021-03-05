@@ -1,8 +1,11 @@
 # flake8-annotations
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/flake8-annotations)](https://pypi.org/project/flake8-annotations/)
 [![PyPI](https://img.shields.io/pypi/v/flake8-annotations)](https://pypi.org/project/flake8-annotations/)
+[![PyPI - License](https://img.shields.io/pypi/l/flake8-annotations?color=magenta)](https://github.com/sco1/flake8-annotations/blob/master/LICENSE)
+[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-black)](https://github.com/psf/black)
 
-`flake8-annotations` is a plugin for [Flake8](http://flake8.pycqa.org/en/latest/) that detects the absence of [PEP 3107-style](https://www.python.org/dev/peps/pep-3107/) function annotations and [PEP 484-style](https://www.python.org/dev/peps/pep-0484/#type-comments) type comments  (see: [Caveats](#Caveats-for-PEP-484-style-Type-Comments)).
+`flake8-annotations` is a plugin for [Flake8](http://flake8.pycqa.org/en/latest/) that detects the absence of [PEP 3107-style](https://www.python.org/dev/peps/pep-3107/) function annotations and [PEP 484-style](https://www.python.org/dev/peps/pep-0484/#type-comments) type comments (see: [Caveats](#Caveats-for-PEP-484-style-Type-Comments)).
 
 What this won't do: Check variable annotations (see: [PEP 526](https://www.python.org/dev/peps/pep-0526/)), respect stub files, or replace [mypy](http://mypy-lang.org/).
 
@@ -19,7 +22,7 @@ You can verify it's being picked up by invoking the following in your shell:
 
 ```bash
 $ flake8 --version
-3.8.4 (flake8-annotations: 2.5.0, mccabe: 0.6.1, pycodestyle: 2.6.0, pyflakes: 2.2.0) CPython 3.9.0 on Darwin
+3.8.4 (flake8-annotations: 2.6.0, mccabe: 0.6.1, pycodestyle: 2.6.0, pyflakes: 2.2.0) CPython 3.9.0 on Darwin
 ```
 
 ## Table of Warnings
@@ -86,6 +89,61 @@ Allow omission of a return type hint for `__init__` if at least one argument is 
 
 Default: `False`
 
+### `--dispatch-decorators`: `list[str]`
+Comma-separated list of decorators flake8-annotations should consider as dispatch decorators. Linting errors are suppressed for functions decorated with at least one of these functions.
+
+Decorators are matched based on their attribute name. For example, `"singledispatch"` will match any of the following:
+  * `import functools; @functools.singledispatch`
+  * `import functools as fnctls; @fnctls.singledispatch`
+  * `from functools import singledispatch; @singledispatch`
+
+**NOTE:** Deeper imports, such as `a.b.singledispatch` are not supported.
+
+See: [Generic Functions](#generic-functions) for additional information.
+
+Default: `"singledispatch, singledispatchmethod"`
+
+### `--overload-decorators`: `list[str]`
+Comma-separated list of decorators flake8-annotations should consider as [`typing.overload`](https://docs.python.org/3/library/typing.html#typing.overload) decorators.
+
+Decorators are matched based on their attribute name. For example, `"overload"` will match any of the following:
+  * `import typing; @typing.overload`
+  * `import typing as t; @t.overload`
+  * `from typing import overload; @overload`
+
+**NOTE:** Deeper imports, such as `a.b.overload` are not supported.
+
+See: [The `typing.overload` Decorator](#the-typingoverload-decorator) for additional information.
+
+Default: `"overload"`
+
+
+## Generic Functions
+Per the Python Glossary, a [generic function](https://docs.python.org/3/glossary.html#term-generic-function) is defined as:
+
+> A function composed of multiple functions implementing the same operation for different types. Which implementation should be used during a call is determined by the dispatch algorithm.
+
+In the standard library we have some examples of decorators for implementing these generic functions: [`functools.singledispatch`](https://docs.python.org/3/library/functools.html#functools.singledispatch) and [`functools.singledispatchmethod`](https://docs.python.org/3/library/functools.html#functools.singledispatchmethod). In the spirit of the purpose of these decorators, errors for missing annotations for functions decorated with at least one of these are ignored.
+
+For example, this code:
+
+```py
+import functools
+
+@functools.singledispatch
+def foo(a):
+    print(a)
+
+@foo.register
+def _(a: list) -> None:
+    for idx, thing in enumerate(a):
+        print(idx, thing)
+```
+
+Will not raise any linting errors for `foo`.
+
+Decorator(s) to treat as defining generic functions may be specified by the [`--dispatch-decorators`](#--dispatch-decorators-liststr) configuration option.
+
 ## The `typing.overload` Decorator
 Per the [`typing`](https://docs.python.org/3/library/typing.html#typing.overload) documentation:
 
@@ -109,7 +167,7 @@ def foo(a):
 
 Will not raise linting errors for missing annotations for the arguments & return of the non-decorated `foo` definition.
 
-**NOTE:** If importing directly, the `typing.overload` decorator will not be recognized if it is imported with an alias (e.g. `from typing import overload as please_dont_do_this`). Aliasing of the `typing` module is supported (e.g. `import typing as t; @t.overload`).
+Decorator(s) to treat as `typing.overload` may be specified by the [`--overload-decorators`](#--overload-decorators-liststr) configuration option.
 
 ## Caveats for PEP 484-style Type Comments
 

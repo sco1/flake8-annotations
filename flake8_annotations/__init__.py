@@ -17,11 +17,11 @@ else:
 
     PY_GTE_38 = False
 
-__version__ = "2.5.0"
+__version__ = "2.6.0"
 
 # The order of AST_ARG_TYPES must match Python's grammar
 # See: https://docs.python.org/3/library/ast.html#abstract-grammar
-AST_ARG_TYPES = ("args", "vararg", "kwonlyargs", "kwarg")
+AST_ARG_TYPES: Tuple[str, ...] = ("args", "vararg", "kwonlyargs", "kwarg")
 if PY_GTE_38:
     # Positional-only args introduced in Python 3.8
     # If posonlyargs are present, they will be before other argument types
@@ -29,10 +29,21 @@ if PY_GTE_38:
 
 AST_FUNCTION_TYPES = Union[ast.FunctionDef, ast.AsyncFunctionDef]
 AST_DEF_NODES = Union[ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef]
+AST_DECORATOR_NODES = Union[ast.Attribute, ast.Call, ast.Name]
 
 
 class Argument:
     """Represent a function argument & its metadata."""
+
+    __slots__ = [
+        "argname",
+        "lineno",
+        "col_offset",
+        "annotation_type",
+        "has_type_annotation",
+        "has_3107_annotation",
+        "has_type_comment",
+    ]
 
     def __init__(
         self,
@@ -102,6 +113,21 @@ class Function:
     aligns with ast's naming convention.
     """
 
+    __slots__ = [
+        "name",
+        "lineno",
+        "col_offset",
+        "function_type",
+        "is_class_method",
+        "class_decorator_type",
+        "is_return_annotated",
+        "has_type_comment",
+        "has_only_none_returns",
+        "is_nested",
+        "decorator_list",
+        "args",
+    ]
+
     def __init__(
         self,
         name: str,
@@ -113,8 +139,8 @@ class Function:
         is_return_annotated: bool = False,
         has_type_comment: bool = False,
         has_only_none_returns: bool = True,
-        is_overload_decorated: bool = False,
         is_nested: bool = False,
+        decorator_list: List[AST_DECORATOR_NODES] = None,
         args: List[Argument] = None,
     ):
         self.name = name
@@ -126,8 +152,8 @@ class Function:
         self.is_return_annotated = is_return_annotated
         self.has_type_comment = has_type_comment
         self.has_only_none_returns = has_only_none_returns
-        self.is_overload_decorated = is_overload_decorated
         self.is_nested = is_nested
+        self.decorator_list = decorator_list
         self.args = args
 
     def is_fully_annotated(self) -> bool:
@@ -142,13 +168,56 @@ class Function:
         """Determine if the function is dynamically typed, defined as completely lacking hints."""
         return not any(arg.has_type_annotation for arg in self.args)
 
-    def get_missed_annotations(self) -> List:
+    def get_missed_annotations(self) -> List[Argument]:
         """Provide a list of arguments with missing type annotations."""
         return [arg for arg in self.args if not arg.has_type_annotation]
 
-    def get_annotated_arguments(self) -> List:
+    def get_annotated_arguments(self) -> List[Argument]:
         """Provide a list of arguments with type annotations."""
         return [arg for arg in self.args if arg.has_type_annotation]
+
+    def has_decorator(self, check_decorators: Set[str]) -> bool:
+        """
+        Determine whether the function node is decorated by any of the provided decorators.
+
+        Decorator matching is done against the provided `check_decorators` set, allowing the user
+        to specify any expected aliasing in the relevant flake8 configuration option. Decorators are
+        assumed to be either a module attribute (e.g. `@typing.overload`) or name
+        (e.g. `@overload`). For the case of a module attribute, only the attribute is checked
+        against `overload_decorators`.
+
+        NOTE: Deeper decorator imports (e.g. `a.b.overload`) are not explicitly supported
+        """
+        for decorator in self.decorator_list:
+            # Drop to a helper to allow for simpler handling of callable decorators
+            return self._decorator_checker(decorator, check_decorators)
+        else:
+            return False
+
+    def _decorator_checker(
+        self, decorator: AST_DECORATOR_NODES, check_decorators: Set[str]
+    ) -> bool:
+        """
+        Check the provided decorator for a match against the provided set of check names.
+
+        Decorators are assumed to be of the following form:
+            * `a.name` or `a.name()`
+            * `name` or `name()`
+
+        NOTE: Deeper imports (e.g. `a.b.name`) are not explicitly supported.
+        """
+        if isinstance(decorator, ast.Name):
+            # e.g. `@overload`, where `decorator.id` will be the name
+            if decorator.id in check_decorators:
+                return True
+        elif isinstance(decorator, ast.Attribute):
+            # e.g. `@typing.overload`, where `decorator.attr` will be the name
+            if decorator.attr in check_decorators:
+                return True
+        elif isinstance(decorator, ast.Call):  # pragma: no branch
+            # e.g. `@overload()` or `@typing.overload()`, where `decorator.func` will be `ast.Name`
+            # or `ast.Attribute`, which we can check recursively
+            return self._decorator_checker(decorator.func, check_decorators)
 
     def __str__(self) -> str:
         """
@@ -176,8 +245,8 @@ class Function:
             f"is_return_annotated={self.is_return_annotated}, "
             f"has_type_comment={self.has_type_comment}, "
             f"has_only_none_returns={self.has_only_none_returns}, "
-            f"is_overload_decorated={self.is_overload_decorated}, "
             f"is_nested={self.is_nested}, "
+            f"decorator_list={self.decorator_list}, "
             f"args={self.args}"
             ")"
         )
@@ -194,7 +263,6 @@ class Function:
         following kwargs will be overridden:
           * function_type
           * class_decorator_type
-          * is_overload_decorated
           * args
         """
         # Extract function types from function name
@@ -204,8 +272,8 @@ class Function:
         if kwargs.get("is_class_method", False):
             kwargs["class_decorator_type"] = cls.get_class_decorator_type(node)
 
-        # Check for `typing.overload` decorator
-        kwargs["is_overload_decorated"] = cls.has_overload_decorator(node)
+        # Store raw decorator list for use by property methods
+        kwargs["decorator_list"] = node.decorator_list
 
         new_function = cls(node.name, node.lineno, node.col_offset, **kwargs)
 
@@ -261,24 +329,24 @@ class Function:
         if node.lineno == node.body[0].lineno:
             return Function._single_line_colon_seeker(node, lines[node.lineno - 1])
 
-        def_end_lineno = node.body[0].lineno - 1
-
         # With Python < 3.8, the function node includes the docstring & the body does not, so
         # we have rewind through any docstrings, if present, before looking for the def colon
+        # We should end up with lines[def_end_lineno - 1] having the colon
+        def_end_lineno = node.body[0].lineno
         if not PY_GTE_38:
-            # This list index is a little funky, since we've already subtracted 1 outside of this
-            # context, we can leave it as-is since it will index the list to the line prior to where
-            # the function node's body begins.
             # If the docstring is on one line then no rewinding is necessary.
-            n_triple_quotes = lines[def_end_lineno].count('"""')
+            n_triple_quotes = lines[def_end_lineno - 1].count('"""')
             if n_triple_quotes == 1:  # pragma: no branch
                 # Docstring closure, rewind until the opening is found & take the line prior
                 while True:
                     def_end_lineno -= 1
                     if '"""' in lines[def_end_lineno - 1]:
                         # Docstring has closed
-                        def_end_lineno -= 1
                         break
+
+        # Once we've gotten here, we've found the line where the docstring begins, so we have
+        # to step up one more line to get to the close of the def
+        def_end_lineno -= 1
 
         # Use str.rfind() to account for annotations on the same line, definition closure should
         # be the last : on the line
@@ -406,29 +474,6 @@ class Function:
             return ClassDecoratorType.STATICMETHOD
         else:
             return None
-
-    @staticmethod
-    def has_overload_decorator(function_node: AST_FUNCTION_TYPES) -> bool:
-        """
-        Determine whether the provided function node is decorated by `typing.overload`.
-
-        NOTE: For simplicity, this check will not identify the `typing.overload` decorator if it has
-        been aliased (e.g. `from typing import overload as please_dont_do_this`).
-        """
-        # Depending on how the decorator is imported, it will appear in the function node's
-        # decorator list as an instance of either `ast.Name` (e.g. `@overload`) or `ast.Attribute`
-        # (e.g. `@typing.overload`)
-        # It assumed that the overload decorator will never be present as a callable
-        # (e.g. `@overload()`)
-        for decorator in function_node.decorator_list:
-            if isinstance(decorator, ast.Name):
-                if decorator.id == "overload":
-                    return True
-            elif isinstance(decorator, ast.Attribute):
-                if decorator.attr == "overload":
-                    return True
-        else:
-            return False
 
 
 class FunctionVisitor(ast.NodeVisitor):

@@ -2,7 +2,7 @@ from typing import Tuple
 
 import pytest
 import pytest_check as check
-from flake8_annotations.error_codes import Error
+from flake8_annotations.checker import FORMATTED_ERROR
 from testing.helpers import check_source
 
 from .test_cases.type_comment_arg_injection_test_cases import (
@@ -20,7 +20,7 @@ class TestTypeCommentArgInject:
     )
     def yielded_errors(
         self, request  # noqa: ANN001
-    ) -> Tuple[str, TypeCommentArgInjectTestCase, Tuple[Error]]:
+    ) -> Tuple[str, TypeCommentArgInjectTestCase, Tuple[FORMATTED_ERROR]]:
         """
         Build a fixture for the error codes emitted from parsing the test code.
 
@@ -36,7 +36,7 @@ class TestTypeCommentArgInject:
         )
 
     def test_type_comment_arg_injection(
-        self, yielded_errors: Tuple[str, TypeCommentArgInjectTestCase, Tuple[Error]]
+        self, yielded_errors: Tuple[str, TypeCommentArgInjectTestCase, Tuple[FORMATTED_ERROR]]
     ) -> None:
         """Test that ANN100 errors are yielded appropriately for type comment annotated defs."""
         failure_msg = f"Check failed for case '{yielded_errors[0]}'"

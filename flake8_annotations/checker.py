@@ -1,6 +1,6 @@
+import typing as t
 from argparse import Namespace
 from functools import lru_cache
-from typing import Generator, List, Optional, Tuple
 
 from flake8.options.manager import OptionManager
 from flake8_annotations import (
@@ -20,7 +20,16 @@ if PY_GTE_38:
 else:
     from typed_ast import ast3 as ast
 
-FORMATTED_ERROR = Tuple[int, int, str, error_codes.Error]
+FORMATTED_ERROR = t.Tuple[int, int, str, t.Type[t.Any]]
+
+_DEFAULT_DISPATCH_DECORATORS = [
+    "singledispatch",
+    "singledispatchmethod",
+]
+
+_DEFAULT_OVERLOAD_DECORATORS = [
+    "overload",
+]
 
 
 class TypeHintChecker:
@@ -29,7 +38,7 @@ class TypeHintChecker:
     name = "flake8-annotations"
     version = __version__
 
-    def __init__(self, tree: ast.Module, lines: List[str]):
+    def __init__(self, tree: t.Optional[ast.Module], lines: t.List[str]):
         # Request `tree` in order to ensure flake8 will run the plugin, even though we don't use it
         # Request `lines` here and join to allow for correct handling of input from stdin
         self.lines = lines
@@ -41,8 +50,10 @@ class TypeHintChecker:
         self.allow_untyped_defs: bool
         self.allow_untyped_nested: bool
         self.mypy_init_return: bool
+        self.dispatch_decorators: t.Set[str]
+        self.overload_decorators: t.Set[str]
 
-    def run(self) -> Generator[FORMATTED_ERROR, None, None]:
+    def run(self) -> t.Generator[FORMATTED_ERROR, None, None]:
         """
         This method is called by flake8 to perform the actual check(s) on the source code.
 
@@ -55,7 +66,7 @@ class TypeHintChecker:
         # Keep track of the last encountered function decorated by `typing.overload`, if any.
         # Per the `typing` module documentation, a series of overload-decorated definitions must be
         # followed by exactly one non-overload-decorated definition of the same function.
-        last_overload_decorated_function_name: Optional[str] = None
+        last_overload_decorated_function_name: t.Optional[str] = None
 
         # Iterate over the arguments with missing type hints, by function, and yield linting errors
         # to flake8
@@ -69,6 +80,11 @@ class TypeHintChecker:
                 elif function.is_nested and self.allow_untyped_nested:
                     # Skip yielding errors from dynamically typed nested functions
                     continue
+
+            # Skip yielding errors for configured dispatch functions, such as (by default)
+            # `functools.singledispatch` and `functools.singledispatchmethod`
+            if function.has_decorator(self.dispatch_decorators):
+                continue
 
             # Create sentinels to check for mixed hint styles
             if function.has_type_comment:
@@ -98,7 +114,7 @@ class TypeHintChecker:
                 continue
 
             # If it's not, and it is overload decorated, store it for the next iteration
-            if function.is_overload_decorated:
+            if function.has_decorator(self.overload_decorators):
                 last_overload_decorated_function_name = function.name
 
             # Yield explicit errors for arguments that are missing annotations
@@ -177,6 +193,32 @@ class TypeHintChecker:
             ),
         )
 
+        parser.add_option(
+            "--dispatch-decorators",
+            default=_DEFAULT_DISPATCH_DECORATORS,
+            action="store",
+            type="string",
+            parse_from_config=True,
+            comma_separated_list=True,
+            help=(
+                "Comma-separated list of decorators flake8-annotations should consider as dispatch "
+                "decorators. (Default: %default)"
+            ),
+        )
+
+        parser.add_option(
+            "--overload-decorators",
+            default=_DEFAULT_OVERLOAD_DECORATORS,
+            action="store",
+            type="string",
+            parse_from_config=True,
+            comma_separated_list=True,
+            help=(
+                "Comma-separated list of decorators flake8-annotations should consider as "
+                "typing.overload decorators. (Default: %default)"
+            ),
+        )
+
     @classmethod
     def parse_options(cls, options: Namespace) -> None:  # pragma: no cover
         """Parse the custom configuration options given to flake8."""
@@ -185,6 +227,10 @@ class TypeHintChecker:
         cls.allow_untyped_defs = options.allow_untyped_defs
         cls.allow_untyped_nested = options.allow_untyped_nested
         cls.mypy_init_return = options.mypy_init_return
+
+        # Store decorator lists as sets for easier lookup
+        cls.dispatch_decorators = set(options.dispatch_decorators)
+        cls.overload_decorators = set(options.overload_decorators)
 
     @staticmethod
     def get_typed_tree(src: str) -> ast.Module:  # pragma: no cover
@@ -233,7 +279,7 @@ def _return_error_classifier(
     is_class_method: bool,
     class_decorator_type: enums.ClassDecoratorType,
     function_type: enums.FunctionType,
-) -> error_codes.Error:
+) -> t.Type[error_codes.Error]:
     """Classify return type annotation error."""
     # Decorated class methods (@classmethod, @staticmethod) have a higher priority than the rest
     if is_class_method:
@@ -258,7 +304,7 @@ def _argument_error_classifier(
     is_first_arg: bool,
     class_decorator_type: enums.ClassDecoratorType,
     annotation_type: enums.AnnotationType,
-) -> error_codes.Error:
+) -> t.Type[error_codes.Error]:
     """Classify argument type annotation error."""
     # Check for regular class methods and @classmethod, @staticmethod is deferred to final check
     if is_class_method:

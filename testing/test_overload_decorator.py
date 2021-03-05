@@ -25,13 +25,16 @@ class TestOverloadDecoratorErrorSuppression:
         Fixture provides a tuple of: test case name, its corresponding
         `OverloadDecoratorTestCase` instance, and a tuple of the errors yielded by the
         checker, which should be empty if the test case's `should_yield_error` is `False`.
+
+        To support decorator aliases, the `overload_decorators` param is optionally specified by the
+        test case. If none is explicitly set, the decorator list defaults to the checker's default.
         """
         test_case_name, test_case = request.param
 
         return (
             test_case_name,
             test_case,
-            tuple(check_source(test_case.src)),
+            tuple(check_source(test_case.src, overload_decorators=test_case.overload_decorators)),
         )
 
     def test_overload_decorator_error_suppression(

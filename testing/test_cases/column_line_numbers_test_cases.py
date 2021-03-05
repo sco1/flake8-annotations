@@ -12,7 +12,7 @@ class ParserTestCase(NamedTuple):
     """
 
     src: str
-    error_locations: Tuple[Tuple[int, int]]
+    error_locations: Tuple[Tuple[int, int], ...]
 
 
 parser_test_cases = {
@@ -57,7 +57,7 @@ parser_test_cases = {
         ),
         error_locations=((1, 10),),
     ),
-    "multi_line_docstring": ParserTestCase(
+    "multiline_docstring": ParserTestCase(
         src=dedent(
             """\
             def snek():              # 1
@@ -90,7 +90,7 @@ parser_test_cases = {
         ),
         error_locations=((1, 10),),
     ),
-    "multi_line_docstring_with_colon": ParserTestCase(
+    "multiline_docstring_with_colon": ParserTestCase(
         src=dedent(
             """\
             def snek():               # 1
@@ -127,5 +127,39 @@ parser_test_cases = {
             """
         ),
         error_locations=((1, 16),),
+    ),
+    "multiline_docstring_no_content": ParserTestCase(
+        src=dedent(
+            """\
+            def foo():  # 1
+                \"\"\"  # 2
+                \"\"\"  # 3
+                ...     # 4
+            """
+        ),
+        error_locations=((1, 10),),
+    ),
+    "multiline_docstring_summary_at_open": ParserTestCase(
+        src=dedent(
+            """\
+            def foo():                 # 1
+                \"\"\"Some docstring.  # 2
+                \"\"\"                 # 3
+                ...                    # 4
+            """
+        ),
+        error_locations=((1, 10),),
+    ),
+    "multiline_docstring_single_line_summary": ParserTestCase(
+        src=dedent(
+            """\
+            def foo():           # 1
+                \"\"\"           # 2
+                Some docstring.  # 3
+                \"\"\"           # 4
+                ...              # 5
+            """
+        ),
+        error_locations=((1, 10),),
     ),
 }

@@ -15,7 +15,7 @@ class FormatTestCase(NamedTuple):
 
 # Define partial functions to simplify object creation
 arg = partial(Argument, lineno=0, col_offset=0, annotation_type=AnnotationType.ARGS)
-func = partial(Function, name="test_func", lineno=0, col_offset=0)
+func = partial(Function, name="test_func", lineno=0, col_offset=0, decorator_list=[])
 
 formatting_test_cases = {
     "arg": FormatTestCase(
@@ -47,8 +47,8 @@ formatting_test_cases = {
             "is_return_annotated=False, "
             "has_type_comment=False, "
             "has_only_none_returns=True, "
-            "is_overload_decorated=False, "
             "is_nested=False, "
+            "decorator_list=[], "
             "args=[Argument(argname='return', lineno=0, col_offset=0, annotation_type=AnnotationType.ARGS, "  # noqa: E501
             "has_type_annotation=False, has_3107_annotation=False, has_type_comment=False)]"
             ")"
@@ -68,8 +68,8 @@ formatting_test_cases = {
             "is_return_annotated=False, "
             "has_type_comment=False, "
             "has_only_none_returns=True, "
-            "is_overload_decorated=False, "
             "is_nested=False, "
+            "decorator_list=[], "
             "args=[Argument(argname='foo', lineno=0, col_offset=0, annotation_type=AnnotationType.ARGS, "  # noqa: E501
             "has_type_annotation=False, has_3107_annotation=False, has_type_comment=False), "
             "Argument(argname='return', lineno=0, col_offset=0, annotation_type=AnnotationType.ARGS, "  # noqa: E501

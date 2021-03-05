@@ -1,4 +1,4 @@
-from typing import Tuple, Type
+from typing import Any, Tuple, Type
 
 from flake8_annotations import Argument, Function, checker
 
@@ -22,7 +22,7 @@ class Error:
         """Set error metadata from the input Function object."""
         return cls(function.name, function.lineno, function.col_offset)
 
-    def to_flake8(self) -> Tuple[int, int, str, Type]:
+    def to_flake8(self) -> Tuple[int, int, str, Type[Any]]:
         """
         Format the Error into what Flake8 is expecting.
 
@@ -40,7 +40,7 @@ class ANN001(Error):
         self.lineno = lineno
         self.col_offset = col_offset
 
-    def to_flake8(self) -> Tuple[int, int, str, Type]:
+    def to_flake8(self) -> Tuple[int, int, str, Type[Any]]:
         """Overload super's formatter so we can include argname in the output."""
         return (
             self.lineno,
@@ -57,7 +57,7 @@ class ANN002(Error):
         self.lineno = lineno
         self.col_offset = col_offset
 
-    def to_flake8(self) -> Tuple[int, int, str, Type]:
+    def to_flake8(self) -> Tuple[int, int, str, Type[Any]]:
         """Overload super's formatter so we can include argname in the output."""
         return (
             self.lineno,
@@ -74,7 +74,7 @@ class ANN003(Error):
         self.lineno = lineno
         self.col_offset = col_offset
 
-    def to_flake8(self) -> Tuple[int, int, str, Type]:
+    def to_flake8(self) -> Tuple[int, int, str, Type[Any]]:
         """Overload super's formatter so we can include argname in the output."""
         return (
             self.lineno,
