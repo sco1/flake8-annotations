@@ -57,7 +57,7 @@ parser_test_cases = {
         ),
         error_locations=((1, 10),),
     ),
-    "multi_line_docstring": ParserTestCase(
+    "multiline_docstring": ParserTestCase(
         src=dedent(
             """\
             def snek():              # 1
@@ -90,7 +90,7 @@ parser_test_cases = {
         ),
         error_locations=((1, 10),),
     ),
-    "multi_line_docstring_with_colon": ParserTestCase(
+    "multiline_docstring_with_colon": ParserTestCase(
         src=dedent(
             """\
             def snek():               # 1
@@ -127,5 +127,27 @@ parser_test_cases = {
             """
         ),
         error_locations=((1, 16),),
+    ),
+    "multiline_docstring_no_content": ParserTestCase(
+        src=dedent(
+            """\
+            def foo():  # 1
+                \"\"\"  # 2
+                \"\"\"  # 3
+                ...     # 4
+            """
+        ),
+        error_locations=((1, 10),),
+    ),
+    "multiline_docstring_only_summary": ParserTestCase(
+        src=dedent(
+            """\
+            def foo():                 # 1
+                \"\"\"Some docstring.  # 2
+                \"\"\"                 # 3
+                ...                    # 4
+            """
+        ),
+        error_locations=((1, 10),),
     ),
 }
