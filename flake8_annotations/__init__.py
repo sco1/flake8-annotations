@@ -329,24 +329,24 @@ class Function:
         if node.lineno == node.body[0].lineno:
             return Function._single_line_colon_seeker(node, lines[node.lineno - 1])
 
-        def_end_lineno = node.body[0].lineno - 1
-
         # With Python < 3.8, the function node includes the docstring & the body does not, so
         # we have rewind through any docstrings, if present, before looking for the def colon
+        # We should end up with lines[def_end_lineno - 1] having the colon
+        def_end_lineno = node.body[0].lineno
         if not PY_GTE_38:
-            # This list index is a little funky, since we've already subtracted 1 outside of this
-            # context, we can leave it as-is since it will index the list to the line prior to where
-            # the function node's body begins.
             # If the docstring is on one line then no rewinding is necessary.
-            n_triple_quotes = lines[def_end_lineno].count('"""')
+            n_triple_quotes = lines[def_end_lineno - 1].count('"""')
             if n_triple_quotes == 1:  # pragma: no branch
                 # Docstring closure, rewind until the opening is found & take the line prior
                 while True:
                     def_end_lineno -= 1
                     if '"""' in lines[def_end_lineno - 1]:
                         # Docstring has closed
-                        def_end_lineno -= 1
                         break
+
+        # Once we've gotten here, we've found the line where the docstring begins, so we have
+        # to step up one more line to get to the close of the def
+        def_end_lineno -= 1
 
         # Use str.rfind() to account for annotations on the same line, definition closure should
         # be the last : on the line

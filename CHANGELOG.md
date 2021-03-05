@@ -6,6 +6,9 @@ Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (`<ma
 * #98 Add `--dispatch-decorators` to support suppression of all errors from functions decorated by decorators such as `functools.singledispatch` and `functools.singledispatchmethod`.
 * #99 Add `--overload-decorators` to support generic aliasing of the `typing.overload` decorator.
 
+### Fixed
+* #106 Fix incorrect parsing of multiline docstrings with less than two lines of content, causing incorrect line numbers for yielded errors in Python versions prior to 3.8
+
 ## [v2.5.0]
 ### Added
 * #103 Add `--allow-untyped-nested` to suppress all errors from dynamically typted nested functions. A function is considered dynamically typed if it does not contain any type hints.

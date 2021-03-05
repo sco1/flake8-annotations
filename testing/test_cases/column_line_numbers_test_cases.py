@@ -139,13 +139,25 @@ parser_test_cases = {
         ),
         error_locations=((1, 10),),
     ),
-    "multiline_docstring_only_summary": ParserTestCase(
+    "multiline_docstring_summary_at_open": ParserTestCase(
         src=dedent(
             """\
             def foo():                 # 1
                 \"\"\"Some docstring.  # 2
                 \"\"\"                 # 3
                 ...                    # 4
+            """
+        ),
+        error_locations=((1, 10),),
+    ),
+    "multiline_docstring_single_line_summary": ParserTestCase(
+        src=dedent(
+            """\
+            def foo():           # 1
+                \"\"\"           # 2
+                Some docstring.  # 3
+                \"\"\"           # 4
+                ...              # 5
             """
         ),
         error_locations=((1, 10),),
