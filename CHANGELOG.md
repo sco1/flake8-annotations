@@ -1,6 +1,10 @@
 # Changelog
 Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (`<major>`.`<minor>`.`<patch>`)
 
+## [v2.6.1]
+### Changed
+* Remove the explicitly pinned minor version ceiling for flake8.
+
 ## [v2.6.0]
 ### Added
 * #98 Add `--dispatch-decorators` to support suppression of all errors from functions decorated by decorators such as `functools.singledispatch` and `functools.singledispatchmethod`.
