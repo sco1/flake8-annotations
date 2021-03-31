@@ -1,6 +1,10 @@
 # Changelog
 Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (`<major>`.`<minor>`.`<patch>`)
 
+## [v2.6.2]
+### Fixed
+* #107, #108 Change incorrect column index yielded for return annotation errors.
+
 ## [v2.6.1]
 ### Changed
 * Remove the explicitly pinned minor version ceiling for flake8.
