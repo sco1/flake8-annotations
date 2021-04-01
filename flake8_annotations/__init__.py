@@ -17,7 +17,7 @@ else:
 
     PY_GTE_38 = False
 
-__version__ = "2.6.1"
+__version__ = "2.6.2"
 
 # The order of AST_ARG_TYPES must match Python's grammar
 # See: https://docs.python.org/3/library/ast.html#abstract-grammar
@@ -350,7 +350,7 @@ class Function:
 
         # Use str.rfind() to account for annotations on the same line, definition closure should
         # be the last : on the line
-        def_end_col_offset = lines[def_end_lineno - 1].rfind(":") + 1
+        def_end_col_offset = lines[def_end_lineno - 1].rfind(":")
 
         return def_end_lineno, def_end_col_offset
 
@@ -359,7 +359,7 @@ class Function:
         """Locate the closing colon for a single-line function definition."""
         col_start = node.col_offset
         col_end = node.body[0].col_offset
-        def_end_col_offset = line.rfind(":", col_start, col_end) + 1
+        def_end_col_offset = line.rfind(":", col_start, col_end)
 
         return node.lineno, def_end_col_offset
 
