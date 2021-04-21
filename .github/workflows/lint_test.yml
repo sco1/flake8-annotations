@@ -23,13 +23,6 @@ jobs:
         pip install poetry
         poetry install
 
-    - name: Run pre-commit
-      uses: pre-commit/action@v2.0.0
-      with:
-        extra_args: --all-files -v
-      env:
-        SKIP: flake8  # Manually invoke to mitigate file not found error in CI
-
     - name: Run flake8
       run: poetry run flake8
 
