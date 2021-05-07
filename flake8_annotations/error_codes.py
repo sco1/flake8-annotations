@@ -4,23 +4,31 @@ from flake8_annotations import Argument, Function, checker
 
 
 class Error:
-    """Represent linting error codes & relevant metadata."""
+    """
+    Represent linting error codes & relevant metadata.
+
+    This is not designed to be instantiated directly, instead providing common methods to reduce
+    copypasta when defining new error codes. New error codes should inherit this class & accept the
+    `argname`, `lineno`, and `col_offset` parameters; the error `message` should be constant for
+    each error code.
+    """
+
+    argname: str
+    lineno: int
+    col_offset: int
 
     def __init__(self, message: str):
         self.message = message
-        self.argname: str
-        self.lineno: int
-        self.col_offset: int
 
     @classmethod
-    def from_argument(cls, argument: Argument):
+    def from_argument(cls, argument: Argument) -> "Error":
         """Set error metadata from the input Argument object."""
-        return cls(argument.argname, argument.lineno, argument.col_offset)
+        return cls(argument.argname, argument.lineno, argument.col_offset)  # type: ignore
 
     @classmethod
-    def from_function(cls, function: Function):
+    def from_function(cls, function: Function) -> "Error":
         """Set error metadata from the input Function object."""
-        return cls(function.name, function.lineno, function.col_offset)
+        return cls(function.name, function.lineno, function.col_offset)  # type: ignore
 
     def to_flake8(self) -> Tuple[int, int, str, Type[Any]]:
         """

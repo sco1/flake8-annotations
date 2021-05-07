@@ -38,12 +38,14 @@ typed-ast = {version="^1.4,<2.0", python="<3.8"}
 
 [tool.poetry.dev-dependencies]
 black = {version = "^20.8b1"}
+bump2version = "^1.0"
 flake8-bugbear = "^21.3"
 flake8-docstrings = "^1.5"
 flake8-fixme = "^1.1"
 flake8-formatter-junit-xml = "^0.0"
 flake8-import-order = "^0.18"
 flake8-tidy-imports = "^4.1"
+mypy = "^0.812"
 pep8-naming = "^0.11"
 pre-commit = "^2.7"
 pytest = "^6.0"

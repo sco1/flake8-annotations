@@ -87,7 +87,7 @@ class Argument:
         )
 
     @classmethod
-    def from_arg_node(cls, node: ast.arguments, annotation_type_name: str):
+    def from_arg_node(cls, node: ast.arg, annotation_type_name: str) -> "Argument":
         """Create an Argument object from an ast.arguments node."""
         annotation_type = AnnotationType[annotation_type_name]
         new_arg = cls(node.arg, node.lineno, node.col_offset, annotation_type)
@@ -140,8 +140,9 @@ class Function:
         has_type_comment: bool = False,
         has_only_none_returns: bool = True,
         is_nested: bool = False,
-        decorator_list: List[AST_DECORATOR_NODES] = None,
-        args: List[Argument] = None,
+        *,
+        decorator_list: List[AST_DECORATOR_NODES],
+        args: List[Argument],
     ):
         self.name = name
         self.lineno = lineno
@@ -217,7 +218,11 @@ class Function:
         elif isinstance(decorator, ast.Call):  # pragma: no branch
             # e.g. `@overload()` or `@typing.overload()`, where `decorator.func` will be `ast.Name`
             # or `ast.Attribute`, which we can check recursively
-            return self._decorator_checker(decorator.func, check_decorators)
+            # Ignore typing here, the AST stub just uses `expr` as the type for `decorator.func`
+            return self._decorator_checker(decorator.func, check_decorators)  # type: ignore
+
+        # There shouldn't be any possible way to get here
+        return False  # pragma: no cover
 
     def __str__(self) -> str:
         """
@@ -252,7 +257,7 @@ class Function:
         )
 
     @classmethod
-    def from_function_node(cls, node: AST_FUNCTION_TYPES, lines: List[str], **kwargs):
+    def from_function_node(cls, node: AST_FUNCTION_TYPES, lines: List[str], **kwargs) -> "Function":
         """
         Create an Function object from ast.FunctionDef or ast.AsyncFunctionDef nodes.
 
@@ -275,10 +280,12 @@ class Function:
         # Store raw decorator list for use by property methods
         kwargs["decorator_list"] = node.decorator_list
 
+        # Instantiate empty args list here since it has no default (mutable defaults bad!)
+        kwargs["args"] = []
+
         new_function = cls(node.name, node.lineno, node.col_offset, **kwargs)
 
         # Iterate over arguments by type & add
-        new_function.args = []
         for arg_type in AST_ARG_TYPES:
             args = node.args.__getattribute__(arg_type)
             if args:
@@ -371,7 +378,11 @@ class Function:
         If a function is type commented it is assumed to have a return annotation, otherwise Python
         will fail to parse the hint
         """
-        hint_tree = ast.parse(node.type_comment, "<func_type>", "func_type")
+        # If we're in this function then the node is guaranteed to have a type comment, so we can
+        # ignore mypy's complaint about an incompatible type
+        # Because we're passing in the `func_type` arg, we know that our return is guaranteed to be
+        # ast.FunctionType
+        hint_tree: ast.FunctionType = ast.parse(node.type_comment, "<func_type>", "func_type")  # type: ignore  # noqa: E501
         hint_tree = Function._maybe_inject_class_argument(hint_tree, func_obj)
 
         for arg, hint_comment in zip_longest(func_obj.args, hint_tree.argtypes):
@@ -424,7 +435,9 @@ class Function:
 
         if func_obj.class_decorator_type != ClassDecoratorType.STATICMETHOD:
             if len(hint_tree.argtypes) < (len(func_obj.args) - 1):  # Subtract 1 to skip return arg
-                hint_tree.argtypes = [ast.Ellipsis()] + hint_tree.argtypes
+                # Ignore mypy's objection to this assignment, Ellipsis subclasses expr so I'm not
+                # sure how to make Mypy happy with this but I think it still makes semantic sense
+                hint_tree.argtypes = [ast.Ellipsis()] + hint_tree.argtypes  # type: ignore
 
         return hint_tree
 

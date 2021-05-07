@@ -16,9 +16,17 @@ class FunctionTestCase(NamedTuple):
 # Note: For testing purposes, lineno and col_offset are ignored so these are set to dummy values
 # using partial objects
 nonclass_func = partial(
-    Function, lineno=0, col_offset=0, is_class_method=False, class_decorator_type=None
+    Function,
+    lineno=0,
+    col_offset=0,
+    is_class_method=False,
+    class_decorator_type=None,
+    decorator_list=[],
+    args=[],
 )
-class_func = partial(Function, lineno=0, col_offset=0, is_class_method=True)
+class_func = partial(
+    Function, lineno=0, col_offset=0, is_class_method=True, decorator_list=[], args=[]
+)
 
 function_test_cases = {
     "public_fun": FunctionTestCase(

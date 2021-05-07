@@ -15,7 +15,7 @@ from .test_cases.type_comment_test_cases import ParserTestCase, parser_test_case
 class TestReturnClassifier:
     """Test missing return annotation error classifications."""
 
-    dummy_arg = Argument(
+    dummy_return = Argument(
         argname="return", lineno=0, col_offset=0, annotation_type=AnnotationType.RETURN
     )
 
@@ -38,13 +38,15 @@ class TestReturnClassifier:
             function_type=request.param.function_type,
             is_class_method=request.param.is_class_method,
             class_decorator_type=request.param.class_decorator_type,
+            decorator_list=[],
+            args=[self.dummy_return],
         )
         return function_object, error_object
 
     def test_return(self, function_builder: Tuple[Function, Error]) -> None:
         """Test missing return annotation error codes."""
         test_function, error_object = function_builder
-        assert isinstance(classify_error(test_function, self.dummy_arg), error_object)
+        assert isinstance(classify_error(test_function, self.dummy_return), error_object)
 
 
 class TestArgumentClassifier:
@@ -73,6 +75,8 @@ class TestArgumentClassifier:
             function_type=None,
             is_class_method=request.param.is_class_method,
             class_decorator_type=request.param.class_decorator_type,
+            decorator_list=[],
+            args=[],  # Functions will always have a return arg but we don't need it for this test
         )
         argument_object = Argument(
             argname="TestArgument",
