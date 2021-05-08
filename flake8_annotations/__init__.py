@@ -1,6 +1,6 @@
 import sys
 from itertools import zip_longest
-from typing import List, Set, Tuple, Union
+from typing import Any, List, Set, Tuple, Union
 
 from flake8_annotations.enums import AnnotationType, ClassDecoratorType, FunctionType
 
@@ -257,7 +257,9 @@ class Function:
         )
 
     @classmethod
-    def from_function_node(cls, node: AST_FUNCTION_TYPES, lines: List[str], **kwargs) -> "Function":
+    def from_function_node(
+        cls, node: AST_FUNCTION_TYPES, lines: List[str], **kwargs: Any
+    ) -> "Function":
         """
         Create an Function object from ast.FunctionDef or ast.AsyncFunctionDef nodes.
 
