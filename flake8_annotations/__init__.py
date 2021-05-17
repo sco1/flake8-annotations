@@ -17,6 +17,13 @@ else:
 
     PY_GTE_38 = False
 
+# Python 3.10 introduces a backwards-incompatible change to Enum str/repr
+# See: https://bugs.python.org/issue40066
+if sys.version_info >= (3, 10):
+    PY_GTE_310 = True
+else:
+    PY_GTE_310 = False
+
 __version__ = "2.6.2"
 
 # The order of AST_ARG_TYPES must match Python's grammar
@@ -74,12 +81,19 @@ class Argument:
 
     def __repr__(self) -> str:
         """Format the Argument object into its "official" representation."""
+        # Python 3.10 introduces a backwards-incompatible change to Enum str/repr
+        # See: https://bugs.python.org/issue40066
+        if PY_GTE_310:
+            annotation_type = repr(self.annotation_type)
+        else:
+            annotation_type = str(self.annotation_type)
+
         return (
             f"Argument("
             f"argname={self.argname!r}, "
             f"lineno={self.lineno}, "
             f"col_offset={self.col_offset}, "
-            f"annotation_type={self.annotation_type}, "
+            f"annotation_type={annotation_type}, "
             f"has_type_annotation={self.has_type_annotation}, "
             f"has_3107_annotation={self.has_3107_annotation}, "
             f"has_type_comment={self.has_type_comment}"
@@ -239,14 +253,23 @@ class Function:
 
     def __repr__(self) -> str:
         """Format the Function object into its "official" representation."""
+        # Python 3.10 introduces a backwards-incompatible change to Enum str/repr
+        # See: https://bugs.python.org/issue40066
+        if PY_GTE_310:
+            function_type = repr(self.function_type)
+            class_decorator_type = repr(self.class_decorator_type)
+        else:
+            function_type = str(self.function_type)
+            class_decorator_type = str(self.class_decorator_type)
+
         return (
             f"Function("
             f"name={self.name!r}, "
             f"lineno={self.lineno}, "
             f"col_offset={self.col_offset}, "
-            f"function_type={self.function_type}, "
+            f"function_type={function_type}, "
             f"is_class_method={self.is_class_method}, "
-            f"class_decorator_type={self.class_decorator_type}, "
+            f"class_decorator_type={class_decorator_type}, "
             f"is_return_annotated={self.is_return_annotated}, "
             f"has_type_comment={self.has_type_comment}, "
             f"has_only_none_returns={self.has_only_none_returns}, "
@@ -349,7 +372,7 @@ class Function:
                 # Docstring closure, rewind until the opening is found & take the line prior
                 while True:
                     def_end_lineno -= 1
-                    if '"""' in lines[def_end_lineno - 1]:
+                    if '"""' in lines[def_end_lineno - 1]:  # pragma: no branch
                         # Docstring has closed
                         break
 
