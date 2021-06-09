@@ -233,7 +233,7 @@ class Function:
             # e.g. `@overload()` or `@typing.overload()`, where `decorator.func` will be `ast.Name`
             # or `ast.Attribute`, which we can check recursively
             # Ignore typing here, the AST stub just uses `expr` as the type for `decorator.func`
-            return self._decorator_checker(decorator.func, check_decorators)  # type: ignore
+            return self._decorator_checker(decorator.func, check_decorators)  # type: ignore[arg-type]  # noqa: E501
 
         # There shouldn't be any possible way to get here
         return False  # pragma: no cover
@@ -404,10 +404,10 @@ class Function:
         will fail to parse the hint
         """
         # If we're in this function then the node is guaranteed to have a type comment, so we can
-        # ignore mypy's complaint about an incompatible type
+        # ignore mypy's complaint about an incompatible type for `node.type_comment`
         # Because we're passing in the `func_type` arg, we know that our return is guaranteed to be
         # ast.FunctionType
-        hint_tree: ast.FunctionType = ast.parse(node.type_comment, "<func_type>", "func_type")  # type: ignore  # noqa: E501
+        hint_tree: ast.FunctionType = ast.parse(node.type_comment, "<func_type>", "func_type")  # type: ignore[assignment, arg-type]  # noqa: E501
         hint_tree = Function._maybe_inject_class_argument(hint_tree, func_obj)
 
         for arg, hint_comment in zip_longest(func_obj.args, hint_tree.argtypes):
@@ -462,7 +462,7 @@ class Function:
             if len(hint_tree.argtypes) < (len(func_obj.args) - 1):  # Subtract 1 to skip return arg
                 # Ignore mypy's objection to this assignment, Ellipsis subclasses expr so I'm not
                 # sure how to make Mypy happy with this but I think it still makes semantic sense
-                hint_tree.argtypes = [ast.Ellipsis()] + hint_tree.argtypes  # type: ignore
+                hint_tree.argtypes = [ast.Ellipsis()] + hint_tree.argtypes  # type: ignore[assignment, operator]  # noqa: E501
 
         return hint_tree
 

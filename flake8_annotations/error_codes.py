@@ -23,12 +23,12 @@ class Error:
     @classmethod
     def from_argument(cls, argument: Argument) -> "Error":
         """Set error metadata from the input Argument object."""
-        return cls(argument.argname, argument.lineno, argument.col_offset)  # type: ignore
+        return cls(argument.argname, argument.lineno, argument.col_offset)  # type: ignore[call-arg]
 
     @classmethod
     def from_function(cls, function: Function) -> "Error":
         """Set error metadata from the input Function object."""
-        return cls(function.name, function.lineno, function.col_offset)  # type: ignore
+        return cls(function.name, function.lineno, function.col_offset)  # type: ignore[call-arg]
 
     def to_flake8(self) -> Tuple[int, int, str, Type[Any]]:
         """

@@ -18,7 +18,7 @@ from flake8_annotations import (
 if PY_GTE_38:
     import ast
 else:
-    from typed_ast import ast3 as ast  # type: ignore
+    from typed_ast import ast3 as ast  # type: ignore[no-redef]
 
 FORMATTED_ERROR = t.Tuple[int, int, str, t.Type[t.Any]]
 

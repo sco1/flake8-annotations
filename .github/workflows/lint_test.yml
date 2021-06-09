@@ -24,7 +24,10 @@ jobs:
         poetry install
 
     - name: Run flake8
-      run: poetry run flake8
+      run: poetry run flake8 .
+
+    - name: Run mypy
+      run: poetry run mypy .
 
   test:
     runs-on: ubuntu-latest
