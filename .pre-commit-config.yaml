@@ -4,7 +4,7 @@ ci:
 repos:
   - repo: local
     hooks:
-    -   id: flake8
+      - id: flake8
         name: Flake8
         description: This hook runs flake8 within our project's poetry environment.
         entry: poetry run flake8
@@ -12,7 +12,7 @@ repos:
         types: [python]
         require_serial: true
   - repo: https://github.com/psf/black
-    rev: 21.5b2
+    rev: 21.6b0
     hooks:
       - id: black
   - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -24,6 +24,7 @@ repos:
       - id: end-of-file-fixer
       - id: mixed-line-ending
   - repo: https://github.com/pre-commit/pygrep-hooks
-    rev: v1.8.0
+    rev: v1.9.0
     hooks:
-    -   id: python-check-blanket-noqa
+      - id: python-check-blanket-noqa 
+      - id: python-check-blanket-type-ignore
