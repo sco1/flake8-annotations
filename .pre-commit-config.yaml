@@ -4,7 +4,7 @@ ci:
 repos:
   - repo: local
     hooks:
-    -   id: flake8
+      - id: flake8
         name: Flake8
         description: This hook runs flake8 within our project's poetry environment.
         entry: poetry run flake8
@@ -26,4 +26,5 @@ repos:
   - repo: https://github.com/pre-commit/pygrep-hooks
     rev: v1.9.0
     hooks:
-    -   id: python-check-blanket-noqa
+      - id: python-check-blanket-noqa 
+      - id: python-check-blanket-type-ignore
