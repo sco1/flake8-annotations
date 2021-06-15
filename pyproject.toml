@@ -26,7 +26,10 @@ classifiers = [
     "Topic :: Software Development :: Quality Assurance",
     "Typing :: Typed",
 ]
-include = ["CHANGELOG.md"]
+
+include = [
+    {path = "./CHANGELOG.md", format = "sdist"}
+]
 
 [tool.poetry.urls]
 "Issue Tracker" = "https://github.com/sco1/flake8-annotations/issues"
