@@ -1,9 +1,9 @@
 from typing import Tuple
 
 import pytest
+
 from flake8_annotations.error_codes import Error
 from testing.helpers import check_is_empty, check_is_not_empty, check_source
-
 from .test_cases.dispatch_decorator_test_cases import (
     DispatchDecoratorTestCase,
     dispatch_decorator_test_cases,

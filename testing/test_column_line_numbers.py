@@ -3,9 +3,9 @@ from typing import Generator, Tuple
 
 import pytest
 import pytest_check as check
+
 from flake8_annotations import checker
 from testing.helpers import check_source
-
 from .test_cases.column_line_numbers_test_cases import ParserTestCase, parser_test_cases
 
 ERROR_CODE = Tuple[int, int, str, checker.TypeHintChecker]

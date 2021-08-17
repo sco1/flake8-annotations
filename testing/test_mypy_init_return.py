@@ -2,9 +2,9 @@ from typing import Tuple
 
 import pytest
 import pytest_check as check
+
 from flake8_annotations.checker import FORMATTED_ERROR
 from testing.helpers import check_source
-
 from .test_cases.mypy_init_return_test_cases import (
     MypyInitReturnTestCase,
     mypy_init_test_cases,

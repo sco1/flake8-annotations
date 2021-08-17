@@ -3,6 +3,7 @@ from argparse import Namespace
 from functools import lru_cache
 
 from flake8.options.manager import OptionManager
+
 from flake8_annotations import (
     Argument,
     Function,

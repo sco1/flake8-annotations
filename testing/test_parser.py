@@ -4,9 +4,9 @@ from typing import List, Tuple
 
 import pytest
 import pytest_check as check
+
 from flake8_annotations import Argument, Function, FunctionVisitor
 from testing.helpers import find_matching_function, parse_source
-
 from .test_cases.argument_parsing_test_cases import argument_test_cases
 from .test_cases.function_parsing_test_cases import function_test_cases
 

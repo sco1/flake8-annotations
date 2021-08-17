@@ -2,12 +2,12 @@ from typing import Tuple
 
 import pytest
 import pytest_check as check
+
 from flake8_annotations import Argument, Function
 from flake8_annotations.checker import FORMATTED_ERROR, classify_error
 from flake8_annotations.enums import AnnotationType
 from flake8_annotations.error_codes import Error
 from testing.helpers import check_source
-
 from .test_cases import classifier_object_attributes
 from .test_cases.type_comment_test_cases import ParserTestCase, parser_test_cases
 

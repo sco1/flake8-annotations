@@ -1,5 +1,7 @@
 import typing as t
 
+from pytest_check import check_func
+
 from flake8_annotations import Function, FunctionVisitor, PY_GTE_38
 from flake8_annotations.checker import (
     FORMATTED_ERROR,
@@ -7,7 +9,6 @@ from flake8_annotations.checker import (
     _DEFAULT_DISPATCH_DECORATORS,
     _DEFAULT_OVERLOAD_DECORATORS,
 )
-from pytest_check import check_func
 
 if PY_GTE_38:
     import ast

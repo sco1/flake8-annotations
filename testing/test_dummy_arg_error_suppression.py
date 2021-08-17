@@ -2,9 +2,9 @@ from typing import Tuple
 
 import pytest
 import pytest_check as check
+
 from flake8_annotations.checker import FORMATTED_ERROR
 from testing.helpers import check_source
-
 from .test_cases.dummy_arg_suppress_test_cases import (
     DummyArgSuppressionTestCase,
     dummy_arg_suppression_test_cases,

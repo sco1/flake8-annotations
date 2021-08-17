@@ -2,9 +2,9 @@ from typing import Tuple
 
 import pytest
 import pytest_check as check
+
 from flake8_annotations import error_codes
 from flake8_annotations.checker import TypeHintChecker
-
 
 ALL_ERROR_CODES = (
     error_codes.ANN001,
