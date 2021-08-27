@@ -7,8 +7,8 @@ import pytest_check as check
 
 from flake8_annotations import Argument, Function, FunctionVisitor
 from testing.helpers import find_matching_function, parse_source
-from .test_cases.argument_parsing_test_cases import argument_test_cases
-from .test_cases.function_parsing_test_cases import function_test_cases
+from testing.test_cases.argument_parsing_test_cases import argument_test_cases
+from testing.test_cases.function_parsing_test_cases import function_test_cases
 
 ARG_FIXTURE_TYPE = Tuple[List[Argument], List[Argument], str]
 FUNC_FIXTURE_TYPE = Tuple[Tuple[Function], List[Function], str]

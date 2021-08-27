@@ -4,7 +4,7 @@ import pytest
 
 from flake8_annotations.error_codes import Error
 from testing.helpers import check_is_empty, check_is_not_empty, check_source
-from .test_cases.overload_decorator_test_cases import (
+from testing.test_cases.overload_decorator_test_cases import (
     OverloadDecoratorTestCase,
     overload_decorator_test_cases,
 )

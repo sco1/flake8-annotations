@@ -2,15 +2,6 @@ ci:
   skip: [flake8]
 
 repos:
-  - repo: local
-    hooks:
-      - id: flake8
-        name: Flake8
-        description: This hook runs flake8 within our project's poetry environment.
-        entry: poetry run flake8
-        language: python
-        types: [python]
-        require_serial: true
   - repo: https://github.com/psf/black
     rev: 21.7b0
     hooks:
@@ -33,3 +24,12 @@ repos:
     hooks:
       - id: python-check-blanket-noqa
       - id: python-check-blanket-type-ignore
+  - repo: local
+    hooks:
+      - id: flake8
+        name: Flake8
+        description: This hook runs flake8 within our project's poetry environment.
+        entry: poetry run flake8
+        language: python
+        types: [python]
+        require_serial: true

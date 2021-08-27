@@ -5,7 +5,7 @@ import pytest_check as check
 
 from flake8_annotations import Function
 from testing.helpers import functions_from_source
-from .test_cases.annotation_presence_test_cases import (
+from testing.test_cases.annotation_presence_test_cases import (
     AnnotationTestCase,
     annotation_test_cases,
 )

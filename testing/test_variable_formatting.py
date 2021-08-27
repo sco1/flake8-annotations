@@ -5,7 +5,9 @@ import pytest
 
 from flake8_annotations.checker import FORMATTED_ERROR
 from testing.helpers import check_source
-from .test_cases.variable_formatting_test_cases import variable_formatting_test_cases
+from testing.test_cases.variable_formatting_test_cases import (
+    variable_formatting_test_cases,
+)
 
 SIMPLE_ERROR_CODE = Tuple[str, str]
 

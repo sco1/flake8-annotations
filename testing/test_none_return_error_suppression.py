@@ -6,7 +6,7 @@ import pytest_check as check
 from flake8_annotations.checker import FORMATTED_ERROR
 from flake8_annotations.error_codes import Error
 from testing.helpers import check_source
-from .test_cases.none_return_suppress_test_cases import (
+from testing.test_cases.none_return_suppress_test_cases import (
     NoneReturnSuppressionTestCase,
     return_suppression_test_cases,
 )

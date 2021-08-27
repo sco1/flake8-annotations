@@ -8,8 +8,8 @@ from flake8_annotations.checker import FORMATTED_ERROR, classify_error
 from flake8_annotations.enums import AnnotationType
 from flake8_annotations.error_codes import Error
 from testing.helpers import check_source
-from .test_cases import classifier_object_attributes
-from .test_cases.type_comment_test_cases import ParserTestCase, parser_test_cases
+from testing.test_cases import classifier_object_attributes
+from testing.test_cases.type_comment_test_cases import ParserTestCase, parser_test_cases
 
 
 class TestReturnClassifier:

@@ -3,7 +3,7 @@ from typing import Tuple
 import pytest
 import pytest_check as check
 
-from .test_cases.object_formatting_test_cases import (
+from testing.test_cases.object_formatting_test_cases import (
     FormatTestCase,
     formatting_test_cases,
 )
