@@ -54,7 +54,7 @@ pep8-naming = "^0.12"
 pre-commit = "^2.13"
 pytest = "^6.2"
 pytest-check = "^1.0"
-pytest-cov = "^2.12"
+pytest-cov = "^3.0"
 tox = "^3.23"
 types-typed-ast = "^1.4"
 
