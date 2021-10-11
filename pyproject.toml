@@ -36,7 +36,7 @@ include = [
 
 [tool.poetry.dependencies]
 python = "^3.6.2"
-flake8 = "^3.7"
+flake8 = ">=3.7, <5.0"
 typed-ast = {version="^1.4,<2.0", python="<3.8"}
 
 [tool.poetry.dev-dependencies]
@@ -47,7 +47,6 @@ flake8-docstrings = "^1.6"
 flake8-fixme = "^1.1"
 flake8-formatter-junit-xml = "^0.0"
 flake8-import-order = "^0.18"
-flake8-tidy-imports = "^4.4"
 isort = "^5.9"
 mypy = "^0.910"
 pep8-naming = "^0.12"
