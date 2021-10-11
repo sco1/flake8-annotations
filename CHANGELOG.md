@@ -1,6 +1,12 @@
 # Changelog
 Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (`<major>`.`<minor>`.`<patch>`)
 
+## [v2.7.0]
+### Added
+* #122 Add support for Flake8 v4.x
+### Fixed
+* #117 Stop including `CHANGELOG.md` when building wheels.
+
 ## [v2.6.2]
 ### Fixed
 * #107, #108 Change incorrect column index yielded for return annotation errors.
