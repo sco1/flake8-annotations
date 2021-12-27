@@ -16,7 +16,6 @@ classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.6",
     "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
@@ -35,7 +34,7 @@ include = [
 "Issue Tracker" = "https://github.com/sco1/flake8-annotations/issues"
 
 [tool.poetry.dependencies]
-python = "^3.6.2"
+python = "^3.7"
 flake8 = ">=3.7, <5.0"
 typed-ast = {version="^1.4,<2.0", python="<3.8"}
 
@@ -48,7 +47,7 @@ flake8-fixme = "^1.1"
 flake8-formatter-junit-xml = "^0.0"
 flake8-import-order = "^0.18"
 isort = "^5.9"
-mypy = "^0.910"
+mypy = "^0.930"
 pep8-naming = "^0.12"
 pre-commit = "^2.13"
 pytest = "^6.2"
