@@ -175,17 +175,6 @@ flake8 = ">3.0.0"
 junit-xml = ">=1.8"
 
 [[package]]
-name = "flake8-import-order"
-version = "0.18.1"
-description = "Flake8 and pylama plugin that checks the ordering of import statements."
-category = "dev"
-optional = false
-python-versions = "*"
-
-[package.dependencies]
-pycodestyle = "*"
-
-[[package]]
 name = "flake8-polyfill"
 version = "1.0.2"
 description = "Polyfill package for Flake8 plugins"
@@ -594,7 +583,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "19aaef5b15ed0d56c71141d91bdf9b8ccf9c43e4d9f8ba5b1d24e006a12b8cd7"
+content-hash = "e85e99387253c780c8d7dbab7c972115ec50f33f2dd98189eba27598bc61a0d1"
 
 [metadata.files]
 atomicwrites = [
@@ -716,10 +705,6 @@ flake8-fixme = [
 flake8-formatter-junit-xml = [
     {file = "flake8_formatter_junit_xml-0.0.6-py2.py3-none-any.whl", hash = "sha256:6358a44ecafdf0f9c8ee5314859b8d6f553dc2e55e946a24c538185e1eba7ce6"},
     {file = "flake8_formatter_junit_xml-0.0.6.tar.gz", hash = "sha256:1ddd9356bb30ba736c3f14c769c837cfacf4f79c3d383ab963ef9d38eea05a9c"},
-]
-flake8-import-order = [
-    {file = "flake8-import-order-0.18.1.tar.gz", hash = "sha256:a28dc39545ea4606c1ac3c24e9d05c849c6e5444a50fb7e9cdd430fc94de6e92"},
-    {file = "flake8_import_order-0.18.1-py2.py3-none-any.whl", hash = "sha256:90a80e46886259b9c396b578d75c749801a41ee969a235e163cfe1be7afd2543"},
 ]
 flake8-polyfill = [
     {file = "flake8-polyfill-1.0.2.tar.gz", hash = "sha256:e44b087597f6da52ec6393a709e7108b2905317d0c0b744cdca6208e670d8eda"},

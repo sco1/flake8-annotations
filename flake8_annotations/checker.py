@@ -4,22 +4,9 @@ from functools import lru_cache
 
 from flake8.options.manager import OptionManager
 
-from flake8_annotations import (
-    Argument,
-    Function,
-    FunctionVisitor,
-    PY_GTE_38,
-    __version__,
-    enums,
-    error_codes,
-)
-
-# Check if we can use the stdlib ast module instead of typed_ast
-# stdlib ast gains native type comment support in Python 3.8
-if PY_GTE_38:
-    import ast
-else:
-    from typed_ast import ast3 as ast  # type: ignore[no-redef]
+from flake8_annotations import PY_GTE_38, __version__, enums, error_codes
+from flake8_annotations.models import Argument, Function
+from flake8_annotations.visitors import FunctionVisitor, ast
 
 FORMATTED_ERROR = t.Tuple[int, int, str, t.Type[t.Any]]
 

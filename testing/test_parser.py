@@ -5,7 +5,8 @@ from typing import List, Tuple
 import pytest
 import pytest_check as check
 
-from flake8_annotations import Argument, Function, FunctionVisitor
+from flake8_annotations.models import Argument, Function
+from flake8_annotations.visitors import FunctionVisitor
 from testing.helpers import find_matching_function, parse_source
 from testing.test_cases.argument_parsing_test_cases import argument_test_cases
 from testing.test_cases.function_parsing_test_cases import function_test_cases

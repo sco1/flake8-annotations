@@ -4,7 +4,8 @@ from typing import List, Tuple
 import pytest
 import pytest_check as check
 
-from flake8_annotations import Argument, FunctionVisitor
+from flake8_annotations.models import Argument
+from flake8_annotations.visitors import FunctionVisitor
 from testing.helpers import parse_source
 from testing.test_cases.type_comment_test_cases import parser_test_cases
 

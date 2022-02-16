@@ -2,8 +2,8 @@ from functools import partial
 from textwrap import dedent
 from typing import NamedTuple, Tuple
 
-from flake8_annotations import Function
 from flake8_annotations.enums import ClassDecoratorType, FunctionType
+from flake8_annotations.models import Function
 
 
 class FunctionTestCase(NamedTuple):

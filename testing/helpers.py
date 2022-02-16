@@ -2,18 +2,15 @@ import typing as t
 
 from pytest_check import check_func
 
-from flake8_annotations import Function, FunctionVisitor, PY_GTE_38
+from flake8_annotations import PY_GTE_38
 from flake8_annotations.checker import (
     FORMATTED_ERROR,
     TypeHintChecker,
     _DEFAULT_DISPATCH_DECORATORS,
     _DEFAULT_OVERLOAD_DECORATORS,
 )
-
-if PY_GTE_38:
-    import ast
-else:
-    from typed_ast import ast3 as ast
+from flake8_annotations.models import Function
+from flake8_annotations.visitors import FunctionVisitor, ast
 
 
 def parse_source(src: str) -> t.Tuple[ast.Module, t.List[str]]:
