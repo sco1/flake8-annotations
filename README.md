@@ -21,10 +21,21 @@ It will then be run automatically as part of flake8.
 
 You can verify it's being picked up by invoking the following in your shell:
 
+
+<!-- [[[cog
+import cog
+from subprocess import PIPE, run
+out = run(["flake8", "--version"], stdout=PIPE, encoding="ascii")
+ver_str = out.stdout.replace("\n", "")
+cog.out(
+    f"```bash\n$ flake8 --version\n{ver_str}\n```"
+)
+]]] -->
 ```bash
 $ flake8 --version
-4.0.0 (flake8-annotations: 2.7.0, mccabe: 0.6.1, pycodestyle: 2.8.0, pyflakes: 2.4.0) CPython 3.10.0 on Darwin
+4.0.1 (flake8-annotations: 2.7.0, mccabe: 0.6.1, pycodestyle: 2.8.0, pyflakes:2.4.0) CPython 3.10.2 on Darwin
 ```
+<!-- [[[end]]] -->
 
 ## Table of Warnings
 All warnings are enabled by default.
