@@ -38,7 +38,7 @@ $ flake8 --version
 <!-- [[[end]]] -->
 
 ## Table of Warnings
-All warnings are enabled by default.
+With the exception of `ANN4xx`-level warnings, all warnings are enabled by default.
 
 ### Function Annotations
 | ID       | Description                                   |
@@ -67,6 +67,12 @@ All warnings are enabled by default.
 | ID       | Description                                               |
 |----------|-----------------------------------------------------------|
 | `ANN301` | PEP 484 disallows both type annotations and type comments |
+
+### Opinionated Warnings
+These warnings are disabled by default.
+| ID       | Description                                                |
+|----------|------------------------------------------------------------|
+| `ANN401` | Dynamically typed expressions (typing.Any) are disallowed. |
 
 **Notes:**
 1. See: [PEP 484](https://www.python.org/dev/peps/pep-0484/#annotating-instance-and-class-methods) and [PEP 563](https://www.python.org/dev/peps/pep-0563/) for suggestions on annotating `self` and `cls` arguments.

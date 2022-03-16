@@ -19,6 +19,8 @@ _DEFAULT_OVERLOAD_DECORATORS = [
     "overload",
 ]
 
+_DISABLED_BY_DEFAULT = ("ANN401",)  # Disable opinionated warnings by default
+
 
 class TypeHintChecker:
     """Top level checker for linting the presence of type hints in function definitions."""
@@ -133,6 +135,8 @@ class TypeHintChecker:
     @classmethod
     def add_options(cls, parser: OptionManager) -> None:  # pragma: no cover
         """Add custom configuration option(s) to flake8."""
+        parser.extend_default_ignore(_DISABLED_BY_DEFAULT)
+
         parser.add_option(
             "--suppress-none-returning",
             default=False,

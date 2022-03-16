@@ -166,3 +166,12 @@ class ANN301(Error):
         self.argname = argname
         self.lineno = lineno
         self.col_offset = col_offset
+
+
+# Opinionated warnings
+class ANN401(Error):
+    def __init__(self, argname: str, lineno: int, col_offset: int):
+        super().__init__("ANN401 Dynamically typed expressions (typing.Any) are disallowed")
+        self.argname = argname
+        self.lineno = lineno
+        self.col_offset = col_offset
