@@ -1,15 +1,14 @@
+from __future__ import annotations
+
 import typing as t
 from itertools import zip_longest
 
 from flake8_annotations import PY_GTE_38, PY_GTE_311
 from flake8_annotations.enums import AnnotationType, ClassDecoratorType, FunctionType
-from flake8_annotations.visitors import (
-    AST_ARG_TYPES,
-    AST_DECORATOR_NODES,
-    AST_FUNCTION_TYPES,
-    ReturnVisitor,
-    ast,
-)
+from flake8_annotations.visitors import AST_ARG_TYPES, ReturnVisitor, ast
+
+if t.TYPE_CHECKING:
+    from flake8_annotations.visitors import AST_DECORATOR_NODES, AST_FUNCTION_TYPES
 
 # Check if we can use the stdlib ast module instead of typed_ast
 # stdlib ast gains native type comment support in Python 3.8
