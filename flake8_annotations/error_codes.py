@@ -1,7 +1,11 @@
+from __future__ import annotations
+
 import typing as t
 
 from flake8_annotations import checker
-from flake8_annotations.models import Argument, Function
+
+if t.TYPE_CHECKING:
+    from flake8_annotations.ast_walker import Argument, Function
 
 
 class Error:
@@ -22,12 +26,12 @@ class Error:
         self.message = message
 
     @classmethod
-    def from_argument(cls, argument: Argument) -> "Error":
+    def from_argument(cls, argument: Argument) -> Error:
         """Set error metadata from the input Argument object."""
         return cls(argument.argname, argument.lineno, argument.col_offset)  # type: ignore[call-arg]
 
     @classmethod
-    def from_function(cls, function: Function) -> "Error":
+    def from_function(cls, function: Function) -> Error:
         """Set error metadata from the input Function object."""
         return cls(function.name, function.lineno, function.col_offset)  # type: ignore[call-arg]
 

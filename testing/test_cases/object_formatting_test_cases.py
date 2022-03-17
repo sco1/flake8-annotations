@@ -1,8 +1,8 @@
 from functools import partial
 from typing import NamedTuple, Union
 
+from flake8_annotations.ast_walker import Argument, Function
 from flake8_annotations.enums import AnnotationType
-from flake8_annotations.models import Argument, Function
 
 
 class FormatTestCase(NamedTuple):
@@ -29,7 +29,8 @@ formatting_test_cases = {
             "annotation_type=AnnotationType.ARGS, "
             "has_type_annotation=False, "
             "has_3107_annotation=False, "
-            "has_type_comment=False"
+            "has_type_comment=False, "
+            "is_dynamically_typed=False"
             ")"
         ),
     ),
@@ -49,14 +50,14 @@ formatting_test_cases = {
             "has_only_none_returns=True, "
             "is_nested=False, "
             "decorator_list=[], "
-            "args=[Argument(argname='return', lineno=0, col_offset=0, annotation_type=AnnotationType.ARGS, "  # noqa: E501
-            "has_type_annotation=False, has_3107_annotation=False, has_type_comment=False)]"
+            "args=[Argument(argname='return', lineno=0, col_offset=0, annotation_type=AnnotationType.ARGS, "
+            "has_type_annotation=False, has_3107_annotation=False, has_type_comment=False, is_dynamically_typed=False)]"
             ")"
         ),
     ),
     "func_has_arg": FormatTestCase(
         test_object=func(args=[arg(argname="foo"), arg(argname="return")]),
-        str_output="<Function: test_func, Args: [<Argument: foo, Annotated: False>, <Argument: return, Annotated: False>]>",  # noqa: E501
+        str_output="<Function: test_func, Args: [<Argument: foo, Annotated: False>, <Argument: return, Annotated: False>]>",
         repr_output=(
             "Function("
             "name='test_func', "
@@ -70,10 +71,10 @@ formatting_test_cases = {
             "has_only_none_returns=True, "
             "is_nested=False, "
             "decorator_list=[], "
-            "args=[Argument(argname='foo', lineno=0, col_offset=0, annotation_type=AnnotationType.ARGS, "  # noqa: E501
-            "has_type_annotation=False, has_3107_annotation=False, has_type_comment=False), "
-            "Argument(argname='return', lineno=0, col_offset=0, annotation_type=AnnotationType.ARGS, "  # noqa: E501
-            "has_type_annotation=False, has_3107_annotation=False, has_type_comment=False)]"
+            "args=[Argument(argname='foo', lineno=0, col_offset=0, annotation_type=AnnotationType.ARGS, "
+            "has_type_annotation=False, has_3107_annotation=False, has_type_comment=False, is_dynamically_typed=False), "
+            "Argument(argname='return', lineno=0, col_offset=0, annotation_type=AnnotationType.ARGS, "
+            "has_type_annotation=False, has_3107_annotation=False, has_type_comment=False, is_dynamically_typed=False)]"
             ")"
         ),
     ),

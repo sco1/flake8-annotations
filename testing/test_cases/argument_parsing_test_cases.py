@@ -2,8 +2,8 @@ from functools import partial
 from textwrap import dedent
 from typing import NamedTuple, Tuple
 
+from flake8_annotations.ast_walker import Argument
 from flake8_annotations.enums import AnnotationType
-from flake8_annotations.models import Argument
 
 
 class ArgumentTestCase(NamedTuple):
