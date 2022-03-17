@@ -40,6 +40,7 @@ class Argument:
         "has_type_annotation",
         "has_3107_annotation",
         "has_type_comment",
+        "is_dynamically_typed",
     ]
 
     def __init__(
@@ -51,6 +52,7 @@ class Argument:
         has_type_annotation: bool = False,
         has_3107_annotation: bool = False,
         has_type_comment: bool = False,
+        is_dynamically_typed: bool = False,
     ):
         self.argname = argname
         self.lineno = lineno
@@ -59,6 +61,7 @@ class Argument:
         self.has_type_annotation = has_type_annotation
         self.has_3107_annotation = has_3107_annotation
         self.has_type_comment = has_type_comment
+        self.is_dynamically_typed = is_dynamically_typed
 
     def __str__(self) -> str:
         """
@@ -87,12 +90,13 @@ class Argument:
             f"annotation_type={annotation_type}, "
             f"has_type_annotation={self.has_type_annotation}, "
             f"has_3107_annotation={self.has_3107_annotation}, "
-            f"has_type_comment={self.has_type_comment}"
+            f"has_type_comment={self.has_type_comment}, "
+            f"is_dynamically_typed={self.is_dynamically_typed}"
             ")"
         )
 
     @classmethod
-    def from_arg_node(cls, node: ast.arg, annotation_type_name: str) -> "Argument":
+    def from_arg_node(cls, node: ast.arg, annotation_type_name: str) -> Argument:
         """Create an Argument object from an ast.arguments node."""
         annotation_type = AnnotationType[annotation_type_name]
         new_arg = cls(node.arg, node.lineno, node.col_offset, annotation_type)
@@ -102,11 +106,33 @@ class Argument:
             new_arg.has_type_annotation = True
             new_arg.has_3107_annotation = True
 
+            if cls._is_annotated_any(node.annotation):
+                new_arg.is_dynamically_typed = True
+
         if node.type_comment:
             new_arg.has_type_annotation = True
             new_arg.has_type_comment = True
 
         return new_arg
+
+    @staticmethod
+    def _is_annotated_any(arg_expr: ast.expr) -> bool:
+        """
+        Check if the provided expression node is annotated with `typing.Any`.
+
+        Support is provided for the following patterns:
+            * `from typing import Any; foo: Any`
+            * `import typing; foo: typing.Any`
+            * `import typing as <alias>; foo: <alias>.Any`
+        """
+        if isinstance(arg_expr, ast.Name):
+            if arg_expr.id == "Any":
+                return True
+        elif isinstance(arg_expr, ast.Attribute):
+            if arg_expr.attr == "Any":
+                return True
+
+        return False
 
 
 class Function:
@@ -274,7 +300,7 @@ class Function:
     @classmethod
     def from_function_node(
         cls, node: AST_FUNCTION_TYPES, lines: t.List[str], **kwargs: t.Any
-    ) -> "Function":
+    ) -> Function:
         """
         Create an Function object from ast.FunctionDef or ast.AsyncFunctionDef nodes.
 
@@ -320,6 +346,9 @@ class Function:
             return_arg.has_type_annotation = True
             return_arg.has_3107_annotation = True
             new_function.is_return_annotated = True
+
+            if Argument._is_annotated_any(node.returns):
+                return_arg.is_dynamically_typed = True
 
         new_function.args.append(return_arg)
 
@@ -388,7 +417,7 @@ class Function:
         return node.lineno, def_end_col_offset
 
     @staticmethod
-    def try_type_comment(func_obj: "Function", node: AST_FUNCTION_TYPES) -> "Function":
+    def try_type_comment(func_obj: Function, node: AST_FUNCTION_TYPES) -> Function:
         """
         Attempt to infer type hints from a function-level type comment.
 
@@ -419,7 +448,7 @@ class Function:
 
     @staticmethod
     def _maybe_inject_class_argument(
-        hint_tree: ast.FunctionType, func_obj: "Function"
+        hint_tree: ast.FunctionType, func_obj: Function
     ) -> ast.FunctionType:
         """
         Inject `self` or `cls` args into a type comment to align with PEP 3107-style annotations.
