@@ -25,9 +25,3 @@ def test_str(build_test_cases: Tuple[FormatTestCase, str]) -> None:
     """Test the __str__ method for Argument and Function objects."""
     test_case, failure_msg = build_test_cases
     check.equal(str(test_case.test_object), test_case.str_output, msg=failure_msg)
-
-
-def test_repr(build_test_cases: Tuple[FormatTestCase, str]) -> None:
-    """Test the __repr__ method for Argument and Function objects."""
-    test_case, failure_msg = build_test_cases
-    check.equal(repr(test_case.test_object), test_case.repr_output, msg=failure_msg)

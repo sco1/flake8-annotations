@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 import typing as t
+from dataclasses import dataclass
 from itertools import zip_longest
 
-from flake8_annotations import PY_GTE_38, PY_GTE_311
+from flake8_annotations import PY_GTE_38
 from flake8_annotations.enums import AnnotationType, ClassDecoratorType, FunctionType
 
 # Check if we can use the stdlib ast module instead of typed_ast; stdlib ast gains native type
@@ -29,39 +30,18 @@ if PY_GTE_38:
     AST_ARG_TYPES = ("posonlyargs",) + AST_ARG_TYPES
 
 
+@dataclass(slots=True)
 class Argument:
     """Represent a function argument & its metadata."""
 
-    __slots__ = [
-        "argname",
-        "lineno",
-        "col_offset",
-        "annotation_type",
-        "has_type_annotation",
-        "has_3107_annotation",
-        "has_type_comment",
-        "is_dynamically_typed",
-    ]
-
-    def __init__(
-        self,
-        argname: str,
-        lineno: int,
-        col_offset: int,
-        annotation_type: AnnotationType,
-        has_type_annotation: bool = False,
-        has_3107_annotation: bool = False,
-        has_type_comment: bool = False,
-        is_dynamically_typed: bool = False,
-    ):
-        self.argname = argname
-        self.lineno = lineno
-        self.col_offset = col_offset
-        self.annotation_type = annotation_type
-        self.has_type_annotation = has_type_annotation
-        self.has_3107_annotation = has_3107_annotation
-        self.has_type_comment = has_type_comment
-        self.is_dynamically_typed = is_dynamically_typed
+    argname: str
+    lineno: int
+    col_offset: int
+    annotation_type: AnnotationType
+    has_type_annotation: bool = False
+    has_3107_annotation: bool = False
+    has_type_comment: bool = False
+    is_dynamically_typed: bool = False
 
     def __str__(self) -> str:
         """
@@ -71,29 +51,6 @@ class Argument:
           '<Argument: <argname>, Annotated: <has_type_annotation>>'
         """
         return f"<Argument: {self.argname}, Annotated: {self.has_type_annotation}>"
-
-    def __repr__(self) -> str:
-        """Format the Argument object into its "official" representation."""
-        # Python 3.11 introduces a backwards-incompatible change to Enum str/repr
-        # See: https://bugs.python.org/issue40066
-        # See: https://bugs.python.org/issue44559
-        if PY_GTE_311:
-            annotation_type = repr(self.annotation_type)
-        else:
-            annotation_type = str(self.annotation_type)
-
-        return (
-            f"Argument("
-            f"argname={self.argname!r}, "
-            f"lineno={self.lineno}, "
-            f"col_offset={self.col_offset}, "
-            f"annotation_type={annotation_type}, "
-            f"has_type_annotation={self.has_type_annotation}, "
-            f"has_3107_annotation={self.has_3107_annotation}, "
-            f"has_type_comment={self.has_type_comment}, "
-            f"is_dynamically_typed={self.is_dynamically_typed}"
-            ")"
-        )
 
     @classmethod
     def from_arg_node(cls, node: ast.arg, annotation_type_name: str) -> Argument:
@@ -135,6 +92,7 @@ class Argument:
         return False
 
 
+@dataclass(slots=True)
 class Function:
     """
     Represent a function and its relevant metadata.
@@ -144,49 +102,18 @@ class Function:
     aligns with ast's naming convention.
     """
 
-    __slots__ = [
-        "name",
-        "lineno",
-        "col_offset",
-        "function_type",
-        "is_class_method",
-        "class_decorator_type",
-        "is_return_annotated",
-        "has_type_comment",
-        "has_only_none_returns",
-        "is_nested",
-        "decorator_list",
-        "args",
-    ]
-
-    def __init__(
-        self,
-        name: str,
-        lineno: int,
-        col_offset: int,
-        function_type: FunctionType = FunctionType.PUBLIC,
-        is_class_method: bool = False,
-        class_decorator_type: t.Union[ClassDecoratorType, None] = None,
-        is_return_annotated: bool = False,
-        has_type_comment: bool = False,
-        has_only_none_returns: bool = True,
-        is_nested: bool = False,
-        *,
-        decorator_list: t.List[AST_DECORATOR_NODES],
-        args: t.List[Argument],
-    ):
-        self.name = name
-        self.lineno = lineno
-        self.col_offset = col_offset
-        self.function_type = function_type
-        self.is_class_method = is_class_method
-        self.class_decorator_type = class_decorator_type
-        self.is_return_annotated = is_return_annotated
-        self.has_type_comment = has_type_comment
-        self.has_only_none_returns = has_only_none_returns
-        self.is_nested = is_nested
-        self.decorator_list = decorator_list
-        self.args = args
+    name: str
+    lineno: int
+    col_offset: int
+    decorator_list: t.List[AST_DECORATOR_NODES]
+    args: t.List[Argument]
+    function_type: FunctionType = FunctionType.PUBLIC
+    is_class_method: bool = False
+    class_decorator_type: t.Union[ClassDecoratorType, None] = None
+    is_return_annotated: bool = False
+    has_type_comment: bool = False
+    has_only_none_returns: bool = True
+    is_nested: bool = False
 
     def is_fully_annotated(self) -> bool:
         """
@@ -267,35 +194,6 @@ class Function:
         str_args = f"[{', '.join([str(arg) for arg in self.args])}]"
 
         return f"<Function: {self.name}, Args: {str_args}>"
-
-    def __repr__(self) -> str:
-        """Format the Function object into its "official" representation."""
-        # Python 3.11 introduces a backwards-incompatible change to Enum str/repr
-        # See: https://bugs.python.org/issue40066
-        # See: https://bugs.python.org/issue44559
-        if PY_GTE_311:
-            function_type = repr(self.function_type)
-            class_decorator_type = repr(self.class_decorator_type)
-        else:
-            function_type = str(self.function_type)
-            class_decorator_type = str(self.class_decorator_type)
-
-        return (
-            f"Function("
-            f"name={self.name!r}, "
-            f"lineno={self.lineno}, "
-            f"col_offset={self.col_offset}, "
-            f"function_type={function_type}, "
-            f"is_class_method={self.is_class_method}, "
-            f"class_decorator_type={class_decorator_type}, "
-            f"is_return_annotated={self.is_return_annotated}, "
-            f"has_type_comment={self.has_type_comment}, "
-            f"has_only_none_returns={self.has_only_none_returns}, "
-            f"is_nested={self.is_nested}, "
-            f"decorator_list={self.decorator_list}, "
-            f"args={self.args}"
-            ")"
-        )
 
     @classmethod
     def from_function_node(
@@ -422,7 +320,7 @@ class Function:
         Attempt to infer type hints from a function-level type comment.
 
         If a function is type commented it is assumed to have a return annotation, otherwise Python
-        will fail to parse the hint
+        will fail to parse the hint.
         """
         # If we're in this function then the node is guaranteed to have a type comment, so we can
         # ignore mypy's complaint about an incompatible type for `node.type_comment`
