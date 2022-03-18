@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 import typing as t
-from dataclasses import dataclass
 from itertools import zip_longest
 
+from attrs import define
 from flake8_annotations import PY_GTE_38
 from flake8_annotations.enums import AnnotationType, ClassDecoratorType, FunctionType
 
@@ -30,7 +30,7 @@ if PY_GTE_38:
     AST_ARG_TYPES = ("posonlyargs",) + AST_ARG_TYPES
 
 
-@dataclass(slots=True)
+@define(slots=True)
 class Argument:
     """Represent a function argument & its metadata."""
 
@@ -101,7 +101,7 @@ class Argument:
         return False
 
 
-@dataclass(slots=True)
+@define(slots=True)
 class Function:
     """
     Represent a function and its relevant metadata.
