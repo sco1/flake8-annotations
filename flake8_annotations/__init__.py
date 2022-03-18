@@ -5,4 +5,4 @@ if sys.version_info >= (3, 8):
 else:
     PY_GTE_38 = False
 
-__version__ = "2.7.0"
+__version__ = "2.8.0"

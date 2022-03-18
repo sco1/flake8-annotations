@@ -4,6 +4,7 @@ import typing as t
 from itertools import zip_longest
 
 from attrs import define
+
 from flake8_annotations import PY_GTE_38
 from flake8_annotations.enums import AnnotationType, ClassDecoratorType, FunctionType
 
