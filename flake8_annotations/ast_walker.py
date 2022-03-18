@@ -70,10 +70,13 @@ class Argument:
             new_arg.has_type_annotation = True
             new_arg.has_type_comment = True
 
+            if cls._is_annotated_any(node.type_comment):
+                new_arg.is_dynamically_typed = True
+
         return new_arg
 
     @staticmethod
-    def _is_annotated_any(arg_expr: ast.expr) -> bool:
+    def _is_annotated_any(arg_expr: t.Union[ast.expr, str]) -> bool:
         """
         Check if the provided expression node is annotated with `typing.Any`.
 
@@ -81,12 +84,18 @@ class Argument:
             * `from typing import Any; foo: Any`
             * `import typing; foo: typing.Any`
             * `import typing as <alias>; foo: <alias>.Any`
+
+        Type comments are also supported. Inline type comments are assumed to be passed here as
+        `str`, and function-level type comments are assumed to be passed as `ast.expr`.
         """
         if isinstance(arg_expr, ast.Name):
             if arg_expr.id == "Any":
                 return True
         elif isinstance(arg_expr, ast.Attribute):
             if arg_expr.attr == "Any":
+                return True
+        elif isinstance(arg_expr, str):
+            if arg_expr.split(".", maxsplit=1)[-1] == "Any":
                 return True
 
         return False
@@ -337,10 +346,15 @@ class Function:
                 arg.has_type_annotation = True
                 arg.has_type_comment = True
 
+                if Argument._is_annotated_any(hint_comment):
+                    arg.is_dynamically_typed = True
+
         # Return arg is always last
         func_obj.args[-1].has_type_annotation = True
         func_obj.args[-1].has_type_comment = True
         func_obj.is_return_annotated = True
+        if Argument._is_annotated_any(hint_tree.returns):
+            arg.is_dynamically_typed = True
 
         return func_obj
 
