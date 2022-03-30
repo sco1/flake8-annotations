@@ -3,7 +3,7 @@ from typing import Tuple
 import pytest
 import pytest_check as check
 
-from flake8_annotations.models import Function
+from flake8_annotations.ast_walker import Function
 from testing.helpers import functions_from_source
 from testing.test_cases.annotation_presence_test_cases import (
     AnnotationTestCase,

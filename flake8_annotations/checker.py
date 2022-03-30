@@ -1,12 +1,17 @@
+from __future__ import annotations
+
 import typing as t
-from argparse import Namespace
 from functools import lru_cache
 
-from flake8.options.manager import OptionManager
-
 from flake8_annotations import PY_GTE_38, __version__, enums, error_codes
-from flake8_annotations.models import Argument, Function
-from flake8_annotations.visitors import FunctionVisitor, ast
+from flake8_annotations.ast_walker import FunctionVisitor, ast
+
+if t.TYPE_CHECKING:
+    from argparse import Namespace
+
+    from flake8.options.manager import OptionManager
+
+    from flake8_annotations.ast_walker import Argument, Function
 
 FORMATTED_ERROR = t.Tuple[int, int, str, t.Type[t.Any]]
 
@@ -18,6 +23,8 @@ _DEFAULT_DISPATCH_DECORATORS = [
 _DEFAULT_OVERLOAD_DECORATORS = [
     "overload",
 ]
+
+_DISABLED_BY_DEFAULT = ("ANN401",)  # Disable opinionated warnings by default
 
 
 class TypeHintChecker:
@@ -84,7 +91,8 @@ class TypeHintChecker:
 
             # Iterate over annotated args to detect mixing of type annotations and type comments
             # Emit this only once per function definition
-            for arg in function.get_annotated_arguments():
+            annotated_args = function.get_annotated_arguments()
+            for arg in annotated_args:
                 if arg.has_type_comment:
                     has_type_comment = True
 
@@ -95,6 +103,14 @@ class TypeHintChecker:
                     # Short-circuit check for mixing of type comments & 3107-style annotations
                     yield error_codes.ANN301.from_function(function).to_flake8()
                     break
+
+            # Iterate over the annotated args to look for `typing.Any`` annotations
+            # We could combine this with the above loop but I'd rather not add even more sentinels
+            # unless we'd notice a significant enough performance impact
+            for arg in annotated_args:
+                if arg.is_dynamically_typed:
+                    # Always yield these and let flake8 take care of ignoring
+                    yield error_codes.ANN401.from_argument(arg).to_flake8()
 
             # Before we iterate over the function's missing annotations, check to see if it's the
             # closing function def in a series of `typing.overload` decorated functions.
@@ -112,15 +128,16 @@ class TypeHintChecker:
                     if self.suppress_none_returning:
                         # Skip yielding return errors if the function has only `None` returns
                         # This includes the case of no returns.
-                        if not arg.has_type_annotation and function.has_only_none_returns:
+                        if function.has_only_none_returns:
                             continue
                     if self.mypy_init_return:
                         # Skip yielding return errors for `__init__` if at least one argument is
                         # annotated
                         if function.is_class_method and function.name == "__init__":
-                            # If we've gotten here, then `function.get_annotated_arguments` won't
-                            # contain `return`, since we're iterating over missing annotations
-                            if function.get_annotated_arguments():
+                            # If we've gotten here, then our annotated args won't contain "return"
+                            # since we're in a logic check for missing "return". So if our annotated
+                            # are non-empty, then __init__ has at least one annotated argument
+                            if annotated_args:
                                 continue
 
                 # If the `--suppress-dummy-args` flag is `True`, skip yielding errors for any
@@ -133,6 +150,8 @@ class TypeHintChecker:
     @classmethod
     def add_options(cls, parser: OptionManager) -> None:  # pragma: no cover
         """Add custom configuration option(s) to flake8."""
+        parser.extend_default_ignore(_DISABLED_BY_DEFAULT)
+
         parser.add_option(
             "--suppress-none-returning",
             default=False,
@@ -140,7 +159,7 @@ class TypeHintChecker:
             parse_from_config=True,
             help=(
                 "Suppress ANN200-level errors for functions that contain no return statement or "
-                "contain only bare return statements. (Default: False)"
+                "contain only bare return statements. (Default: %(default)s)"
             ),
         )
 
@@ -150,7 +169,7 @@ class TypeHintChecker:
             action="store_true",
             parse_from_config=True,
             help=(
-                "Suppress ANN000-level errors for dummy arguments, defined as '_'. (Default: False)"
+                "Suppress ANN000-level errors for dummy arguments, defined as '_'. (Default: %(default)s)"  # noqa: E501
             ),
         )
 
@@ -159,7 +178,7 @@ class TypeHintChecker:
             default=False,
             action="store_true",
             parse_from_config=True,
-            help="Suppress all errors for dynamically typed functions. (Default: False)",
+            help="Suppress all errors for dynamically typed functions. (Default: %(default)s)",
         )
 
         parser.add_option(
@@ -167,7 +186,7 @@ class TypeHintChecker:
             default=False,
             action="store_true",
             parse_from_config=True,
-            help="Suppress all errors for dynamically typed nested functions. (Default: False)",
+            help="Suppress all errors for dynamically typed nested functions. (Default: %(default)s)",  # noqa: E501
         )
 
         parser.add_option(
@@ -177,7 +196,7 @@ class TypeHintChecker:
             parse_from_config=True,
             help=(
                 "Allow omission of a return type hint for __init__ if at least one argument is "
-                "annotated. (Default: False)"
+                "annotated. (Default: %(default)s)"
             ),
         )
 
@@ -185,12 +204,12 @@ class TypeHintChecker:
             "--dispatch-decorators",
             default=_DEFAULT_DISPATCH_DECORATORS,
             action="store",
-            type="string",
+            type=str,
             parse_from_config=True,
             comma_separated_list=True,
             help=(
                 "Comma-separated list of decorators flake8-annotations should consider as dispatch "
-                "decorators. (Default: %default)"
+                "decorators. (Default: %(default)s)"
             ),
         )
 
@@ -198,12 +217,12 @@ class TypeHintChecker:
             "--overload-decorators",
             default=_DEFAULT_OVERLOAD_DECORATORS,
             action="store",
-            type="string",
+            type=str,
             parse_from_config=True,
             comma_separated_list=True,
             help=(
                 "Comma-separated list of decorators flake8-annotations should consider as "
-                "typing.overload decorators. (Default: %default)"
+                "typing.overload decorators. (Default: %(default)s)"
             ),
         )
 

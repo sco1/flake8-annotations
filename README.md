@@ -33,12 +33,12 @@ cog.out(
 ]]] -->
 ```bash
 $ flake8 --version
-4.0.1 (flake8-annotations: 2.7.0, mccabe: 0.6.1, pycodestyle: 2.8.0, pyflakes:2.4.0) CPython 3.10.2 on Darwin
+4.0.1 (flake8-annotations: 2.8.0, mccabe: 0.6.1, pycodestyle: 2.8.0, pyflakes:2.4.0) CPython 3.10.2 on Darwin
 ```
 <!-- [[[end]]] -->
 
 ## Table of Warnings
-All warnings are enabled by default.
+With the exception of `ANN4xx`-level warnings, all warnings are enabled by default.
 
 ### Function Annotations
 | ID       | Description                                   |
@@ -68,8 +68,15 @@ All warnings are enabled by default.
 |----------|-----------------------------------------------------------|
 | `ANN301` | PEP 484 disallows both type annotations and type comments |
 
+### Opinionated Warnings
+These warnings are disabled by default.
+| ID       | Description                                                |
+|----------|------------------------------------------------------------|
+| `ANN401` | Dynamically typed expressions (typing.Any) are disallowed.<sup>2</sup> |
+
 **Notes:**
 1. See: [PEP 484](https://www.python.org/dev/peps/pep-0484/#annotating-instance-and-class-methods) and [PEP 563](https://www.python.org/dev/peps/pep-0563/) for suggestions on annotating `self` and `cls` arguments.
+2. See: [Dynamic Typing Caveats](#dynamic-typing-caveats)
 
 ## Configuration Options
 Some opinionated flags are provided to tailor the linting errors emitted.
@@ -106,7 +113,7 @@ Comma-separated list of decorators flake8-annotations should consider as dispatc
 
 Decorators are matched based on their attribute name. For example, `"singledispatch"` will match any of the following:
   * `import functools; @functools.singledispatch`
-  * `import functools as fnctls; @fnctls.singledispatch`
+  * `import functools as <alias>; @<alias>.singledispatch`
   * `from functools import singledispatch; @singledispatch`
 
 **NOTE:** Deeper imports, such as `a.b.singledispatch` are not supported.
@@ -120,7 +127,7 @@ Comma-separated list of decorators flake8-annotations should consider as [`typin
 
 Decorators are matched based on their attribute name. For example, `"overload"` will match any of the following:
   * `import typing; @typing.overload`
-  * `import typing as t; @t.overload`
+  * `import typing as <alias>; @<alias>.overload`
   * `from typing import overload; @overload`
 
 **NOTE:** Deeper imports, such as `a.b.overload` are not supported.
@@ -182,7 +189,6 @@ Will not raise linting errors for missing annotations for the arguments & return
 Decorator(s) to treat as `typing.overload` may be specified by the [`--overload-decorators`](#--overload-decorators-liststr) configuration option.
 
 ## Caveats for PEP 484-style Type Comments
-
 ### Mixing argument-level and function-level type comments
 Support is provided for mixing argument-level and function-level type comments.
 
@@ -230,6 +236,14 @@ def foo(arg1, arg2):
 Will show `arg1` as missing a type hint.
 
 **Deprecation notice**: Explicit support for utilization of ellipses as placeholders will be removed in version `3.0`. See [this issue](https://github.com/sco1/flake8-annotations/issues/95) for more information.
+
+## Dynamic Typing Caveats
+Support is only provided for the following patterns:
+  * `from typing import any; foo: Any`
+  * `import typing; foo: typing.Any`
+  * `import typing as <alias>; foo: <alias>.Any`
+
+Nested dynamic types (e.g. `typing.Tuple[typing.Any]`) and redefinition (e.g. `from typing import Any as Foo`) will not be identified.
 
 ## Contributing
 
