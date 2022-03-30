@@ -159,7 +159,7 @@ class TypeHintChecker:
             parse_from_config=True,
             help=(
                 "Suppress ANN200-level errors for functions that contain no return statement or "
-                "contain only bare return statements. (Default: False)"
+                "contain only bare return statements. (Default: %(default)s)"
             ),
         )
 
@@ -169,7 +169,7 @@ class TypeHintChecker:
             action="store_true",
             parse_from_config=True,
             help=(
-                "Suppress ANN000-level errors for dummy arguments, defined as '_'. (Default: False)"
+                "Suppress ANN000-level errors for dummy arguments, defined as '_'. (Default: %(default)s)"  # noqa: E501
             ),
         )
 
@@ -178,7 +178,7 @@ class TypeHintChecker:
             default=False,
             action="store_true",
             parse_from_config=True,
-            help="Suppress all errors for dynamically typed functions. (Default: False)",
+            help="Suppress all errors for dynamically typed functions. (Default: %(default)s)",
         )
 
         parser.add_option(
@@ -186,7 +186,7 @@ class TypeHintChecker:
             default=False,
             action="store_true",
             parse_from_config=True,
-            help="Suppress all errors for dynamically typed nested functions. (Default: False)",
+            help="Suppress all errors for dynamically typed nested functions. (Default: %(default)s)",  # noqa: E501
         )
 
         parser.add_option(
@@ -196,7 +196,7 @@ class TypeHintChecker:
             parse_from_config=True,
             help=(
                 "Allow omission of a return type hint for __init__ if at least one argument is "
-                "annotated. (Default: False)"
+                "annotated. (Default: %(default)s)"
             ),
         )
 
@@ -204,12 +204,12 @@ class TypeHintChecker:
             "--dispatch-decorators",
             default=_DEFAULT_DISPATCH_DECORATORS,
             action="store",
-            type="string",
+            type=str,
             parse_from_config=True,
             comma_separated_list=True,
             help=(
                 "Comma-separated list of decorators flake8-annotations should consider as dispatch "
-                "decorators. (Default: %default)"
+                "decorators. (Default: %(default)s)"
             ),
         )
 
@@ -217,12 +217,12 @@ class TypeHintChecker:
             "--overload-decorators",
             default=_DEFAULT_OVERLOAD_DECORATORS,
             action="store",
-            type="string",
+            type=str,
             parse_from_config=True,
             comma_separated_list=True,
             help=(
                 "Comma-separated list of decorators flake8-annotations should consider as "
-                "typing.overload decorators. (Default: %default)"
+                "typing.overload decorators. (Default: %(default)s)"
             ),
         )
 
