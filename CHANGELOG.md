@@ -1,6 +1,10 @@
 # Changelog
 Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (`<major>`.`<minor>`.`<patch>`)
 
+## [v2.9.0]
+### Added
+* #135 Add `--allow-star-arg-any` to support suppression of `ANN401` for `*args` and `**kwargs`.
+
 ## [v2.8.0]
 ### Added
 * #131 Add the `ANN4xx` error level for opinionated warnings that are disabled by default.

@@ -45,6 +45,7 @@ class TypeHintChecker:
         self.allow_untyped_defs: bool
         self.allow_untyped_nested: bool
         self.mypy_init_return: bool
+        self.allow_star_arg_any: bool
         self.dispatch_decorators: t.Set[str]
         self.overload_decorators: t.Set[str]
 
@@ -168,9 +169,7 @@ class TypeHintChecker:
             default=False,
             action="store_true",
             parse_from_config=True,
-            help=(
-                "Suppress ANN000-level errors for dummy arguments, defined as '_'. (Default: %(default)s)"  # noqa: E501
-            ),
+            help="Suppress ANN000-level errors for dummy arguments, defined as '_'. (Default: %(default)s)",  # noqa: E501
         )
 
         parser.add_option(
@@ -226,6 +225,14 @@ class TypeHintChecker:
             ),
         )
 
+        parser.add_option(
+            "--allow-star-arg-any",
+            default=False,
+            action="store_true",
+            parse_from_config=True,
+            help="Suppress ANN401 for dynamically typed *args and **kwargs. (Default: %(default)s)",
+        )
+
     @classmethod
     def parse_options(cls, options: Namespace) -> None:  # pragma: no cover
         """Parse the custom configuration options given to flake8."""
@@ -234,6 +241,7 @@ class TypeHintChecker:
         cls.allow_untyped_defs = options.allow_untyped_defs
         cls.allow_untyped_nested = options.allow_untyped_nested
         cls.mypy_init_return = options.mypy_init_return
+        cls.allow_star_arg_any = options.allow_star_arg_any
 
         # Store decorator lists as sets for easier lookup
         cls.dispatch_decorators = set(options.dispatch_decorators)

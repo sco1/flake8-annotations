@@ -136,6 +136,10 @@ See: [The `typing.overload` Decorator](#the-typingoverload-decorator) for additi
 
 Default: `"overload"`
 
+### `--allow-star-arg-any`
+Suppress `ANN401` for dynamically typed `*args` and `**kwargs`.
+
+Default: `False`
 
 ## Generic Functions
 Per the Python Glossary, a [generic function](https://docs.python.org/3/glossary.html#term-generic-function) is defined as:
