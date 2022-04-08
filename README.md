@@ -64,6 +64,7 @@ With the exception of `ANN4xx`-level warnings, all warnings are enabled by defau
 | `ANN206` | Missing return type annotation for classmethod        |
 
 ### Type Comments
+**Deprecation notice**: Support for type comments will be removed in `3.0`. See [this issue](https://github.com/sco1/flake8-annotations/issues/95) for more information.
 | ID       | Description                                               |
 |----------|-----------------------------------------------------------|
 | `ANN301` | PEP 484 disallows both type annotations and type comments |
@@ -193,6 +194,7 @@ Will not raise linting errors for missing annotations for the arguments & return
 Decorator(s) to treat as `typing.overload` may be specified by the [`--overload-decorators`](#--overload-decorators-liststr) configuration option.
 
 ## Caveats for PEP 484-style Type Comments
+**Deprecation notice**: Support for type comments will be removed in `3.0`. See [this issue](https://github.com/sco1/flake8-annotations/issues/95) for more information.
 ### Mixing argument-level and function-level type comments
 Support is provided for mixing argument-level and function-level type comments.
 
@@ -238,8 +240,6 @@ def foo(arg1, arg2):
     pass
 ```
 Will show `arg1` as missing a type hint.
-
-**Deprecation notice**: Explicit support for utilization of ellipses as placeholders will be removed in version `3.0`. See [this issue](https://github.com/sco1/flake8-annotations/issues/95) for more information.
 
 ## Dynamic Typing Caveats
 Support is only provided for the following patterns:
