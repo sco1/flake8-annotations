@@ -105,12 +105,17 @@ class TypeHintChecker:
                     yield error_codes.ANN301.from_function(function).to_flake8()
                     break
 
-            # Iterate over the annotated args to look for `typing.Any`` annotations
+            # Iterate over the annotated args to look for `typing.Any` annotations
             # We could combine this with the above loop but I'd rather not add even more sentinels
             # unless we'd notice a significant enough performance impact
             for arg in annotated_args:
                 if arg.is_dynamically_typed:
-                    # Always yield these and let flake8 take care of ignoring
+                    if self.allow_star_arg_any and arg.annotation_type in {
+                        enums.AnnotationType.VARARG,
+                        enums.AnnotationType.KWARG,
+                    }:
+                        continue
+
                     yield error_codes.ANN401.from_argument(arg).to_flake8()
 
             # Before we iterate over the function's missing annotations, check to see if it's the
