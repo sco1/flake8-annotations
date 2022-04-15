@@ -22,9 +22,7 @@ class ArgumentTestCase(NamedTuple):
 # Note: For testing purposes, lineno and col_offset are ignored so these are set to dummy values
 # using partial objects
 untyped_arg = partial(Argument, lineno=0, col_offset=0, has_type_annotation=False)
-typed_arg = partial(
-    Argument, lineno=0, col_offset=0, has_type_annotation=True, has_3107_annotation=True
-)
+typed_arg = partial(Argument, lineno=0, col_offset=0, has_type_annotation=True)
 
 argument_test_cases = {
     "all_args_untyped": ArgumentTestCase(

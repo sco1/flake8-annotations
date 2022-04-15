@@ -18,7 +18,6 @@ ALL_ERROR_CODES = (
     error_codes.ANN204,
     error_codes.ANN205,
     error_codes.ANN206,
-    error_codes.ANN301,
 )
 
 

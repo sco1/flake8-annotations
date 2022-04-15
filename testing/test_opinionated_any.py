@@ -59,27 +59,6 @@ TEST_CASES = (
             """
         ),
     ),
-    # Type comments
-    (
-        dedent(
-            """\
-            def foo(
-                a  # type: Any
-            ):
-                # type: (...) -> int
-                ...
-            """
-        ),
-    ),
-    (
-        dedent(
-            """\
-            def foo(a):
-                # type: (int) -> Any
-                ...
-            """
-        ),
-    ),
 )
 
 

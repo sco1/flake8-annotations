@@ -5,9 +5,9 @@
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/sco1/flake8-annotations/main.svg)](https://results.pre-commit.ci/latest/github/sco1/flake8-annotations/main)
 [![Open in Visual Studio Code](https://img.shields.io/badge/Open%20in-VSCode.dev-blue)](https://github.dev/sco1/flake8-annotations)
 
-`flake8-annotations` is a plugin for [Flake8](http://flake8.pycqa.org/en/latest/) that detects the absence of [PEP 3107-style](https://www.python.org/dev/peps/pep-3107/) function annotations and [PEP 484-style](https://www.python.org/dev/peps/pep-0484/#type-comments) type comments (see: [Caveats](#Caveats-for-PEP-484-style-Type-Comments)).
+`flake8-annotations` is a plugin for [Flake8](http://flake8.pycqa.org/en/latest/) that detects the absence of [PEP 3107-style](https://www.python.org/dev/peps/pep-3107/) function annotations.
 
-What this won't do: Check variable annotations (see: [PEP 526](https://www.python.org/dev/peps/pep-0526/)), respect stub files, or replace [mypy](http://mypy-lang.org/).
+What this won't do: replace [mypy](http://mypy-lang.org/), check type comments (see: [PEP 484](https://peps.python.org/pep-0484/#type-comments)), check variable annotations (see: [PEP 526](https://www.python.org/dev/peps/pep-0526/)), or respect stub files.
 
 ## Installation
 Install from PyPi with your favorite `pip` invocation:
@@ -61,12 +61,6 @@ With the exception of `ANN4xx`-level warnings, all warnings are enabled by defau
 | `ANN204` | Missing return type annotation for special method     |
 | `ANN205` | Missing return type annotation for staticmethod       |
 | `ANN206` | Missing return type annotation for classmethod        |
-
-### Type Comments
-**Deprecation notice**: Support for type comments will be removed in `3.0`. See [this issue](https://github.com/sco1/flake8-annotations/issues/95) for more information.
-| ID       | Description                                               |
-|----------|-----------------------------------------------------------|
-| `ANN301` | PEP 484 disallows both type annotations and type comments |
 
 ### Opinionated Warnings
 These warnings are disabled by default.
@@ -194,54 +188,6 @@ def foo(a):
 Will not raise linting errors for missing annotations for the arguments & return of the non-decorated `foo` definition.
 
 Decorator(s) to treat as `typing.overload` may be specified by the [`--overload-decorators`](#--overload-decorators-liststr) configuration option.
-
-## Caveats for PEP 484-style Type Comments
-**Deprecation notice**: Support for type comments will be removed in `3.0`. See [this issue](https://github.com/sco1/flake8-annotations/issues/95) for more information.
-### Mixing argument-level and function-level type comments
-Support is provided for mixing argument-level and function-level type comments.
-
-```py
-def foo(
-    arg1,  # type: bool
-    arg2,  # type: bool
-):  # type: (...) -> bool
-    pass
-```
-
-**Note:** If present, function-level type comments will override any argument-level type comments.
-
-### Partial type comments
-Partially type hinted functions are supported for non-static class methods.
-
-For example:
-
-```py
-class Foo:
-    def __init__(self):
-        # type: () -> None
-        ...
-
-    def bar(self, a):
-        # type: (int) -> int
-        ...
-```
-Will consider `bar`'s `self` argument as unannotated and use the `int` type hint for `a`.
-
-Partial type comments utilizing ellipses as placeholders is also supported:
-
-```py
-def foo(arg1, arg2):
-    # type: (bool) -> bool
-    pass
-```
-Will show `arg2` as missing a type hint.
-
-```py
-def foo(arg1, arg2):
-    # type: (..., bool) -> bool
-    pass
-```
-Will show `arg1` as missing a type hint.
 
 ## Dynamic Typing Caveats
 Support is only provided for the following patterns:

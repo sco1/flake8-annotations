@@ -1,15 +1,12 @@
 from typing import Tuple
 
 import pytest
-import pytest_check as check
 
 from flake8_annotations.ast_walker import Argument, Function
-from flake8_annotations.checker import FORMATTED_ERROR, classify_error
+from flake8_annotations.checker import classify_error
 from flake8_annotations.enums import AnnotationType
 from flake8_annotations.error_codes import Error
-from testing.helpers import check_source
 from testing.test_cases import classifier_object_attributes
-from testing.test_cases.type_comment_test_cases import ParserTestCase, parser_test_cases
 
 
 class TestReturnClassifier:
@@ -98,38 +95,3 @@ class TestArgumentClassifier:
         """Test missing argument annotation error codes."""
         test_function, test_argument, error_object = function_builder
         assert isinstance(classify_error(test_function, test_argument), error_object)
-
-
-class TestMixedTypeHintClassifier:
-    """Test for correct classification of mixed type comments & type annotations."""
-
-    @pytest.fixture(params=parser_test_cases.items(), ids=parser_test_cases.keys())
-    def yielded_errors(
-        self, request  # noqa: ANN001
-    ) -> Tuple[str, ParserTestCase, Tuple[FORMATTED_ERROR]]:
-        """
-        Build a fixture for the error codes emitted from parsing the type comments test code.
-
-        Fixture provides a tuple of: test case name, its corresponding ParserTestCase instance, and
-        a tuple of the errors yielded by the checker
-        """
-        test_case_name, test_case = request.param
-
-        return test_case_name, test_case, tuple(check_source(test_case.src))
-
-    def test_ANN301_classification(
-        self, yielded_errors: Tuple[str, ParserTestCase, Tuple[FORMATTED_ERROR]]
-    ) -> None:
-        """Test for correct classification of mixed type comments & type annotations."""
-        failure_msg = f"Check failed for case '{yielded_errors[0]}'"
-
-        yielded_ANN301 = any("ANN301" in error[2] for error in yielded_errors[2])
-        check.equal(yielded_errors[1].should_yield_ANN301, yielded_ANN301, msg=failure_msg)
-
-    def test_single_ANN301_yield(
-        self, yielded_errors: Tuple[str, ParserTestCase, Tuple[FORMATTED_ERROR]]
-    ) -> None:
-        """Test that only one ANN301 error is yielded if a function mixes type comments."""
-        if yielded_errors[1].should_yield_ANN301:
-            n_yielded_ANN301_errors = sum("ANN301" in error[2] for error in yielded_errors[2])
-            assert n_yielded_ANN301_errors == 1

@@ -163,15 +163,6 @@ class ANN206(Error):
         self.col_offset = col_offset
 
 
-# Type comments
-class ANN301(Error):
-    def __init__(self, argname: str, lineno: int, col_offset: int):
-        super().__init__("ANN301 PEP 484 disallows both type annotations and type comments")
-        self.argname = argname
-        self.lineno = lineno
-        self.col_offset = col_offset
-
-
 # Opinionated warnings
 class ANN401(Error):
     def __init__(self, argname: str, lineno: int, col_offset: int):

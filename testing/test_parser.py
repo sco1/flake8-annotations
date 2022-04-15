@@ -72,14 +72,12 @@ class TestArgumentParsing:
           * argname
           * annotation_type
           * has_type_annotation
-          * has_3107_annotation
         """
         return all(
             (
                 arg_a.argname == arg_b.argname,
                 arg_a.annotation_type == arg_b.annotation_type,
                 arg_a.has_type_annotation == arg_b.has_type_annotation,
-                arg_a.has_3107_annotation == arg_b.has_3107_annotation,
             )
         )
 
