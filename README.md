@@ -33,7 +33,7 @@ cog.out(
 ]]] -->
 ```bash
 $ flake8 --version
-4.0.1 (flake8-annotations: 2.8.0, mccabe: 0.6.1, pycodestyle: 2.8.0, pyflakes:2.4.0) CPython 3.10.2 on Darwin
+4.0.1 (flake8-annotations: 2.9.0, mccabe: 0.6.1, pycodestyle: 2.8.0, pyflakes:2.4.0) CPython 3.10.2 on Darwin
 ```
 <!-- [[[end]]] -->
 
@@ -64,6 +64,7 @@ With the exception of `ANN4xx`-level warnings, all warnings are enabled by defau
 | `ANN206` | Missing return type annotation for classmethod        |
 
 ### Type Comments
+**Deprecation notice**: Support for type comments will be removed in `3.0`. See [this issue](https://github.com/sco1/flake8-annotations/issues/95) for more information.
 | ID       | Description                                               |
 |----------|-----------------------------------------------------------|
 | `ANN301` | PEP 484 disallows both type annotations and type comments |
@@ -136,6 +137,10 @@ See: [The `typing.overload` Decorator](#the-typingoverload-decorator) for additi
 
 Default: `"overload"`
 
+### `--allow-star-arg-any`
+Suppress `ANN401` for dynamically typed `*args` and `**kwargs`.
+
+Default: `False`
 
 ## Generic Functions
 Per the Python Glossary, a [generic function](https://docs.python.org/3/glossary.html#term-generic-function) is defined as:
@@ -189,6 +194,7 @@ Will not raise linting errors for missing annotations for the arguments & return
 Decorator(s) to treat as `typing.overload` may be specified by the [`--overload-decorators`](#--overload-decorators-liststr) configuration option.
 
 ## Caveats for PEP 484-style Type Comments
+**Deprecation notice**: Support for type comments will be removed in `3.0`. See [this issue](https://github.com/sco1/flake8-annotations/issues/95) for more information.
 ### Mixing argument-level and function-level type comments
 Support is provided for mixing argument-level and function-level type comments.
 
@@ -234,8 +240,6 @@ def foo(arg1, arg2):
     pass
 ```
 Will show `arg1` as missing a type hint.
-
-**Deprecation notice**: Explicit support for utilization of ellipses as placeholders will be removed in version `3.0`. See [this issue](https://github.com/sco1/flake8-annotations/issues/95) for more information.
 
 ## Dynamic Typing Caveats
 Support is only provided for the following patterns:

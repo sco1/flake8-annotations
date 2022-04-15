@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "flake8-annotations"
-version = "2.8.0"
+version = "2.9.0"
 description = "Flake8 Type Annotation Checks"
 license = "MIT"
 readme = "README.md"
@@ -49,7 +49,7 @@ flake8-fixme = "^1.1"
 flake8-formatter-junit-xml = "^0.0"
 flake8-type-checking = {version="^1.3", python=">=3.8,<4.0"}
 isort = "^5.9"
-mypy = "^0.941"
+mypy = "^0.942"
 pep8-naming = "^0.12"
 pre-commit = "^2.13"
 pytest = "^7.0"

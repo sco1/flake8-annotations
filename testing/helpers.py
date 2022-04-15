@@ -38,6 +38,7 @@ def check_source(
     allow_untyped_defs: bool = False,
     allow_untyped_nested: bool = False,
     mypy_init_return: bool = False,
+    allow_star_arg_any: bool = False,
     dispatch_decorators: t.AbstractSet[str] = frozenset(_DEFAULT_DISPATCH_DECORATORS),
     overload_decorators: t.AbstractSet[str] = frozenset(_DEFAULT_OVERLOAD_DECORATORS),
 ) -> t.Generator[FORMATTED_ERROR, None, None]:
@@ -51,6 +52,7 @@ def check_source(
     checker_instance.allow_untyped_defs = allow_untyped_defs
     checker_instance.allow_untyped_nested = allow_untyped_nested
     checker_instance.mypy_init_return = mypy_init_return
+    checker_instance.allow_star_arg_any = allow_star_arg_any
     checker_instance.dispatch_decorators = dispatch_decorators
     checker_instance.overload_decorators = overload_decorators
 
