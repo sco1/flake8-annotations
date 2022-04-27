@@ -24,7 +24,11 @@ _DEFAULT_OVERLOAD_DECORATORS = [
     "overload",
 ]
 
-_DISABLED_BY_DEFAULT = ("ANN401",)  # Disable opinionated warnings by default
+# Disable opinionated warnings by default
+_DISABLED_BY_DEFAULT = (
+    "ANN401",
+    "ANN402",
+)
 
 
 class TypeHintChecker:
@@ -69,6 +73,9 @@ class TypeHintChecker:
         #
         # Flake8 handles all noqa and error code ignore configurations after the error is yielded
         for function in visitor.function_definitions:
+            if function.has_type_comment:
+                yield error_codes.ANN402.from_function(function).to_flake8()
+
             if function.is_dynamically_typed():
                 if self.allow_untyped_defs:
                     # Skip yielding errors from dynamically typed functions
@@ -82,7 +89,7 @@ class TypeHintChecker:
             if function.has_decorator(self.dispatch_decorators):
                 continue
 
-            # Iterate over the annotated args to look for `typing.Any` annotations
+            # Iterate over the annotated args to look for opinionated warnings
             annotated_args = function.get_annotated_arguments()
             for arg in annotated_args:
                 if arg.is_dynamically_typed:
@@ -105,6 +112,10 @@ class TypeHintChecker:
 
             # Yield explicit errors for arguments that are missing annotations
             for arg in function.get_missed_annotations():
+                # Check for type comments here since we're not considering them as typed args
+                if arg.has_type_comment:
+                    yield error_codes.ANN402.from_argument(arg).to_flake8()
+
                 if arg.argname == "return":
                     # return annotations have multiple possible short-circuit paths
                     if self.suppress_none_returning:

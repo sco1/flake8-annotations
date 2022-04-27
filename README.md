@@ -67,6 +67,7 @@ These warnings are disabled by default.
 | ID       | Description                                                            |
 |----------|------------------------------------------------------------------------|
 | `ANN401` | Dynamically typed expressions (typing.Any) are disallowed.<sup>2</sup> |
+| `ANN402` | Type comments are disallowed.                                          |
 
 Use [`extend-select`](https://flake8.pycqa.org/en/latest/user/options.html#cmdoption-flake8-extend-ignore) to enable opinionated warnings without overriding other implicit configurations<sup>3</sup>.
 

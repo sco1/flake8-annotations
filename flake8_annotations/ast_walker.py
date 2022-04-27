@@ -55,7 +55,6 @@ class Argument:
         annotation_type = AnnotationType[annotation_type_name]
         new_arg = cls(node.arg, node.lineno, node.col_offset, annotation_type)
 
-        new_arg.has_type_annotation = False
         if node.annotation:
             new_arg.has_type_annotation = True
 
@@ -68,7 +67,7 @@ class Argument:
         return new_arg
 
     @staticmethod
-    def _is_annotated_any(arg_expr: t.Union[ast.expr, str]) -> bool:
+    def _is_annotated_any(arg_expr: ast.expr) -> bool:
         """
         Check if the provided expression node is annotated with `typing.Any`.
 
@@ -82,9 +81,6 @@ class Argument:
                 return True
         elif isinstance(arg_expr, ast.Attribute):
             if arg_expr.attr == "Any":
-                return True
-        elif isinstance(arg_expr, str):
-            if arg_expr.split(".", maxsplit=1)[-1] == "Any":
                 return True
 
         return False

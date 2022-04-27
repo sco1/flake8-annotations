@@ -170,3 +170,11 @@ class ANN401(Error):
         self.argname = argname
         self.lineno = lineno
         self.col_offset = col_offset
+
+
+class ANN402(Error):
+    def __init__(self, argname: str, lineno: int, col_offset: int):
+        super().__init__("ANN402 Type comments are disallowed")
+        self.argname = argname
+        self.lineno = lineno
+        self.col_offset = col_offset
