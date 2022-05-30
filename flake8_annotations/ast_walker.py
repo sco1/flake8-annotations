@@ -43,6 +43,7 @@ class Argument:
     has_3107_annotation: bool = False
     has_type_comment: bool = False
     is_dynamically_typed: bool = False
+    has_bare_annotation: bool = False
 
     def __str__(self) -> str:
         """
@@ -66,6 +67,9 @@ class Argument:
 
             if cls._is_annotated_any(node.annotation):
                 new_arg.is_dynamically_typed = True
+            
+            if cls._is_bare_annotation(node.annotation):
+                new_arg.has_bare_annotation = True
 
         if node.type_comment:
             new_arg.has_type_annotation = True
@@ -73,8 +77,30 @@ class Argument:
 
             if cls._is_annotated_any(node.type_comment):
                 new_arg.is_dynamically_typed = True
-
+            
+            if cls._is_bare_annotation(node.type_comment):
+                new_arg.has_bare_annotation = True
+        
         return new_arg
+
+    @staticmethod
+    def _is_annotated_with(query: str, arg_expr: t.Union[ast.expr, str]) -> bool:
+        if isinstance(arg_expr, ast.Name):
+            if arg_expr.id == query:
+                return True
+        elif isinstance(arg_expr, ast.Attribute):
+            if arg_expr.attr == query:
+                return True
+        elif isinstance(arg_expr, str):
+            if arg_expr.split(".", maxsplit=1)[-1] == query:
+                return True
+
+        return False
+
+    @staticmethod
+    def _is_bare_annotation(arg_expr: t.Union[ast.expr, str]) -> bool:
+        possibilities = ["dict", "list", "set", "frozenset", "defaultdict", "ordereddict", "chainmap", "counter", "deque"]
+        return any([Argument._is_annotated_with(possible, arg_expr) for possible in possibilities])
 
     @staticmethod
     def _is_annotated_any(arg_expr: t.Union[ast.expr, str]) -> bool:
@@ -89,18 +115,7 @@ class Argument:
         Type comments are also supported. Inline type comments are assumed to be passed here as
         `str`, and function-level type comments are assumed to be passed as `ast.expr`.
         """
-        if isinstance(arg_expr, ast.Name):
-            if arg_expr.id == "Any":
-                return True
-        elif isinstance(arg_expr, ast.Attribute):
-            if arg_expr.attr == "Any":
-                return True
-        elif isinstance(arg_expr, str):
-            if arg_expr.split(".", maxsplit=1)[-1] == "Any":
-                return True
-
-        return False
-
+        return Argument._is_annotated_with("Any", arg_expr)
 
 @define(slots=True)
 class Function:
@@ -144,6 +159,10 @@ class Function:
     def get_annotated_arguments(self) -> t.List[Argument]:
         """Provide a list of arguments with type annotations."""
         return [arg for arg in self.args if arg.has_type_annotation]
+
+    def get_bare_annotations(self) -> t.List[Argument]:
+        """Provide a list of arguments withe bare annotations."""
+        return [arg for arg in self.args if arg.has_bare_annotation]
 
     def has_decorator(self, check_decorators: t.Set[str]) -> bool:
         """

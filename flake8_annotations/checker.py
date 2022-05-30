@@ -46,6 +46,7 @@ class TypeHintChecker:
         self.allow_untyped_nested: bool
         self.mypy_init_return: bool
         self.allow_star_arg_any: bool
+        self.allow_bare_types: bool
         self.dispatch_decorators: t.Set[str]
         self.overload_decorators: t.Set[str]
 
@@ -126,6 +127,10 @@ class TypeHintChecker:
             # If it's not, and it is overload decorated, store it for the next iteration
             if function.has_decorator(self.overload_decorators):
                 last_overload_decorated_function_name = function.name
+
+            if not self.allow_bare_types:
+                for arg in function.get_bare_annotations():
+                    yield error_codes.ANN402.from_argument(arg).to_flake8()
 
             # Yield explicit errors for arguments that are missing annotations
             for arg in function.get_missed_annotations():
@@ -238,6 +243,14 @@ class TypeHintChecker:
             help="Suppress ANN401 for dynamically typed *args and **kwargs. (Default: %(default)s)",
         )
 
+        parser.add_option(
+            "--allow-bare-types",
+            default=True,
+            action="store_false",
+            parse_from_config=True,
+            help="Suppress ANN402 for unparametrized builtin generics. (Default: %(default)s)",
+        )
+
     @classmethod
     def parse_options(cls, options: Namespace) -> None:  # pragma: no cover
         """Parse the custom configuration options given to flake8."""
@@ -247,6 +260,7 @@ class TypeHintChecker:
         cls.allow_untyped_nested = options.allow_untyped_nested
         cls.mypy_init_return = options.mypy_init_return
         cls.allow_star_arg_any = options.allow_star_arg_any
+        cls.allow_bare_types = options.allow_bare_types
 
         # Store decorator lists as sets for easier lookup
         cls.dispatch_decorators = set(options.dispatch_decorators)
