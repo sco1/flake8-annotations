@@ -67,7 +67,7 @@ class Argument:
 
             if cls._is_annotated_any(node.annotation):
                 new_arg.is_dynamically_typed = True
-            
+
             if cls._is_bare_annotation(node.annotation):
                 new_arg.has_bare_annotation = True
 
@@ -77,10 +77,10 @@ class Argument:
 
             if cls._is_annotated_any(node.type_comment):
                 new_arg.is_dynamically_typed = True
-            
+
             if cls._is_bare_annotation(node.type_comment):
                 new_arg.has_bare_annotation = True
-        
+
         return new_arg
 
     @staticmethod
@@ -99,7 +99,17 @@ class Argument:
 
     @staticmethod
     def _is_bare_annotation(arg_expr: t.Union[ast.expr, str]) -> bool:
-        possibilities = ["dict", "list", "set", "frozenset", "defaultdict", "ordereddict", "chainmap", "counter", "deque"]
+        possibilities = [
+            "dict",
+            "list",
+            "set",
+            "frozenset",
+            "defaultdict",
+            "ordereddict",
+            "chainmap",
+            "counter",
+            "deque",
+        ]
         return any([Argument._is_annotated_with(possible, arg_expr) for possible in possibilities])
 
     @staticmethod
@@ -116,6 +126,7 @@ class Argument:
         `str`, and function-level type comments are assumed to be passed as `ast.expr`.
         """
         return Argument._is_annotated_with("Any", arg_expr)
+
 
 @define(slots=True)
 class Function:
