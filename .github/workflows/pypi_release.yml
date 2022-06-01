@@ -10,9 +10,9 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Set up Python
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v3
       with:
         python-version: '3.x'
 
@@ -23,7 +23,7 @@ jobs:
         poetry build
       
     - name: Publish package
-      uses: pypa/gh-action-pypi-publish@release/v1.4
+      uses: pypa/gh-action-pypi-publish@release/v1.5
       with:
         user: __token__
         password: ${{ secrets.pypi_api_token }}

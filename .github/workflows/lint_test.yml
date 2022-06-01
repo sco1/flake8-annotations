@@ -13,9 +13,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Set up Python
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v3
       with:
         python-version: '3.x'
 
@@ -39,9 +39,9 @@ jobs:
       fail-fast: false
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v3
       with:
         python-version: ${{ matrix.python-version }}
 
@@ -54,7 +54,7 @@ jobs:
       run: tox
 
     - name: Cache coverage for ${{ matrix.python-version }}
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: cov_py${{ matrix.python-version }}
         path: .coverage
@@ -64,14 +64,14 @@ jobs:
     needs: test
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Set up Python
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v3
       with:
         python-version: '3.x'
 
     - name: Pull coverage workflow artifacts
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v3
       with:
         path: cov_cache/
 
@@ -86,7 +86,7 @@ jobs:
         coverage html
 
     - name: Publish cov HTML
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         path: htmlcov/
         name: cov_report_html
