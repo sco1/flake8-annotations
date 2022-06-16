@@ -3,7 +3,7 @@ from typing import NamedTuple
 
 
 class FormatTestCase(NamedTuple):
-    """Helper comtainer for variable formatting test cases."""
+    """Helper container for variable formatting test cases."""
 
     src: str
 
