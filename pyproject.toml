@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "flake8-annotations"
-version = "2.9.0"
+version = "2.9.1"
 description = "Flake8 Type Annotation Checks"
 license = "MIT"
 readme = "README.md"
@@ -20,6 +20,7 @@ classifiers = [
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3 :: Only",
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Topic :: Software Development :: Quality Assurance",
@@ -35,7 +36,7 @@ include = [
 
 [tool.poetry.dependencies]
 python = "^3.7"
-attrs = "^21.4"
+attrs = ">=21.4"
 flake8 = ">=3.7"
 typed-ast = {version="^1.4,<2.0", python="<3.8"}
 
@@ -47,9 +48,11 @@ flake8-bugbear = "^22.4"
 flake8-docstrings = "^1.6"
 flake8-fixme = "^1.1"
 flake8-formatter-junit-xml = "^0.0"
-flake8-type-checking = {version="^1.5", python=">=3.8,<4.0"}
+flake8-type-checking = {version="^2.0", python=">=3.8,<4.0"}
+importlib-metadata = {version="^4.0", python="<3.8"}
 isort = "^5.10"
-mypy = "^0.960"
+mypy = "^0.971"
+packaging = ">=21"
 pep8-naming = "^0.12"
 pre-commit = "^2.18"
 pytest = "^7.1"

@@ -1,6 +1,13 @@
 # Changelog
 Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (`<major>`.`<minor>`.`<patch>`)
 
+## [v2.9.1]
+### Changed
+* #144 Unpin the version ceiling for `attrs`.
+
+### Fixed
+* (Internal) Fix unit tests for opinionated warning codes in `flake8 >= 5.0` (See: https://github.com/pycqa/flake8/issues/284)
+
 ## [v2.9.0]
 ### Added
 * #135 Add `--allow-star-arg-any` to support suppression of `ANN401` for `*args` and `**kwargs`.

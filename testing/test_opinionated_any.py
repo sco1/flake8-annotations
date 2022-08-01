@@ -3,12 +3,19 @@ from subprocess import PIPE, run
 from textwrap import dedent
 
 import pytest
+from packaging import version
 
-from flake8_annotations import error_codes
+from flake8_annotations import PY_GTE_38, error_codes
 from testing.helpers import check_source
 
-ERR = partial(error_codes.ANN401, lineno=3)
+if PY_GTE_38:
+    from importlib import metadata
+else:
+    import importlib_metadata as metadata
 
+FLAKE_GTE_5 = version.parse(metadata.version("flake8")) >= version.Version("5.0")
+
+ERR = partial(error_codes.ANN401, lineno=3)
 
 TEST_CASES = (
     # Type annotations
@@ -93,16 +100,23 @@ INP = dedent(
     """
 )
 
+RUN_PARTIAL = partial(run, stdout=PIPE, input=INP, encoding="ascii")
+
 
 def test_ANN401_ignored_default() -> None:
-    p = run(["flake8", "--select=ANN", "-"], stdout=PIPE, input=INP, encoding="ascii")
-    assert len(p.stdout) == 0
+    p = RUN_PARTIAL(["flake8", "-"])
+
+    assert "ANN401" not in p.stdout
 
 
 def test_ANN401_fire_when_selected() -> None:
-    p = run(
-        ["flake8", "--select=ANN", "--ignore=''", "-"], stdout=PIPE, input=INP, encoding="ascii"
-    )
+    # flake8 ignore logic changes in v5.0
+    # See: https://github.com/pycqa/flake8/issues/284
+    if FLAKE_GTE_5:
+        p = RUN_PARTIAL(["flake8", "--extend-select=ANN401", "-"])
+    else:
+        p = RUN_PARTIAL(["flake8", "--select=ANN", "--ignore=''", "-"])
+
     assert "ANN401" in p.stdout
 
 
