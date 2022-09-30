@@ -41,25 +41,25 @@ flake8 = ">=3.7"
 typed-ast = {version="^1.4,<2.0", python="<3.8"}
 
 [tool.poetry.dev-dependencies]
-black = "^22.3"
+black = "^22.8"
 bump2version = "^1.0"
 cogapp = "^3.3"
-flake8-bugbear = "^22.4"
+flake8-bugbear = "^22.9"
 flake8-docstrings = "^1.6"
 flake8-fixme = "^1.1"
 flake8-formatter-junit-xml = "^0.0"
 flake8-type-checking = {version="^2.0", python=">=3.8,<4.0"}
 importlib-metadata = {version="^4.0", python="<3.8"}
 isort = "^5.10"
-mypy = "^0.971"
+mypy = "^0.981"
 packaging = ">=21"
 pep8-naming = "^0.12"
 pre-commit = "^2.18"
 pytest = "^7.1"
 pytest-check = "^1.0"
-pytest-cov = "^3.0"
+pytest-cov = "^4.0"
 pytest-randomly = "^3.12"
-tox = "^3.25"
+tox = "^3.26"
 types-typed-ast = "^1.5"
 
 [tool.poetry.plugins]
@@ -91,5 +91,5 @@ warn_unused_configs = true
 warn_unused_ignores = true
 
 [build-system]
-requires = ["poetry-core>=1.0.8"]
+requires = ["poetry-core>=1.2"]
 build-backend = "poetry.core.masonry.api"

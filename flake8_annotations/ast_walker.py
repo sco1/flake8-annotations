@@ -396,7 +396,7 @@ class Function:
             if len(hint_tree.argtypes) < (len(func_obj.args) - 1):  # Subtract 1 to skip return arg
                 # Ignore mypy's objection to this assignment, Ellipsis subclasses expr so I'm not
                 # sure how to make Mypy happy with this but I think it still makes semantic sense
-                hint_tree.argtypes = [ast.Ellipsis()] + hint_tree.argtypes  # type: ignore[assignment, operator]  # noqa: E501
+                hint_tree.argtypes = [ast.Ellipsis()] + hint_tree.argtypes
 
         return hint_tree
 

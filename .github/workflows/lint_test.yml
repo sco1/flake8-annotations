@@ -82,7 +82,10 @@ jobs:
 
     - name: Report coverage
       run: |
-        coverage report -m --skip-covered
+        echo '**Combined Coverage**' >> $GITHUB_STEP_SUMMARY
+        echo '```' >> $GITHUB_STEP_SUMMARY
+        coverage report -m --skip-covered >> $GITHUB_STEP_SUMMARY
+        echo '```' >> $GITHUB_STEP_SUMMARY
         coverage html
 
     - name: Publish cov HTML
