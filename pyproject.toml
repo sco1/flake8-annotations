@@ -16,7 +16,6 @@ classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
@@ -36,10 +35,9 @@ include = [
 "Issue Tracker" = "https://github.com/sco1/flake8-annotations/issues"
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = "^3.8"
 attrs = ">=21.4"
 flake8 = ">=3.7"
-typed-ast = {version="^1.4,<2.0", python="<3.8"}
 
 [tool.poetry.dev-dependencies]
 black = "^22.12"

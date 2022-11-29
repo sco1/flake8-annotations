@@ -1,19 +1,11 @@
 from __future__ import annotations
 
+import ast
 import typing as t
 
 from attrs import define
 
-from flake8_annotations import PY_GTE_38
 from flake8_annotations.enums import AnnotationType, ClassDecoratorType, FunctionType
-
-# Check if we can use the stdlib ast module instead of typed_ast; stdlib ast gains native type
-# comment support in Python 3.8
-if PY_GTE_38:
-    import ast
-else:
-    from typed_ast import ast3 as ast  # type: ignore[no-redef]
-
 
 AST_DECORATOR_NODES = t.Union[ast.Attribute, ast.Call, ast.Name]
 AST_DEF_NODES = t.Union[ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef]
@@ -21,11 +13,7 @@ AST_FUNCTION_TYPES = t.Union[ast.FunctionDef, ast.AsyncFunctionDef]
 
 # The order of AST_ARG_TYPES must match Python's grammar
 # See: https://docs.python.org/3/library/ast.html#abstract-grammar
-AST_ARG_TYPES: t.Tuple[str, ...] = ("args", "vararg", "kwonlyargs", "kwarg")
-if PY_GTE_38:
-    # Positional-only args introduced in Python 3.8
-    # If posonlyargs are present, they will be before other argument types
-    AST_ARG_TYPES = ("posonlyargs",) + AST_ARG_TYPES
+AST_ARG_TYPES: t.Tuple[str, ...] = ("posonlyargs", "args", "vararg", "kwonlyargs", "kwarg")
 
 
 @define(slots=True)
@@ -258,10 +246,7 @@ class Function:
         """
         Find the line & column indices of the function definition's closing colon.
 
-        Processing paths are Python version-dependent, as there are differences in where the
-        docstring is placed in the AST:
-            * Python >= 3.8, docstrings are contained in the body of the function node
-            * Python < 3.8, docstrings are contained in the function node
+        For Python >= 3.8, docstrings are contained in the body of the function node.
 
         NOTE: AST's line numbers are 1-indexed, column offsets are 0-indexed. Since `lines` is a
         list, it will be 0-indexed.
@@ -270,23 +255,9 @@ class Function:
         if node.lineno == node.body[0].lineno:
             return Function._single_line_colon_seeker(node, lines[node.lineno - 1])
 
-        # With Python < 3.8, the function node includes the docstring & the body does not, so
-        # we have rewind through any docstrings, if present, before looking for the def colon
-        # We should end up with lines[def_end_lineno - 1] having the colon
-        def_end_lineno = node.body[0].lineno
-        if not PY_GTE_38:
-            # If the docstring is on one line then no rewinding is necessary.
-            n_triple_quotes = lines[def_end_lineno - 1].count('"""')
-            if n_triple_quotes == 1:  # pragma: no branch
-                # Docstring closure, rewind until the opening is found & take the line prior
-                while True:
-                    def_end_lineno -= 1
-                    if '"""' in lines[def_end_lineno - 1]:  # pragma: no branch
-                        # Docstring has closed
-                        break
-
         # Once we've gotten here, we've found the line where the docstring begins, so we have
         # to step up one more line to get to the close of the def
+        def_end_lineno = node.body[0].lineno
         def_end_lineno -= 1
 
         # Use str.rfind() to account for annotations on the same line, definition closure should

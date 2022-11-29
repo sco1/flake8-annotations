@@ -6,7 +6,7 @@ from functools import lru_cache
 
 from flake8.options.manager import OptionManager
 
-from flake8_annotations import PY_GTE_38, __version__, enums, error_codes
+from flake8_annotations import __version__, enums, error_codes
 from flake8_annotations.ast_walker import Argument, Function, FunctionVisitor, ast
 
 FORMATTED_ERROR = t.Tuple[int, int, str, t.Type[t.Any]]
@@ -37,7 +37,8 @@ class TypeHintChecker:
         # Request `tree` in order to ensure flake8 will run the plugin, even though we don't use it
         # Request `lines` here and join to allow for correct handling of input from stdin
         self.lines = lines
-        self.tree = self.get_typed_tree("".join(lines))  # flake8 doesn't strip newlines
+
+        self.tree = ast.parse("".join(lines), type_comments=True)  # flake8 doesn't strip newlines
 
         # Set by flake8's config parser
         self.suppress_none_returning: bool
@@ -234,18 +235,6 @@ class TypeHintChecker:
         # Store decorator lists as sets for easier lookup
         cls.dispatch_decorators = set(options.dispatch_decorators)
         cls.overload_decorators = set(options.overload_decorators)
-
-    @staticmethod
-    def get_typed_tree(src: str) -> ast.Module:  # pragma: no cover
-        """Parse the provided source into a typed AST."""
-        if PY_GTE_38:
-            # Built-in ast requires a flag to parse type comments
-            tree = ast.parse(src, type_comments=True)
-        else:
-            # typed-ast will implicitly parse type comments
-            tree = ast.parse(src)
-
-        return tree
 
 
 def classify_error(function: Function, arg: Argument) -> error_codes.Error:

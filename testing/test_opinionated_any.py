@@ -1,17 +1,13 @@
 from functools import partial
+from importlib import metadata
 from subprocess import PIPE, run
 from textwrap import dedent
 
 import pytest
 from packaging import version
 
-from flake8_annotations import PY_GTE_38, error_codes
+from flake8_annotations import error_codes
 from testing.helpers import check_source
-
-if PY_GTE_38:
-    from importlib import metadata
-else:
-    import importlib_metadata as metadata
 
 FLAKE_GTE_5 = version.parse(metadata.version("flake8")) >= version.Version("5.0")
 

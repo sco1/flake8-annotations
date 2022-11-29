@@ -6,17 +6,9 @@ from flake8_annotations.ast_walker import Argument
 from flake8_annotations.enums import AnnotationType
 
 
-class ArgumentTestCase(NamedTuple):
-    """
-    Helper container for Argument parsing test cases.
-
-    The `py38_only` flag may be optionally specified for use skipping test cases that will fail for
-    Python versions less than 3.8
-    """
-
+class ArgumentTestCase(NamedTuple):  # noqa: D101
     src: str
     args: Tuple[Argument, ...]
-    py38_only: bool = False
 
 
 # Note: For testing purposes, lineno and col_offset are ignored so these are set to dummy values
@@ -66,7 +58,6 @@ argument_test_cases = {
             untyped_arg(argname="posonlyarg", annotation_type=AnnotationType.POSONLYARGS),
             typed_arg(argname="return", annotation_type=AnnotationType.RETURN),
         ),
-        py38_only=True,
     ),
     "posonly_arg_typed": ArgumentTestCase(
         src=dedent(
@@ -79,7 +70,6 @@ argument_test_cases = {
             typed_arg(argname="posonlyarg", annotation_type=AnnotationType.POSONLYARGS),
             typed_arg(argname="return", annotation_type=AnnotationType.RETURN),
         ),
-        py38_only=True,
     ),
     "posonly_and_arg_args": ArgumentTestCase(
         src=dedent(
@@ -93,6 +83,5 @@ argument_test_cases = {
             typed_arg(argname="bar", annotation_type=AnnotationType.ARGS),
             typed_arg(argname="return", annotation_type=AnnotationType.RETURN),
         ),
-        py38_only=True,
     ),
 }
