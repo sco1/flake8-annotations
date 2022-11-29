@@ -1,17 +1,13 @@
 from __future__ import annotations
 
 import typing as t
+from argparse import Namespace
 from functools import lru_cache
 
+from flake8.options.manager import OptionManager
+
 from flake8_annotations import PY_GTE_38, __version__, enums, error_codes
-from flake8_annotations.ast_walker import FunctionVisitor, ast
-
-if t.TYPE_CHECKING:
-    from argparse import Namespace
-
-    from flake8.options.manager import OptionManager
-
-    from flake8_annotations.ast_walker import Argument, Function
+from flake8_annotations.ast_walker import Argument, Function, FunctionVisitor, ast
 
 FORMATTED_ERROR = t.Tuple[int, int, str, t.Type[t.Any]]
 

@@ -3,9 +3,7 @@ from __future__ import annotations
 import typing as t
 
 from flake8_annotations import checker
-
-if t.TYPE_CHECKING:
-    from flake8_annotations.ast_walker import Argument, Function
+from flake8_annotations.ast_walker import Argument, Function
 
 
 class Error:
