@@ -1,5 +1,6 @@
 ci:
   skip: [flake8]
+  autoupdate_schedule: monthly
 
 repos:
   - repo: https://github.com/psf/black
