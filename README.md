@@ -1,10 +1,10 @@
 # flake8-annotations
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/flake8-annotations)](https://pypi.org/project/flake8-annotations/)
 [![PyPI](https://img.shields.io/pypi/v/flake8-annotations)](https://pypi.org/project/flake8-annotations/)
-[![PyPI - License](https://img.shields.io/pypi/l/flake8-annotations?color=magenta)](https://github.com/sco1/flake8-annotations/blob/master/LICENSE)
+[![PyPI - License](https://img.shields.io/pypi/l/flake8-annotations?color=magenta)](https://github.com/sco1/flake8-annotations/blob/main/LICENSE)
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/sco1/flake8-annotations/main.svg)](https://results.pre-commit.ci/latest/github/sco1/flake8-annotations/main)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-black)](https://github.com/psf/black)
-[![Open in Visual Studio Code](https://img.shields.io/badge/Open%20in-VSCode.dev-blue)](https://vscode.dev/github.com/sco1/flake8-annotations)
+[![Open in Visual Studio Code](https://img.shields.io/badge/Open%20in-VSCode.dev-blue)](https://github.dev/sco1/flake8-annotations)
 
 `flake8-annotations` is a plugin for [Flake8](http://flake8.pycqa.org/en/latest/) that detects the absence of [PEP 3107-style](https://www.python.org/dev/peps/pep-3107/) function annotations and [PEP 484-style](https://www.python.org/dev/peps/pep-0484/#type-comments) type comments (see: [Caveats](#Caveats-for-PEP-484-style-Type-Comments)).
 
@@ -71,13 +71,16 @@ With the exception of `ANN4xx`-level warnings, all warnings are enabled by defau
 
 ### Opinionated Warnings
 These warnings are disabled by default.
-| ID       | Description                                                |
-|----------|------------------------------------------------------------|
+| ID       | Description                                                            |
+|----------|------------------------------------------------------------------------|
 | `ANN401` | Dynamically typed expressions (typing.Any) are disallowed.<sup>2</sup> |
 
+Use [`extend-select`](https://flake8.pycqa.org/en/latest/user/options.html#cmdoption-flake8-extend-ignore) to enable opinionated warnings without overriding other implicit configurations<sup>3</sup>.
+
 **Notes:**
-1. See: [PEP 484](https://www.python.org/dev/peps/pep-0484/#annotating-instance-and-class-methods) and [PEP 563](https://www.python.org/dev/peps/pep-0563/) for suggestions on annotating `self` and `cls` arguments.
+1. See: [PEP 484](https://www.python.org/dev/peps/pep-0484/#annotating-instance-and-class-methods) and [PEP 563](https://www.python.org/dev/peps/pep-0563/) for suggestions on annotating `self` and `cls` arguments
 2. See: [Dynamic Typing Caveats](#dynamic-typing-caveats)
+3. Common pitfall: the use of [`ignore`](https://flake8.pycqa.org/en/latest/user/options.html#cmdoption-flake8-ignore) will enable all implicitly disabled warnings
 
 ## Configuration Options
 Some opinionated flags are provided to tailor the linting errors emitted.
