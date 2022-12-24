@@ -15,7 +15,7 @@ if PY_GTE_38:
     from ast import Ellipsis as ast_Ellipsis
 else:
     from typed_ast import ast3 as ast  # type: ignore[no-redef]
-    from typed_ast.ast3 import Ellipsis as ast_Ellipsis  # type: ignore[misc]
+    from typed_ast.ast3 import Ellipsis as ast_Ellipsis  # type: ignore[assignment]
 
 
 AST_DECORATOR_NODES = t.Union[ast.Attribute, ast.Call, ast.Name]
