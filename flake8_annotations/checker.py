@@ -1,17 +1,13 @@
 from __future__ import annotations
 
 import typing as t
+from argparse import Namespace
 from functools import lru_cache
 
-from flake8_annotations import PY_GTE_38, __version__, enums, error_codes
-from flake8_annotations.ast_walker import FunctionVisitor, ast
+from flake8.options.manager import OptionManager
 
-if t.TYPE_CHECKING:
-    from argparse import Namespace
-
-    from flake8.options.manager import OptionManager
-
-    from flake8_annotations.ast_walker import Argument, Function
+from flake8_annotations import __version__, enums, error_codes
+from flake8_annotations.ast_walker import Argument, Function, FunctionVisitor, ast
 
 FORMATTED_ERROR = t.Tuple[int, int, str, t.Type[t.Any]]
 
@@ -24,7 +20,11 @@ _DEFAULT_OVERLOAD_DECORATORS = [
     "overload",
 ]
 
-_DISABLED_BY_DEFAULT = ("ANN401",)  # Disable opinionated warnings by default
+# Disable opinionated warnings by default
+_DISABLED_BY_DEFAULT = (
+    "ANN401",
+    "ANN402",
+)
 
 
 class TypeHintChecker:
@@ -37,7 +37,8 @@ class TypeHintChecker:
         # Request `tree` in order to ensure flake8 will run the plugin, even though we don't use it
         # Request `lines` here and join to allow for correct handling of input from stdin
         self.lines = lines
-        self.tree = self.get_typed_tree("".join(lines))  # flake8 doesn't strip newlines
+
+        self.tree = ast.parse("".join(lines), type_comments=True)  # flake8 doesn't strip newlines
 
         # Set by flake8's config parser
         self.suppress_none_returning: bool
@@ -69,6 +70,9 @@ class TypeHintChecker:
         #
         # Flake8 handles all noqa and error code ignore configurations after the error is yielded
         for function in visitor.function_definitions:
+            if function.has_type_comment:
+                yield error_codes.ANN402.from_function(function).to_flake8()
+
             if function.is_dynamically_typed():
                 if self.allow_untyped_defs:
                     # Skip yielding errors from dynamically typed functions
@@ -82,32 +86,8 @@ class TypeHintChecker:
             if function.has_decorator(self.dispatch_decorators):
                 continue
 
-            # Create sentinels to check for mixed hint styles
-            if function.has_type_comment:
-                has_type_comment = True
-            else:
-                has_type_comment = False
-
-            has_3107_annotation = False  # 3107 annotations are captured by the return arg
-
-            # Iterate over annotated args to detect mixing of type annotations and type comments
-            # Emit this only once per function definition
+            # Iterate over the annotated args to look for opinionated warnings
             annotated_args = function.get_annotated_arguments()
-            for arg in annotated_args:
-                if arg.has_type_comment:
-                    has_type_comment = True
-
-                if arg.has_3107_annotation:
-                    has_3107_annotation = True
-
-                if has_type_comment and has_3107_annotation:
-                    # Short-circuit check for mixing of type comments & 3107-style annotations
-                    yield error_codes.ANN301.from_function(function).to_flake8()
-                    break
-
-            # Iterate over the annotated args to look for `typing.Any` annotations
-            # We could combine this with the above loop but I'd rather not add even more sentinels
-            # unless we'd notice a significant enough performance impact
             for arg in annotated_args:
                 if arg.is_dynamically_typed:
                     if self.allow_star_arg_any and arg.annotation_type in {
@@ -129,6 +109,10 @@ class TypeHintChecker:
 
             # Yield explicit errors for arguments that are missing annotations
             for arg in function.get_missed_annotations():
+                # Check for type comments here since we're not considering them as typed args
+                if arg.has_type_comment:
+                    yield error_codes.ANN402.from_argument(arg).to_flake8()
+
                 if arg.argname == "return":
                     # return annotations have multiple possible short-circuit paths
                     if self.suppress_none_returning:
@@ -251,18 +235,6 @@ class TypeHintChecker:
         # Store decorator lists as sets for easier lookup
         cls.dispatch_decorators = set(options.dispatch_decorators)
         cls.overload_decorators = set(options.overload_decorators)
-
-    @staticmethod
-    def get_typed_tree(src: str) -> ast.Module:  # pragma: no cover
-        """Parse the provided source into a typed AST."""
-        if PY_GTE_38:
-            # Built-in ast requires a flag to parse type comments
-            tree = ast.parse(src, type_comments=True)
-        else:
-            # typed-ast will implicitly parse type comments
-            tree = ast.parse(src)
-
-        return tree
 
 
 def classify_error(function: Function, arg: Argument) -> error_codes.Error:

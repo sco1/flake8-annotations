@@ -4,28 +4,18 @@ import typing as t
 
 from pytest_check import check_func
 
-from flake8_annotations import PY_GTE_38
-from flake8_annotations.ast_walker import FunctionVisitor, ast
+from flake8_annotations.ast_walker import Function, FunctionVisitor, ast
 from flake8_annotations.checker import (
+    FORMATTED_ERROR,
     TypeHintChecker,
     _DEFAULT_DISPATCH_DECORATORS,
     _DEFAULT_OVERLOAD_DECORATORS,
 )
 
-if t.TYPE_CHECKING:
-    from flake8_annotations.ast_walker import Function
-    from flake8_annotations.checker import FORMATTED_ERROR
-
 
 def parse_source(src: str) -> t.Tuple[ast.Module, t.List[str]]:
     """Parse the provided Python source string and return an (typed AST, source) tuple."""
-    if PY_GTE_38:
-        # Built-in ast requires a flag to parse type comments
-        tree = ast.parse(src, type_comments=True)
-    else:
-        # typed-ast will implicitly parse type comments
-        tree = ast.parse(src)
-
+    tree = ast.parse(src, type_comments=True)
     lines = src.splitlines(keepends=True)
 
     return tree, lines

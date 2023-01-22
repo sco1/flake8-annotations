@@ -1,13 +1,13 @@
 # flake8-annotations
-[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/flake8-annotations/2.9.1?logo=python&logoColor=FFD43B)](https://pypi.org/project/flake8-annotations/)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/flake8-annotations/3.0.0?logo=python&logoColor=FFD43B)](https://pypi.org/project/flake8-annotations/)
 [![PyPI](https://img.shields.io/pypi/v/flake8-annotations?logo=Python&logoColor=FFD43B)](https://pypi.org/project/flake8-annotations/)
 [![PyPI - License](https://img.shields.io/pypi/l/flake8-annotations?color=magenta)](https://github.com/sco1/flake8-annotations/blob/main/LICENSE)
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/sco1/flake8-annotations/main.svg)](https://results.pre-commit.ci/latest/github/sco1/flake8-annotations/main)
 [![Open in Visual Studio Code](https://img.shields.io/badge/Open%20in-VSCode.dev-blue)](https://github.dev/sco1/flake8-annotations)
 
-`flake8-annotations` is a plugin for [Flake8](http://flake8.pycqa.org/en/latest/) that detects the absence of [PEP 3107-style](https://www.python.org/dev/peps/pep-3107/) function annotations and [PEP 484-style](https://www.python.org/dev/peps/pep-0484/#type-comments) type comments (see: [Caveats](#Caveats-for-PEP-484-style-Type-Comments)).
+`flake8-annotations` is a plugin for [Flake8](http://flake8.pycqa.org/en/latest/) that detects the absence of [PEP 3107-style](https://www.python.org/dev/peps/pep-3107/) function annotations.
 
-What this won't do: Check variable annotations (see: [PEP 526](https://www.python.org/dev/peps/pep-0526/)), respect stub files, or replace [mypy](http://mypy-lang.org/).
+What this won't do: replace [mypy](http://mypy-lang.org/), check type comments (see: [PEP 484](https://peps.python.org/pep-0484/#type-comments)), check variable annotations (see: [PEP 526](https://www.python.org/dev/peps/pep-0526/)), or respect stub files.
 
 ## Installation
 Install from PyPi with your favorite `pip` invocation:
@@ -32,7 +32,7 @@ cog.out(
 ]]] -->
 ```bash
 $ flake8 --version
-5.0.4 (flake8-annotations: 2.9.1, mccabe: 0.7.0, pycodestyle: 2.9.1, pyflakes:2.5.0) CPython 3.10.6 on Darwin
+6.0.0 (flake8-annotations: 3.0.0, mccabe: 0.7.0, pycodestyle: 2.10.0, pyflakes: 3.0.1) CPython 3.11.0 on Darwin
 ```
 <!-- [[[end]]] -->
 
@@ -62,17 +62,12 @@ With the exception of `ANN4xx`-level warnings, all warnings are enabled by defau
 | `ANN205` | Missing return type annotation for staticmethod       |
 | `ANN206` | Missing return type annotation for classmethod        |
 
-### Type Comments
-**Deprecation notice**: Support for type comments will be removed in `3.0`. See [this issue](https://github.com/sco1/flake8-annotations/issues/95) for more information.
-| ID       | Description                                               |
-|----------|-----------------------------------------------------------|
-| `ANN301` | PEP 484 disallows both type annotations and type comments |
-
 ### Opinionated Warnings
 These warnings are disabled by default.
 | ID       | Description                                                            |
 |----------|------------------------------------------------------------------------|
 | `ANN401` | Dynamically typed expressions (typing.Any) are disallowed.<sup>2</sup> |
+| `ANN402` | Type comments are disallowed.                                          |
 
 Use [`extend-select`](https://flake8.pycqa.org/en/latest/user/options.html#cmdoption-flake8-extend-ignore) to enable opinionated warnings without overriding other implicit configurations<sup>3</sup>.
 
@@ -194,54 +189,6 @@ def foo(a):
 Will not raise linting errors for missing annotations for the arguments & return of the non-decorated `foo` definition.
 
 Decorator(s) to treat as `typing.overload` may be specified by the [`--overload-decorators`](#--overload-decorators-liststr) configuration option.
-
-## Caveats for PEP 484-style Type Comments
-**Deprecation notice**: Support for type comments will be removed in `3.0`. See [this issue](https://github.com/sco1/flake8-annotations/issues/95) for more information.
-### Mixing argument-level and function-level type comments
-Support is provided for mixing argument-level and function-level type comments.
-
-```py
-def foo(
-    arg1,  # type: bool
-    arg2,  # type: bool
-):  # type: (...) -> bool
-    pass
-```
-
-**Note:** If present, function-level type comments will override any argument-level type comments.
-
-### Partial type comments
-Partially type hinted functions are supported for non-static class methods.
-
-For example:
-
-```py
-class Foo:
-    def __init__(self):
-        # type: () -> None
-        ...
-
-    def bar(self, a):
-        # type: (int) -> int
-        ...
-```
-Will consider `bar`'s `self` argument as unannotated and use the `int` type hint for `a`.
-
-Partial type comments utilizing ellipses as placeholders is also supported:
-
-```py
-def foo(arg1, arg2):
-    # type: (bool) -> bool
-    pass
-```
-Will show `arg2` as missing a type hint.
-
-```py
-def foo(arg1, arg2):
-    # type: (..., bool) -> bool
-    pass
-```
-Will show `arg1` as missing a type hint.
 
 ## Dynamic Typing Caveats
 Support is only provided for the following patterns:

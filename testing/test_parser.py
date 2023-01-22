@@ -1,4 +1,3 @@
-import sys
 from itertools import zip_longest
 from typing import List, Tuple
 
@@ -34,12 +33,6 @@ class TestArgumentParsing:
         dummy values in the truth dictionary
         """
         test_case_name, test_case = request.param
-
-        # Since positional-only args are part of these test cases, short-circuit for Python < 3.8 if
-        # the `py38_only` boolean flag is set in the test case
-        if test_case.py38_only and sys.version_info < (3, 8):
-            pytest.skip("Test case expected to fail for Python < 3.8")
-
         truth_arguments = test_case.args
 
         tree, lines = parse_source(test_case.src)
@@ -72,14 +65,12 @@ class TestArgumentParsing:
           * argname
           * annotation_type
           * has_type_annotation
-          * has_3107_annotation
         """
         return all(
             (
                 arg_a.argname == arg_b.argname,
                 arg_a.annotation_type == arg_b.annotation_type,
                 arg_a.has_type_annotation == arg_b.has_type_annotation,
-                arg_a.has_3107_annotation == arg_b.has_3107_annotation,
             )
         )
 

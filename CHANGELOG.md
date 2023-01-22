@@ -1,6 +1,19 @@
 # Changelog
 Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (`<major>`.`<minor>`.`<patch>`)
 
+## [v3.0.0]
+### Added
+* Add `ANN402` for the presence of type comments
+### Changed
+* Python 3.8.1 is now the minimum supported version
+* Flake8 v5.0 is now the minimum supported version
+
+### Removed
+* Remove support for [PEP 484-style](https://www.python.org/dev/peps/pep-0484/#type-comments) type comments
+  * See: https://mail.python.org/archives/list/typing-sig@python.org/thread/66JDHQ2I3U3CPUIYA43W7SPEJLLPUETG/
+  * See: https://github.com/python/mypy/issues/12947
+* Remove `ANN301`
+
 ## [v2.9.1]
 ### Changed
 * #144 Unpin the version ceiling for `attrs`.

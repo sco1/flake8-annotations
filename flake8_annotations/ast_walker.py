@@ -1,22 +1,11 @@
 from __future__ import annotations
 
+import ast
 import typing as t
-from itertools import zip_longest
 
 from attrs import define
 
-from flake8_annotations import PY_GTE_38
 from flake8_annotations.enums import AnnotationType, ClassDecoratorType, FunctionType
-
-# Check if we can use the stdlib ast module instead of typed_ast; stdlib ast gains native type
-# comment support in Python 3.8
-if PY_GTE_38:
-    import ast
-    from ast import Ellipsis as ast_Ellipsis
-else:
-    from typed_ast import ast3 as ast  # type: ignore[no-redef]
-    from typed_ast.ast3 import Ellipsis as ast_Ellipsis  # type: ignore[assignment]
-
 
 AST_DECORATOR_NODES = t.Union[ast.Attribute, ast.Call, ast.Name]
 AST_DEF_NODES = t.Union[ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef]
@@ -24,11 +13,7 @@ AST_FUNCTION_TYPES = t.Union[ast.FunctionDef, ast.AsyncFunctionDef]
 
 # The order of AST_ARG_TYPES must match Python's grammar
 # See: https://docs.python.org/3/library/ast.html#abstract-grammar
-AST_ARG_TYPES: t.Tuple[str, ...] = ("args", "vararg", "kwonlyargs", "kwarg")
-if PY_GTE_38:
-    # Positional-only args introduced in Python 3.8
-    # If posonlyargs are present, they will be before other argument types
-    AST_ARG_TYPES = ("posonlyargs",) + AST_ARG_TYPES
+AST_ARG_TYPES: t.Tuple[str, ...] = ("posonlyargs", "args", "vararg", "kwonlyargs", "kwarg")
 
 
 @define(slots=True)
@@ -40,7 +25,6 @@ class Argument:
     col_offset: int
     annotation_type: AnnotationType
     has_type_annotation: bool = False
-    has_3107_annotation: bool = False
     has_type_comment: bool = False
     is_dynamically_typed: bool = False
 
@@ -59,25 +43,19 @@ class Argument:
         annotation_type = AnnotationType[annotation_type_name]
         new_arg = cls(node.arg, node.lineno, node.col_offset, annotation_type)
 
-        new_arg.has_type_annotation = False
         if node.annotation:
             new_arg.has_type_annotation = True
-            new_arg.has_3107_annotation = True
 
             if cls._is_annotated_any(node.annotation):
                 new_arg.is_dynamically_typed = True
 
         if node.type_comment:
-            new_arg.has_type_annotation = True
             new_arg.has_type_comment = True
-
-            if cls._is_annotated_any(node.type_comment):
-                new_arg.is_dynamically_typed = True
 
         return new_arg
 
     @staticmethod
-    def _is_annotated_any(arg_expr: t.Union[ast.expr, str]) -> bool:
+    def _is_annotated_any(arg_expr: ast.expr) -> bool:
         """
         Check if the provided expression node is annotated with `typing.Any`.
 
@@ -85,18 +63,12 @@ class Argument:
             * `from typing import Any; foo: Any`
             * `import typing; foo: typing.Any`
             * `import typing as <alias>; foo: <alias>.Any`
-
-        Type comments are also supported. Inline type comments are assumed to be passed here as
-        `str`, and function-level type comments are assumed to be passed as `ast.expr`.
         """
         if isinstance(arg_expr, ast.Name):
             if arg_expr.id == "Any":
                 return True
         elif isinstance(arg_expr, ast.Attribute):
             if arg_expr.attr == "Any":
-                return True
-        elif isinstance(arg_expr, str):
-            if arg_expr.split(".", maxsplit=1)[-1] == "Any":
                 return True
 
         return False
@@ -252,7 +224,6 @@ class Function:
         return_arg = Argument("return", def_end_lineno, def_end_col_offset, AnnotationType.RETURN)
         if node.returns:
             return_arg.has_type_annotation = True
-            return_arg.has_3107_annotation = True
             new_function.is_return_annotated = True
 
             if Argument._is_annotated_any(node.returns):
@@ -260,11 +231,8 @@ class Function:
 
         new_function.args.append(return_arg)
 
-        # Type comments in-line with input arguments are handled by the Argument class
-        # If a function-level type comment is present, attempt to parse for any missed type hints
         if node.type_comment:
             new_function.has_type_comment = True
-            new_function = cls.try_type_comment(new_function, node)
 
         # Check for the presence of non-`None` returns using the special-case return node visitor
         return_visitor = ReturnVisitor(node)
@@ -278,10 +246,7 @@ class Function:
         """
         Find the line & column indices of the function definition's closing colon.
 
-        Processing paths are Python version-dependent, as there are differences in where the
-        docstring is placed in the AST:
-            * Python >= 3.8, docstrings are contained in the body of the function node
-            * Python < 3.8, docstrings are contained in the function node
+        For Python >= 3.8, docstrings are contained in the body of the function node.
 
         NOTE: AST's line numbers are 1-indexed, column offsets are 0-indexed. Since `lines` is a
         list, it will be 0-indexed.
@@ -290,23 +255,9 @@ class Function:
         if node.lineno == node.body[0].lineno:
             return Function._single_line_colon_seeker(node, lines[node.lineno - 1])
 
-        # With Python < 3.8, the function node includes the docstring & the body does not, so
-        # we have rewind through any docstrings, if present, before looking for the def colon
-        # We should end up with lines[def_end_lineno - 1] having the colon
-        def_end_lineno = node.body[0].lineno
-        if not PY_GTE_38:
-            # If the docstring is on one line then no rewinding is necessary.
-            n_triple_quotes = lines[def_end_lineno - 1].count('"""')
-            if n_triple_quotes == 1:  # pragma: no branch
-                # Docstring closure, rewind until the opening is found & take the line prior
-                while True:
-                    def_end_lineno -= 1
-                    if '"""' in lines[def_end_lineno - 1]:  # pragma: no branch
-                        # Docstring has closed
-                        break
-
         # Once we've gotten here, we've found the line where the docstring begins, so we have
         # to step up one more line to get to the close of the def
+        def_end_lineno = node.body[0].lineno
         def_end_lineno -= 1
 
         # Use str.rfind() to account for annotations on the same line, definition closure should
@@ -323,82 +274,6 @@ class Function:
         def_end_col_offset = line.rfind(":", col_start, col_end)
 
         return node.lineno, def_end_col_offset
-
-    @staticmethod
-    def try_type_comment(func_obj: Function, node: AST_FUNCTION_TYPES) -> Function:
-        """
-        Attempt to infer type hints from a function-level type comment.
-
-        If a function is type commented it is assumed to have a return annotation, otherwise Python
-        will fail to parse the hint.
-        """
-        # If we're in this function then the node is guaranteed to have a type comment, so we can
-        # ignore mypy's complaint about an incompatible type for `node.type_comment`
-        # Because we're passing in the `func_type` arg, we know that our return is guaranteed to be
-        # ast.FunctionType
-        hint_tree: ast.FunctionType = ast.parse(node.type_comment, "<func_type>", "func_type")  # type: ignore[assignment, arg-type]  # noqa: E501
-        hint_tree = Function._maybe_inject_class_argument(hint_tree, func_obj)
-
-        for arg, hint_comment in zip_longest(func_obj.args, hint_tree.argtypes):
-            if isinstance(hint_comment, ast_Ellipsis):
-                continue
-
-            if arg and hint_comment:
-                arg.has_type_annotation = True
-                arg.has_type_comment = True
-
-                if Argument._is_annotated_any(hint_comment):
-                    arg.is_dynamically_typed = True
-
-        # Return arg is always last
-        func_obj.args[-1].has_type_annotation = True
-        func_obj.args[-1].has_type_comment = True
-        func_obj.is_return_annotated = True
-        if Argument._is_annotated_any(hint_tree.returns):
-            arg.is_dynamically_typed = True
-
-        return func_obj
-
-    @staticmethod
-    def _maybe_inject_class_argument(
-        hint_tree: ast.FunctionType, func_obj: Function
-    ) -> ast.FunctionType:
-        """
-        Inject `self` or `cls` args into a type comment to align with PEP 3107-style annotations.
-
-        Because PEP 484 does not describe a method to provide partial function-level type comments,
-        there is a potential for ambiguity in the context of both class methods and classmethods
-        when aligning type comments to method arguments.
-
-        These two class methods, for example, should lint equivalently:
-
-            def bar(self, a):
-                # type: (int) -> int
-                ...
-
-            def bar(self, a: int) -> int
-                ...
-
-        When this example type comment is parsed by `ast` and then matched with the method's
-        arguments, it associates the `int` hint to `self` rather than `a`, so a dummy hint needs to
-        be provided in situations where `self` or `class` are not hinted in the type comment in
-        order to achieve equivalent linting results to PEP-3107 style annotations.
-
-        A dummy `ast.Ellipses` constant is injected if the following criteria are met:
-            1. The function node is either a class method or classmethod
-            2. The number of hinted args is at least 1 less than the number of function args
-        """
-        if not func_obj.is_class_method:
-            # Short circuit
-            return hint_tree
-
-        if func_obj.class_decorator_type != ClassDecoratorType.STATICMETHOD:
-            if len(hint_tree.argtypes) < (len(func_obj.args) - 1):  # Subtract 1 to skip return arg
-                # Ignore mypy's objection to this assignment, Ellipsis subclasses expr so I'm not
-                # sure how to make Mypy happy with this but I think it still makes semantic sense
-                hint_tree.argtypes = [ast.Ellipsis()] + hint_tree.argtypes
-
-        return hint_tree
 
     @staticmethod
     def get_function_type(function_name: str) -> FunctionType:

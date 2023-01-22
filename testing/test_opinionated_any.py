@@ -3,17 +3,9 @@ from subprocess import PIPE, run
 from textwrap import dedent
 
 import pytest
-from packaging import version
 
-from flake8_annotations import PY_GTE_38, error_codes
+from flake8_annotations import error_codes
 from testing.helpers import check_source
-
-if PY_GTE_38:
-    from importlib import metadata
-else:
-    import importlib_metadata as metadata
-
-FLAKE_GTE_5 = version.parse(metadata.version("flake8")) >= version.Version("5.0")
 
 ERR = partial(error_codes.ANN401, lineno=3)
 
@@ -59,27 +51,6 @@ TEST_CASES = (
             """
         ),
     ),
-    # Type comments
-    (
-        dedent(
-            """\
-            def foo(
-                a  # type: Any
-            ):
-                # type: (...) -> int
-                ...
-            """
-        ),
-    ),
-    (
-        dedent(
-            """\
-            def foo(a):
-                # type: (int) -> Any
-                ...
-            """
-        ),
-    ),
 )
 
 
@@ -110,12 +81,7 @@ def test_ANN401_ignored_default() -> None:
 
 
 def test_ANN401_fire_when_selected() -> None:
-    # flake8 ignore logic changes in v5.0
-    # See: https://github.com/pycqa/flake8/issues/284
-    if FLAKE_GTE_5:
-        p = RUN_PARTIAL(["flake8", "--extend-select=ANN401", "-"])
-    else:
-        p = RUN_PARTIAL(["flake8", "--select=ANN", "--ignore=''", "-"])
+    p = RUN_PARTIAL(["flake8", "--extend-select=ANN401", "-"])
 
     assert "ANN401" in p.stdout
 

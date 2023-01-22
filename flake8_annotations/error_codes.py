@@ -3,9 +3,7 @@ from __future__ import annotations
 import typing as t
 
 from flake8_annotations import checker
-
-if t.TYPE_CHECKING:
-    from flake8_annotations.ast_walker import Argument, Function
+from flake8_annotations.ast_walker import Argument, Function
 
 
 class Error:
@@ -163,19 +161,18 @@ class ANN206(Error):
         self.col_offset = col_offset
 
 
-# Type comments
-class ANN301(Error):
+# Opinionated warnings
+class ANN401(Error):
     def __init__(self, argname: str, lineno: int, col_offset: int):
-        super().__init__("ANN301 PEP 484 disallows both type annotations and type comments")
+        super().__init__("ANN401 Dynamically typed expressions (typing.Any) are disallowed")
         self.argname = argname
         self.lineno = lineno
         self.col_offset = col_offset
 
 
-# Opinionated warnings
-class ANN401(Error):
+class ANN402(Error):
     def __init__(self, argname: str, lineno: int, col_offset: int):
-        super().__init__("ANN401 Dynamically typed expressions (typing.Any) are disallowed")
+        super().__init__("ANN402 Type comments are disallowed")
         self.argname = argname
         self.lineno = lineno
         self.col_offset = col_offset
