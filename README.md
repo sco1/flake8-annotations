@@ -64,17 +64,18 @@ With the exception of `ANN4xx`-level warnings, all warnings are enabled by defau
 
 ### Opinionated Warnings
 These warnings are disabled by default.
-| ID       | Description                                                            |
-|----------|------------------------------------------------------------------------|
-| `ANN401` | Dynamically typed expressions (typing.Any) are disallowed.<sup>2</sup> |
-| `ANN402` | Type comments are disallowed.                                          |
+| ID       | Description                                                             |
+|----------|-------------------------------------------------------------------------|
+| `ANN401` | Dynamically typed expressions (typing.Any) are disallowed<sup>2,3</sup> |
+| `ANN402` | Type comments are disallowed<sup>3</sup>                                |
 
-Use [`extend-select`](https://flake8.pycqa.org/en/latest/user/options.html#cmdoption-flake8-extend-ignore) to enable opinionated warnings without overriding other implicit configurations<sup>3</sup>.
+Use [`extend-select`](https://flake8.pycqa.org/en/latest/user/options.html#cmdoption-flake8-extend-ignore) to enable opinionated warnings without overriding other implicit configurations<sup>4</sup>.
 
 **Notes:**
 1. See: [PEP 484](https://www.python.org/dev/peps/pep-0484/#annotating-instance-and-class-methods) and [PEP 563](https://www.python.org/dev/peps/pep-0563/) for suggestions on annotating `self` and `cls` arguments
 2. See: [Dynamic Typing Caveats](#dynamic-typing-caveats)
-3. Common pitfall: the use of [`ignore`](https://flake8.pycqa.org/en/latest/user/options.html#cmdoption-flake8-ignore) will enable all implicitly disabled warnings
+3. Only function declarations are considered by this plugin; type annotations in function/module bodies are not checked 
+4. Common pitfall: the use of [`ignore`](https://flake8.pycqa.org/en/latest/user/options.html#cmdoption-flake8-ignore) will enable all implicitly disabled warnings
 
 ## Configuration Options
 Some opinionated flags are provided to tailor the linting errors emitted.
