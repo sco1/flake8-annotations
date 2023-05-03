@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "flake8-annotations"
-version = "3.0.0"
+version = "3.0.1"
 description = "Flake8 Type Annotation Checks"
 license = "MIT"
 readme = "README.md"
@@ -35,7 +35,7 @@ include = [
 "Issue Tracker" = "https://github.com/sco1/flake8-annotations/issues"
 
 [tool.poetry.dependencies]
-python = "^3.8.1"
+python = ">=3.8.1"
 attrs = ">=21.4"
 flake8 = ">=5.0"
 
@@ -54,7 +54,7 @@ pytest = "^7.2"
 pytest-check = "^2.0"
 pytest-cov = "^4.0"
 pytest-randomly = "^3.12"
-tox = "^4.4"
+tox = { version = "^4.4", python = "<4.0" }
 
 [tool.poetry.plugins]
 [tool.poetry.plugins."flake8.extension"]

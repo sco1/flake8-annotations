@@ -1,6 +1,10 @@
 # Changelog
 Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (`<major>`.`<minor>`.`<patch>`)
 
+## [v3.0.1]
+### Changed
+* #155 Remove upper bound on Python constraint
+
 ## [v3.0.0]
 ### Added
 * Add `ANN402` for the presence of type comments
