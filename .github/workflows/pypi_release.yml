@@ -22,8 +22,14 @@ jobs:
         pip install poetry
         poetry build
       
-    - name: Publish package
+    - name: Publish to PyPI
       uses: pypa/gh-action-pypi-publish@release/v1.5
       with:
         user: __token__
         password: ${{ secrets.pypi_api_token }}
+
+    - name: Upload wheel to release
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run:
+        gh release upload ${{ github.event.release.tag_name }} ./dist/flake8_annotations-*.whl
