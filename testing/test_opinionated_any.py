@@ -10,7 +10,6 @@ from testing.helpers import check_source
 ERR = partial(error_codes.ANN401, lineno=3)
 
 TEST_CASES = (
-    # Type annotations
     (
         dedent(
             """\
@@ -113,6 +112,17 @@ STARG_CASES = (
             from typing import Any
 
             def foo(a: int, *b: Any, c: int) -> None:
+                ...
+            """
+        ),
+    ),
+    (
+        dedent(
+            """\
+            import datetime as dt
+            from typing import Any
+
+            def foo(a: int, *b: Any, c: dt.datetime) -> None:
                 ...
             """
         ),

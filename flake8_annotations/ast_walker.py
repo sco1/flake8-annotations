@@ -402,9 +402,8 @@ class ReturnVisitor(ast.NodeVisitor):
         """
         if node.value is not None:
             # In the event of an explicit `None` return (`return None`), the node body will be an
-            # instance of either `ast.Constant` (3.8+) or `ast.NameConstant`, which we need to check
-            # to see if it's actually `None`
-            if isinstance(node.value, (ast.Constant, ast.NameConstant)):  # pragma: no branch
+            # instance of `ast.Constant`, which we need to check to see if it's actually `None`
+            if isinstance(node.value, ast.Constant):  # pragma: no branch
                 if node.value.value is None:
                     return
 
