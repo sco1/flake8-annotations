@@ -40,6 +40,10 @@ class TypeHintChecker:
 
         self.tree = ast.parse("".join(lines), type_comments=True)  # flake8 doesn't strip newlines
 
+        # Type ignores are provided by ast at the module level & we'll need them later when deciding
+        # whether or not to emit errors for a given function
+        self._type_ignore_lineno = {ti.lineno for ti in self.tree.type_ignores}
+
         # Set by flake8's config parser
         self.suppress_none_returning: bool
         self.suppress_dummy_args: bool
@@ -47,6 +51,7 @@ class TypeHintChecker:
         self.allow_untyped_nested: bool
         self.mypy_init_return: bool
         self.allow_star_arg_any: bool
+        self.respect_type_ignore: bool
         self.dispatch_decorators: t.Set[str]
         self.overload_decorators: t.Set[str]
 
@@ -106,6 +111,11 @@ class TypeHintChecker:
             # If it's not, and it is overload decorated, store it for the next iteration
             if function.has_decorator(self.overload_decorators):
                 last_overload_decorated_function_name = function.name
+
+            # Optionally respect a type: ignore comment
+            # These are considered at the function level & tags are not considered
+            if self.respect_type_ignore and (function.lineno in self._type_ignore_lineno):
+                continue
 
             # Yield explicit errors for arguments that are missing annotations
             for arg in function.get_missed_annotations():
@@ -222,6 +232,17 @@ class TypeHintChecker:
             help="Suppress ANN401 for dynamically typed *args and **kwargs. (Default: %(default)s)",
         )
 
+        parser.add_option(
+            "--respect-type-ignore",
+            default=False,
+            action="store_true",
+            parse_from_config=True,
+            help=(
+                "Supress errors for functions annotated with a 'type: ignore' comment. (Default: "
+                "%(default)s)"
+            ),
+        )
+
     @classmethod
     def parse_options(cls, options: Namespace) -> None:  # pragma: no cover
         """Parse the custom configuration options given to flake8."""
@@ -231,6 +252,7 @@ class TypeHintChecker:
         cls.allow_untyped_nested = options.allow_untyped_nested
         cls.mypy_init_return = options.mypy_init_return
         cls.allow_star_arg_any = options.allow_star_arg_any
+        cls.respect_type_ignore = options.respect_type_ignore
 
         # Store decorator lists as sets for easier lookup
         cls.dispatch_decorators = set(options.dispatch_decorators)

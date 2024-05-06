@@ -1,5 +1,5 @@
 # flake8-annotations
-[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/flake8-annotations/3.0.1?logo=python&logoColor=FFD43B)](https://pypi.org/project/flake8-annotations/)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/flake8-annotations/3.1.0?logo=python&logoColor=FFD43B)](https://pypi.org/project/flake8-annotations/)
 [![PyPI](https://img.shields.io/pypi/v/flake8-annotations?logo=Python&logoColor=FFD43B)](https://pypi.org/project/flake8-annotations/)
 [![PyPI - License](https://img.shields.io/pypi/l/flake8-annotations?color=magenta)](https://github.com/sco1/flake8-annotations/blob/main/LICENSE)
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/sco1/flake8-annotations/main.svg)](https://results.pre-commit.ci/latest/github/sco1/flake8-annotations/main)
@@ -32,7 +32,7 @@ cog.out(
 ]]] -->
 ```bash
 $ flake8 --version
-6.1.0 (flake8-annotations: 3.0.1, mccabe: 0.7.0, pycodestyle: 2.11.1, pyflakes: 3.1.0) CPython 3.12.0 on Darwin
+7.0.0 (flake8-annotations: 3.1.0, mccabe: 0.7.0, pycodestyle: 2.11.1, pyflakes: 3.2.0) CPython 3.12.3 on Darwin
 ```
 <!-- [[[end]]] -->
 
@@ -140,6 +140,14 @@ Suppress `ANN401` for dynamically typed `*args` and `**kwargs`.
 
 Default: `False`
 
+### `--respect-type-ignore`
+Suppress linting errors for functions annotated with a `# type: ignore` comment.
+
+**NOTE:** Type ignore tags are not considered, e.g. `# type: ignore[arg-type]` is treated the same as `# type: ignore`.
+
+Default: `False`
+
+
 ## Generic Functions
 Per the Python Glossary, a [generic function](https://docs.python.org/3/glossary.html#term-generic-function) is defined as:
 
@@ -200,6 +208,8 @@ Support is only provided for the following patterns:
 Nested dynamic types (e.g. `typing.Tuple[typing.Any]`) and redefinition (e.g. `from typing import Any as Foo`) will not be identified.
 
 ## Contributing
+### Python Version Support
+A best attempt is made to support Python versions until they reach EOL, after which support will be formally dropped by the next minor or major release of this package, whichever arrives first. The status of Python versions can be found [here](https://devguide.python.org/versions/).
 
 ### Development Environment
 This project uses [Poetry](https://python-poetry.org/) to manage dependencies. With your fork cloned to your local machine, you can install the project and its dependencies to create a development environment using:
