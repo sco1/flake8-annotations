@@ -3,7 +3,6 @@
 [![PyPI](https://img.shields.io/pypi/v/flake8-annotations?logo=Python&logoColor=FFD43B)](https://pypi.org/project/flake8-annotations/)
 [![PyPI - License](https://img.shields.io/pypi/l/flake8-annotations?color=magenta)](https://github.com/sco1/flake8-annotations/blob/main/LICENSE)
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/sco1/flake8-annotations/main.svg)](https://results.pre-commit.ci/latest/github/sco1/flake8-annotations/main)
-[![Open in Visual Studio Code](https://img.shields.io/badge/Open%20in-VSCode.dev-blue)](https://github.dev/sco1/flake8-annotations)
 
 `flake8-annotations` is a plugin for [Flake8](http://flake8.pycqa.org/en/latest/) that detects the absence of [PEP 3107-style](https://www.python.org/dev/peps/pep-3107/) function annotations.
 
@@ -141,9 +140,10 @@ Suppress `ANN401` for dynamically typed `*args` and `**kwargs`.
 Default: `False`
 
 ### `--respect-type-ignore`
-Suppress linting errors for functions annotated with a `# type: ignore` comment.
+Suppress linting errors for functions annotated with a `# type: ignore` comment. Support is also provided for module-level blanket ignores (see: [mypy: Ignoring a whole file](https://mypy.readthedocs.io/en/stable/common_issues.html#ignoring-a-whole-file)). 
 
 **NOTE:** Type ignore tags are not considered, e.g. `# type: ignore[arg-type]` is treated the same as `# type: ignore`.
+**NOTE:** Module-level suppression is only considered for the `# mypy: ignore-errors` or `# type: ignore` tags when provided as the sole contents of the first line of the module.
 
 Default: `False`
 
