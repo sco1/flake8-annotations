@@ -43,6 +43,7 @@ class TypeHintChecker:
         # Type ignores are provided by ast at the module level & we'll need them later when deciding
         # whether or not to emit errors for a given function
         self._type_ignore_lineno = {ti.lineno for ti in self.tree.type_ignores}
+        self._has_mypy_ignore_errors = "# mypy: ignore-errors" in lines[0] if lines else False
 
         # Set by flake8's config parser
         self.suppress_none_returning: bool
@@ -114,8 +115,16 @@ class TypeHintChecker:
 
             # Optionally respect a type: ignore comment
             # These are considered at the function level & tags are not considered
-            if self.respect_type_ignore and (function.lineno in self._type_ignore_lineno):
-                continue
+            if self.respect_type_ignore:
+                if function.lineno in self._type_ignore_lineno:
+                    # function-level ignore
+                    continue
+                elif (1 in self._type_ignore_lineno) or (
+                    self._has_mypy_ignore_errors
+                ):  # pragma: no branch
+                    # module-level ignore
+                    # lineno from ast is 1-indexed
+                    continue
 
             # Yield explicit errors for arguments that are missing annotations
             for arg in function.get_missed_annotations():

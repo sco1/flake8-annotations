@@ -1,6 +1,10 @@
 # Changelog
 Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (`<major>`.`<minor>`.`<patch>`)
 
+## [v3.1.1]
+### Changed
+* #167 Add module-level support for the `--respect-type-ignore` flag
+
 ## [v3.1.0]
 ### Added
 * #164 Add `--respect-type-ignore` to support suppression of errors for functions annotated with `type: ignore`
