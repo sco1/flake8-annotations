@@ -27,7 +27,7 @@ repos:
       - id: python-check-blanket-type-ignore
         exclude: "test_type_ignore.py"
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.5.0
+    rev: v0.5.2
     hooks:
       - id: ruff
   - repo: local
