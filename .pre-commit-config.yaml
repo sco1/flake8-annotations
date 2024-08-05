@@ -4,7 +4,7 @@ ci:
 
 repos:
   - repo: https://github.com/psf/black
-    rev: 24.4.2
+    rev: 24.8.0
     hooks:
       - id: black
   - repo: https://github.com/pycqa/isort
@@ -27,7 +27,7 @@ repos:
       - id: python-check-blanket-type-ignore
         exclude: "test_type_ignore.py"
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.5.2
+    rev: v0.5.6
     hooks:
       - id: ruff
   - repo: local
