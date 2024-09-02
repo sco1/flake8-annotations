@@ -51,7 +51,7 @@ pytest = "^8.0"
 pytest-check = "^2.0"
 pytest-cov = "^5.0"
 pytest-randomly = "^3.12"
-ruff = "^0.5"
+ruff = "^0.6"
 tox = { version = "^4.4", python = "<4.0" }
 
 [tool.poetry.plugins]
