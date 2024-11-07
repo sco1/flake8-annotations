@@ -32,7 +32,7 @@ classifiers = [
 
 requires-python = ">=3.9"
 dependencies = [
-    "attrs~=21.4",
+    "attrs~=24.0",
     "flake8>=5.0",
 ]
 
@@ -56,7 +56,7 @@ dev-dependencies = [
     "pre-commit~=4.0",
     "pytest~=8.3",
     "pytest-check~=2.4",
-    "pytest-cov~=5.0",
+    "pytest-cov~=6.0",
     "pytest-randomly~=3.15",
     "ruff~=0.6",
     "tox~=4.18",
