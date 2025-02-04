@@ -32,7 +32,7 @@ classifiers = [
 
 requires-python = ">=3.9"
 dependencies = [
-    "attrs~=24.0",
+    "attrs~=25.0",
     "flake8>=5.0",
 ]
 
@@ -48,10 +48,10 @@ Changelog = "https://github.com/sco1/flake8-annotations/blob/main/CHANGELOG.md"
 
 [tool.uv]
 dev-dependencies = [
-    "black~=24.10",
+    "black~=25.0",
     "bump2version~=1.0",
     "cogapp~=3.3",
-    "isort~=5.13",
+    "isort~=6.0",
     "mypy~=1.11",
     "pre-commit~=4.0",
     "pytest~=8.3",

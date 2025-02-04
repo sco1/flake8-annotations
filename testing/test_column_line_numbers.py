@@ -48,7 +48,7 @@ def test_lineno(parsed_errors: Tuple[Generator[ERROR_CODE, None, None], ParserTe
 
 
 def test_column_offset(
-    parsed_errors: Tuple[Generator[ERROR_CODE, None, None], ParserTestCase]
+    parsed_errors: Tuple[Generator[ERROR_CODE, None, None], ParserTestCase],
 ) -> None:
     """
     Check for correct column number values.
