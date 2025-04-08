@@ -2,10 +2,9 @@
 name = "flake8-annotations"
 version = "3.1.1"
 description = "Flake8 Type Annotation Checks"
+license = "MIT"
+license-files = ["LICENSE"]
 authors = [
-    {name = "sco1", email = "sco1.git@gmail.com"}
-]
-maintainers = [
     {name = "sco1", email = "sco1.git@gmail.com"}
 ]
 
@@ -14,9 +13,8 @@ classifiers = [
     "Framework :: Flake8",
     "Environment :: Console",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
-    "Development Status :: 5 - Production/Stable",
+    "Development Status :: 6 - Mature",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.9",
