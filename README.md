@@ -31,7 +31,7 @@ cog.out(
 ]]] -->
 ```bash
 $ flake8 --version
-7.1.2 (flake8-annotations: 3.1.1, mccabe: 0.7.0, pycodestyle: 2.12.1, pyflakes: 3.2.0) CPython 3.13.1 on Darwin
+7.3.0 (flake8-annotations: 3.1.1, mccabe: 0.7.0, pycodestyle: 2.14.0, pyflakes: 3.4.0) CPython 3.13.5 on Darwin
 ```
 <!-- [[[end]]] -->
 
