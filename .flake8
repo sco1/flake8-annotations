@@ -1,15 +1,7 @@
 [flake8]
-max-line-length=100
 extend-ignore=
-    # pycodestyle
-    E226,
+    E,F,W,
     # flake8-annotations
     ANN002,ANN003,ANN101,ANN102,ANN204,ANN206,
 extend-exclude=
-    venv, .venv,
-    build, dist,
-    error_codes.py,
-per-file-ignores =
-    testing/test_*.py:E501,
-import-order-style=pycharm
-application-import-names=flake8_annotations,testing
+    .venv, error_codes.py

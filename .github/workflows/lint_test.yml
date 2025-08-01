@@ -16,9 +16,9 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: Install uv
-      uses: astral-sh/setup-uv@v3
+      uses: astral-sh/setup-uv@v6
       with:
-        version: "0.6.x"
+        version: "0.8.x"
         enable-cache: true
         cache-dependency-glob: "uv.lock"
 
@@ -38,16 +38,16 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13", "3.14-dev"]
       fail-fast: false
 
     steps:
     - uses: actions/checkout@v4
 
     - name: Install uv
-      uses: astral-sh/setup-uv@v3
+      uses: astral-sh/setup-uv@v6
       with:
-        version: "0.6.x"
+        version: "0.8.x"
         enable-cache: true
         cache-dependency-glob: "uv.lock"
 
@@ -58,7 +58,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
 
     - name: Set up (deadsnakes) Python ${{ matrix.python-version }}
-      uses: deadsnakes/action@v3.1.0
+      uses: deadsnakes/action@v3.2.0
       if: endsWith(matrix.python-version, '-dev')
       with:
         python-version: ${{ matrix.python-version }}
