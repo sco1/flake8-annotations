@@ -2,8 +2,7 @@ from __future__ import annotations
 
 import ast
 import typing as t
-
-from attrs import define
+from dataclasses import dataclass
 
 from flake8_annotations.enums import AnnotationType, ClassDecoratorType, FunctionType
 
@@ -16,7 +15,7 @@ AST_FUNCTION_TYPES = t.Union[ast.FunctionDef, ast.AsyncFunctionDef]
 AST_ARG_TYPES: t.Tuple[str, ...] = ("posonlyargs", "args", "vararg", "kwonlyargs", "kwarg")
 
 
-@define(slots=True)
+@dataclass(slots=True)
 class Argument:
     """Represent a function argument & its metadata."""
 
@@ -74,7 +73,7 @@ class Argument:
         return False
 
 
-@define(slots=True)
+@dataclass(slots=True)
 class Function:
     """
     Represent a function and its relevant metadata.
