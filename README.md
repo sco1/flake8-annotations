@@ -206,31 +206,3 @@ Support is only provided for the following patterns:
   * `import typing as <alias>; foo: <alias>.Any`
 
 Nested dynamic types (e.g. `typing.Tuple[typing.Any]`) and redefinition (e.g. `from typing import Any as Foo`) will not be identified.
-
-## Contributing
-### Python Version Support
-A best attempt is made to support Python versions until they reach EOL, after which support will be formally dropped by the next minor or major release of this package, whichever arrives first. The status of Python versions can be found [here](https://devguide.python.org/versions/).
-
-### Development Environment
-This project uses [Poetry](https://python-poetry.org/) to manage dependencies. With your fork cloned to your local machine, you can install the project and its dependencies to create a development environment using:
-
-```bash
-$ poetry install
-```
-
-Note: An editable installation of `flake8-annotations` in the developer environment is required in order for the plugin to be registered for Flake8. By default, Poetry includes an editable install of the project itself when `poetry install` is invoked.
-
-A [pre-commit](https://pre-commit.com) configuration is also provided to create a pre-commit hook so linting errors aren't committed:
-
-```bash
-$ pre-commit install
-```
-
-### Testing & Coverage
-A [pytest](https://docs.pytest.org/en/latest/) suite is provided, with coverage reporting from [pytest-cov](https://github.com/pytest-dev/pytest-cov). A [tox](https://github.com/tox-dev/tox/) configuration is provided to test across all supported versions of Python. Testing will be skipped for Python versions that cannot be found.
-
-```bash
-$ tox
-```
-
-Details on missing coverage, including in the test suite, is provided in the report to allow the user to generate additional tests for full coverage.
