@@ -1,6 +1,11 @@
 # Changelog
 Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (`<major>`.`<minor>`.`<patch>`)
 
+## [v3.2.0]
+### Changed
+* Python 3.10 is now the minimum supported version
+* (Internal) Remove `attrs` as a dependency
+
 ## [v3.1.1]
 ### Changed
 * #167 Add module-level support for the `--respect-type-ignore` flag

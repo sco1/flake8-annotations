@@ -1,5 +1,5 @@
 # flake8-annotations
-[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/flake8-annotations/3.1.1?logo=python&logoColor=FFD43B)](https://pypi.org/project/flake8-annotations/)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/flake8-annotations/3.2.0?logo=python&logoColor=FFD43B)](https://pypi.org/project/flake8-annotations/)
 [![PyPI](https://img.shields.io/pypi/v/flake8-annotations?logo=Python&logoColor=FFD43B)](https://pypi.org/project/flake8-annotations/)
 [![PyPI - License](https://img.shields.io/pypi/l/flake8-annotations?color=magenta)](https://github.com/sco1/flake8-annotations/blob/main/LICENSE)
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/sco1/flake8-annotations/main.svg)](https://results.pre-commit.ci/latest/github/sco1/flake8-annotations/main)
@@ -31,7 +31,7 @@ cog.out(
 ]]] -->
 ```bash
 $ flake8 --version
-7.3.0 (flake8-annotations: 3.1.1, mccabe: 0.7.0, pycodestyle: 2.14.0, pyflakes: 3.4.0) CPython 3.14.0 on Darwin
+7.3.0 (flake8-annotations: 3.2.0, mccabe: 0.7.0, pycodestyle: 2.14.0, pyflakes: 3.4.0) CPython 3.14.0 on Darwin
 ```
 <!-- [[[end]]] -->
 

@@ -1,6 +1,6 @@
 [project]
 name = "flake8-annotations"
-version = "3.1.1"
+version = "3.2.0"
 description = "Flake8 Type Annotation Checks"
 license = "MIT"
 license-files = ["LICENSE"]
