@@ -11,44 +11,36 @@ ERR = partial(error_codes.ANN401, lineno=3)
 
 TEST_CASES = (
     (
-        dedent(
-            """\
+        dedent("""\
             from typing import Any
 
             def foo(a: Any) -> None:
                 ...
-            """
-        ),
+            """),
     ),
     (
-        dedent(
-            """\
+        dedent("""\
             from typing import Any
 
             def foo(a: int) -> Any:
                 ...
-            """
-        ),
+            """),
     ),
     (
-        dedent(
-            """\
+        dedent("""\
             import typing as t
 
             def foo(a: t.Any) -> None:
                 ...
-            """
-        ),
+            """),
     ),
     (
-        dedent(
-            """\
+        dedent("""\
             import typing as t
 
             def foo(a: int) -> t.Any:
                 ...
-            """
-        ),
+            """),
     ),
 )
 
@@ -62,13 +54,11 @@ def test_dynamic_typing_errors(src: str) -> None:
     assert "ANN401" in err_msg
 
 
-INP = dedent(
-    """\
+INP = dedent("""\
     import typing
     def foo(a: typing.Any) -> None:
         ...
-    """
-)
+    """)
 
 RUN_PARTIAL = partial(run, stdout=PIPE, input=INP, encoding="ascii")
 
@@ -87,55 +77,45 @@ def test_ANN401_fire_when_selected() -> None:
 
 STARG_CASES = (
     (
-        dedent(
-            """\
+        dedent("""\
             from typing import Any
 
             def foo(*a: Any) -> None:
                 ...
-            """
-        ),
+            """),
     ),
     (
-        dedent(
-            """\
+        dedent("""\
             from typing import Any
 
             def foo(**a: Any) -> None:
                 ...
-            """
-        ),
+            """),
     ),
     (
-        dedent(
-            """\
+        dedent("""\
             from typing import Any
 
             def foo(a: int, *b: Any, c: int) -> None:
                 ...
-            """
-        ),
+            """),
     ),
     (
-        dedent(
-            """\
+        dedent("""\
             import datetime as dt
             from typing import Any
 
             def foo(a: int, *b: Any, c: dt.datetime) -> None:
                 ...
-            """
-        ),
+            """),
     ),
     (
-        dedent(
-            """\
+        dedent("""\
             from typing import Any
 
             def foo(a: int, *, b: int, **c: Any) -> None:
                 ...
-            """
-        ),
+            """),
     ),
 )
 

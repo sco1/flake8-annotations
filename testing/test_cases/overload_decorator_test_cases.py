@@ -14,108 +14,92 @@ class OverloadDecoratorTestCase(NamedTuple):
 
 overload_decorator_test_cases = {
     "overload_decorated_attribute": OverloadDecoratorTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             @typing.overload
             def foo(a: int) -> int:
                 ...
 
             def foo(a):
                 ...
-            """
-        ),
+            """),
         should_yield_error=False,
     ),
     "overload_decorated_aliased_attribute": OverloadDecoratorTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             @t.overload
             def foo(a: int) -> int:
                 ...
 
             def foo(a):
                 ...
-            """
-        ),
+            """),
         should_yield_error=False,
     ),
     "overload_decorated_direct_import": OverloadDecoratorTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             @overload
             def foo(a: int) -> int:
                 ...
 
             def foo(a):
                 ...
-            """
-        ),
+            """),
         should_yield_error=False,
     ),
     "overload_decorated_aliased_import": OverloadDecoratorTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             @ovrld
             def foo(a: int) -> int:
                 ...
 
             def foo(a):
                 ...
-            """
-        ),
+            """),
         should_yield_error=True,
     ),
     "overload_decorated_aliased_import_configured": OverloadDecoratorTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             @ovrld
             def foo(a: int) -> int:
                 ...
 
             def foo(a):
                 ...
-            """
-        ),
+            """),
         should_yield_error=False,
         overload_decorators={"ovrld"},
     ),
     "overload_decorated_name_mismatch": OverloadDecoratorTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             @typing.overload
             def foo(a: int) -> int:
                 ...
 
             def bar(a):
                 ...
-            """
-        ),
+            """),
         should_yield_error=True,
     ),
     "overload_decorated_attribute_callable": OverloadDecoratorTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             @typing.overload()
             def foo(a: int) -> int:
                 ...
 
             def foo(a):
                 ...
-            """
-        ),
+            """),
         should_yield_error=False,
     ),
     "overload_decorated_direct_import_callable": OverloadDecoratorTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             @overload()
             def foo(a: int) -> int:
                 ...
 
             def foo(a):
                 ...
-            """
-        ),
+            """),
         should_yield_error=False,
     ),
 }

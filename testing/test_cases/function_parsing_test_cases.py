@@ -30,21 +30,17 @@ class_func = partial(
 
 function_test_cases = {
     "public_fun": FunctionTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             def foo():
                 pass
-            """
-        ),
+            """),
         func=(nonclass_func(name="foo", function_type=FunctionType.PUBLIC),),
     ),
     "public_fun_return_annotated": FunctionTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             def foo() -> None:
                 pass
-            """
-        ),
+            """),
         func=(
             nonclass_func(
                 name="foo",
@@ -54,48 +50,38 @@ function_test_cases = {
         ),
     ),
     "protected_fun": FunctionTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             def _foo():
                 pass
-            """
-        ),
+            """),
         func=(nonclass_func(name="_foo", function_type=FunctionType.PROTECTED),),
     ),
     "private_fun": FunctionTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             def __foo():
                 pass
-            """
-        ),
+            """),
         func=(nonclass_func(name="__foo", function_type=FunctionType.PRIVATE),),
     ),
     "special_fun": FunctionTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             def __foo__():
                 pass
-            """
-        ),
+            """),
         func=(nonclass_func(name="__foo__", function_type=FunctionType.SPECIAL),),
     ),
     "async_public_fun": FunctionTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             async def foo():
                 pass
-            """
-        ),
+            """),
         func=(nonclass_func(name="foo", function_type=FunctionType.PUBLIC),),
     ),
     "async_public_fun_return_annotated": FunctionTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             async def foo() -> None:
                 pass
-            """
-        ),
+            """),
         func=(
             nonclass_func(
                 name="foo",
@@ -105,41 +91,33 @@ function_test_cases = {
         ),
     ),
     "async_protected_fun": FunctionTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             async def _foo():
                 pass
-            """
-        ),
+            """),
         func=(nonclass_func(name="_foo", function_type=FunctionType.PROTECTED),),
     ),
     "async_private_fun": FunctionTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             async def __foo():
                 pass
-            """
-        ),
+            """),
         func=(nonclass_func(name="__foo", function_type=FunctionType.PRIVATE),),
     ),
     "async_special_fun__": FunctionTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             async def __foo__():
                 pass
-            """
-        ),
+            """),
         func=(nonclass_func(name="__foo__", function_type=FunctionType.SPECIAL),),
     ),
     "double_nested_public_no_return_annotation": FunctionTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             def foo() -> None:
                 def bar():
                     def baz():
                         pass
-            """
-        ),
+            """),
         func=(
             nonclass_func(name="foo", function_type=FunctionType.PUBLIC, is_return_annotated=True),
             nonclass_func(name="bar", function_type=FunctionType.PUBLIC),
@@ -147,14 +125,12 @@ function_test_cases = {
         ),
     ),
     "double_nested_public_return_annotation": FunctionTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             def foo() -> None:
                 def bar() -> None:
                     def baz() -> None:
                         pass
-            """
-        ),
+            """),
         func=(
             nonclass_func(name="foo", function_type=FunctionType.PUBLIC, is_return_annotated=True),
             nonclass_func(name="bar", function_type=FunctionType.PUBLIC, is_return_annotated=True),
@@ -162,14 +138,12 @@ function_test_cases = {
         ),
     ),
     "double_nested_public_async_no_return_annotation": FunctionTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             async def foo() -> None:
                 async def bar():
                     async def baz():
                         pass
-            """
-        ),
+            """),
         func=(
             nonclass_func(name="foo", function_type=FunctionType.PUBLIC, is_return_annotated=True),
             nonclass_func(name="bar", function_type=FunctionType.PUBLIC),
@@ -177,14 +151,12 @@ function_test_cases = {
         ),
     ),
     "double_nested_public_async_return_annotation": FunctionTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             async def foo() -> None:
                 async def bar() -> None:
                     async def baz() -> None:
                         pass
-            """
-        ),
+            """),
         func=(
             nonclass_func(name="foo", function_type=FunctionType.PUBLIC, is_return_annotated=True),
             nonclass_func(name="bar", function_type=FunctionType.PUBLIC, is_return_annotated=True),
@@ -192,14 +164,12 @@ function_test_cases = {
         ),
     ),
     "decorated_noncallable_method": FunctionTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             class Foo:
                 @some_decorator
                 def foo(self):
                     pass
-            """
-        ),
+            """),
         func=(
             class_func(
                 name="foo",
@@ -209,14 +179,12 @@ function_test_cases = {
         ),
     ),
     "decorated_callable_method": FunctionTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             class Foo:
                 @some_decorator()
                 def foo(self):
                     pass
-            """
-        ),
+            """),
         func=(
             class_func(
                 name="foo",
@@ -226,14 +194,12 @@ function_test_cases = {
         ),
     ),
     "decorated_noncallable_async_method": FunctionTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             class Foo:
                 @some_decorator
                 async def foo(self):
                     pass
-            """
-        ),
+            """),
         func=(
             class_func(
                 name="foo",
@@ -243,14 +209,12 @@ function_test_cases = {
         ),
     ),
     "decorated_callable_async_method": FunctionTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             class Foo:
                 @some_decorator()
                 async def foo(self):
                     pass
-            """
-        ),
+            """),
         func=(
             class_func(
                 name="foo",
@@ -260,14 +224,12 @@ function_test_cases = {
         ),
     ),
     "decorated_classmethod": FunctionTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             class Foo:
                 @classmethod
                 def foo(cls):
                     pass
-            """
-        ),
+            """),
         func=(
             class_func(
                 name="foo",
@@ -277,14 +239,12 @@ function_test_cases = {
         ),
     ),
     "decorated_staticmethod": FunctionTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             class Foo:
                 @staticmethod
                 def foo():
                     pass
-            """
-        ),
+            """),
         func=(
             class_func(
                 name="foo",
@@ -294,14 +254,12 @@ function_test_cases = {
         ),
     ),
     "decorated_async_classmethod": FunctionTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             class Foo:
                 @classmethod
                 async def foo(cls):
                     pass
-            """
-        ),
+            """),
         func=(
             class_func(
                 name="foo",
@@ -311,14 +269,12 @@ function_test_cases = {
         ),
     ),
     "decorated_async_staticmethod": FunctionTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             class Foo:
                 @staticmethod
                 async def foo():
                     pass
-            """
-        ),
+            """),
         func=(
             class_func(
                 name="foo",
@@ -328,15 +284,13 @@ function_test_cases = {
         ),
     ),
     "decorated_noncallable_classmethod": FunctionTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             class Foo:
                 @some_decorator
                 @classmethod
                 def foo(cls):
                     pass
-            """
-        ),
+            """),
         func=(
             class_func(
                 name="foo",
@@ -346,15 +300,13 @@ function_test_cases = {
         ),
     ),
     "decorated_callable_classmethod": FunctionTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             class Foo:
                 @some_decorator()
                 @classmethod
                 def foo(cls):
                     pass
-            """
-        ),
+            """),
         func=(
             class_func(
                 name="foo",
@@ -364,15 +316,13 @@ function_test_cases = {
         ),
     ),
     "decorated_noncallable_staticmethod": FunctionTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             class Foo:
                 @some_decorator
                 @staticmethod
                 def foo():
                     pass
-            """
-        ),
+            """),
         func=(
             class_func(
                 name="foo",
@@ -382,15 +332,13 @@ function_test_cases = {
         ),
     ),
     "decorated_callable_staticmethod": FunctionTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             class Foo:
                 @some_decorator()
                 @staticmethod
                 def foo():
                     pass
-            """
-        ),
+            """),
         func=(
             class_func(
                 name="foo",
@@ -400,15 +348,13 @@ function_test_cases = {
         ),
     ),
     "decorated_noncallable_async_classmethod": FunctionTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             class Foo:
                 @some_decorator
                 @classmethod
                 async def foo(cls):
                     pass
-            """
-        ),
+            """),
         func=(
             class_func(
                 name="foo",
@@ -418,15 +364,13 @@ function_test_cases = {
         ),
     ),
     "decorated_callable_async_classmethod": FunctionTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             class Foo:
                 @some_decorator()
                 @classmethod
                 async def foo(cls):
                     pass
-            """
-        ),
+            """),
         func=(
             class_func(
                 name="foo",
@@ -436,15 +380,13 @@ function_test_cases = {
         ),
     ),
     "decorated_noncallable_async_staticmethod": FunctionTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             class Foo:
                 @some_decorator
                 @staticmethod
                 async def foo():
                     pass
-            """
-        ),
+            """),
         func=(
             class_func(
                 name="foo",
@@ -454,15 +396,13 @@ function_test_cases = {
         ),
     ),
     "decorated_callable_async_staticmethod": FunctionTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             class Foo:
                 @some_decorator()
                 @staticmethod
                 async def foo():
                     pass
-            """
-        ),
+            """),
         func=(
             class_func(
                 name="foo",
@@ -472,15 +412,13 @@ function_test_cases = {
         ),
     ),
     "double_nested_method": FunctionTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             class Foo:
                 def foo(self) -> None:
                     def bar():
                         def baz():
                             pass
-            """
-        ),
+            """),
         func=(
             class_func(
                 name="foo",
@@ -493,15 +431,13 @@ function_test_cases = {
         ),
     ),
     "double_nested_async_method": FunctionTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             class Foo:
                 async def foo(self) -> None:
                     async def bar():
                         async def baz():
                             pass
-            """
-        ),
+            """),
         func=(
             class_func(
                 name="foo",
@@ -514,8 +450,7 @@ function_test_cases = {
         ),
     ),
     "nested_classes": FunctionTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             class Foo:
                 class Bar:
                     def bar_method(self):
@@ -523,21 +458,18 @@ function_test_cases = {
 
                 def foo_method(self):
                     pass
-            """
-        ),
+            """),
         func=(
             class_func(name="bar_method", function_type=FunctionType.PUBLIC),
             class_func(name="foo_method", function_type=FunctionType.PUBLIC),
         ),
     ),
     "overload_decorated_non_alias": FunctionTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             @overload
             def foo():
                 pass
-            """
-        ),
+            """),
         func=(
             nonclass_func(
                 name="foo",
@@ -546,13 +478,11 @@ function_test_cases = {
         ),
     ),
     "overload_decorated_attribute": FunctionTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             @typing.overload
             def foo():
                 pass
-            """
-        ),
+            """),
         func=(
             nonclass_func(
                 name="foo",

@@ -6,38 +6,32 @@ from testing.helpers import check_source
 
 TEST_CASES = (
     (
-        dedent(
-            """\
+        dedent("""\
             def foo(a):
                 # type: int -> None
                 ...
-            """
-        ),
+            """),
         3,
         1,
     ),
     (
-        dedent(
-            """\
+        dedent("""\
             def foo(
                 a  # type: int
             ):
                 ...
-            """
-        ),
+            """),
         3,
         1,
     ),
     (
-        dedent(
-            """\
+        dedent("""\
             def foo(
                 a  # type: int
             ):
                 # type: (...) -> int
                 ...
-            """
-        ),
+            """),
         4,
         2,
     ),

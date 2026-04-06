@@ -14,130 +14,106 @@ class DispatchDecoratorTestCase(NamedTuple):
 
 dispatch_decorator_test_cases = {
     "singledispatch_decorated_attribute": DispatchDecoratorTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             @functools.singledispatch
             def foo(a):
                 print(a)
-            """
-        ),
+            """),
         should_yield_error=False,
     ),
     "singledispatch_decorated_aliased_attribute": DispatchDecoratorTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             @fnctls.singledispatch
             def foo(a):
                 print(a)
-            """
-        ),
+            """),
         should_yield_error=False,
     ),
     "singledispatch_decorated_direct_import": DispatchDecoratorTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             @singledispatch
             def foo(a):
                 print(a)
-            """
-        ),
+            """),
         should_yield_error=False,
     ),
     "singledispatch_decorated_aliased_import": DispatchDecoratorTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             @sngldsptch
             def foo(a):
                 print(a)
-            """
-        ),
+            """),
         should_yield_error=True,
     ),
     "singledispatch_decorated_aliased_import_configured": DispatchDecoratorTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             @sngldsptch
             def foo(a):
                 print(a)
-            """
-        ),
+            """),
         should_yield_error=False,
         dispatch_decorators={"sngldsptch"},
     ),
     "singledispatchmethod_decorated_attribute": DispatchDecoratorTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             class Foo:
                 @functools.singledispatchmethod
                 def foo(self, a):
                     print(a)
-            """
-        ),
+            """),
         should_yield_error=False,
     ),
     "singledispatchmethod_decorated_aliased_attribute": DispatchDecoratorTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             class Foo:
                 @fnctls.singledispatchmethod
                 def foo(self, a):
                     print(a)
-            """
-        ),
+            """),
         should_yield_error=False,
     ),
     "singledispatchmethod_decorated_direct_import": DispatchDecoratorTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             class Foo:
                 @singledispatchmethod
                 def foo(self, a):
                     print(a)
-            """
-        ),
+            """),
         should_yield_error=False,
     ),
     "singledispatchmethod_decorated_aliased_import": DispatchDecoratorTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             class Foo:
                 @sngldsptchmthd
                 def foo(self, a):
                     print(a)
-            """
-        ),
+            """),
         should_yield_error=True,
     ),
     "singledispatchmethod_decorated_aliased_import_configured": DispatchDecoratorTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             class Foo:
                 @sngldsptchmthd
                 def foo(self, a):
                     print(a)
-            """
-        ),
+            """),
         should_yield_error=False,
         dispatch_decorators={"sngldsptchmthd"},
     ),
     "singledispatch_attribute_callable": DispatchDecoratorTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             @functools.singledispatch()
             def foo(a):
                 print(a)
-            """
-        ),
+            """),
         should_yield_error=False,
     ),
     "singledispatch_import_callable": DispatchDecoratorTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             @singledispatch()
             def foo(a):
                 print(a)
-            """
-        ),
+            """),
         should_yield_error=False,
     ),
 }

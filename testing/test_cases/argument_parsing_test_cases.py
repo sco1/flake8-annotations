@@ -18,12 +18,10 @@ typed_arg = partial(Argument, lineno=0, col_offset=0, has_type_annotation=True)
 
 argument_test_cases = {
     "all_args_untyped": ArgumentTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             def foo(arg, *vararg, kwonlyarg, **kwarg):
                 pass
-            """
-        ),
+            """),
         args=(
             untyped_arg(argname="arg", annotation_type=AnnotationType.ARGS),
             untyped_arg(argname="vararg", annotation_type=AnnotationType.VARARG),
@@ -33,12 +31,10 @@ argument_test_cases = {
         ),
     ),
     "all_args_typed": ArgumentTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             def foo(arg: int, *vararg: int, kwonlyarg: int, **kwarg: int) -> int:
                 pass
-            """
-        ),
+            """),
         args=(
             typed_arg(argname="arg", annotation_type=AnnotationType.ARGS),
             typed_arg(argname="vararg", annotation_type=AnnotationType.VARARG),
@@ -48,36 +44,30 @@ argument_test_cases = {
         ),
     ),
     "posonly_arg_untyped": ArgumentTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             def foo(posonlyarg, /) -> int:
                 pass
-            """
-        ),
+            """),
         args=(
             untyped_arg(argname="posonlyarg", annotation_type=AnnotationType.POSONLYARGS),
             typed_arg(argname="return", annotation_type=AnnotationType.RETURN),
         ),
     ),
     "posonly_arg_typed": ArgumentTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             def foo(posonlyarg: int, /) -> int:
                 pass
-            """
-        ),
+            """),
         args=(
             typed_arg(argname="posonlyarg", annotation_type=AnnotationType.POSONLYARGS),
             typed_arg(argname="return", annotation_type=AnnotationType.RETURN),
         ),
     ),
     "posonly_and_arg_args": ArgumentTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             def foo(posonlyarg: int, /, bar: int) -> int:
                 pass
-            """
-        ),
+            """),
         args=(
             typed_arg(argname="posonlyarg", annotation_type=AnnotationType.POSONLYARGS),
             typed_arg(argname="bar", annotation_type=AnnotationType.ARGS),
