@@ -15,78 +15,64 @@ class MypyInitReturnTestCase(NamedTuple):
 
 mypy_init_test_cases = {
     "no_args_no_return": MypyInitReturnTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             class Foo:
 
                 def __init__(self):
                     ...
-            """
-        ),
+            """),
         should_yield_return_error=True,
     ),
     "arg_no_hint_no_return": MypyInitReturnTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             class Foo:
 
                 def __init__(self, foo):
                     ...
-            """
-        ),
+            """),
         should_yield_return_error=True,
     ),
     "arg_no_hint_return": MypyInitReturnTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             class Foo:
 
                 def __init__(self, foo) -> None:
                     ...
-            """
-        ),
+            """),
         should_yield_return_error=False,
     ),
     "no_arg_return": MypyInitReturnTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             class Foo:
 
                 def __init__(self) -> None:
                     ...
-            """
-        ),
+            """),
         should_yield_return_error=False,
     ),
     "arg_hint_no_return": MypyInitReturnTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             class Foo:
 
                 def __init__(self, foo: int):
                     ...
-            """
-        ),
+            """),
         should_yield_return_error=False,
     ),
     "arg_hint_return": MypyInitReturnTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             class Foo:
 
                 def __init__(self, foo: int) -> None:
                     ...
-            """
-        ),
+            """),
         should_yield_return_error=False,
     ),
     "cheeky_non_method_init": MypyInitReturnTestCase(
-        src=dedent(
-            """\
+        src=dedent("""\
             def __init__(self, foo: int):
                 ...
-            """
-        ),
+            """),
         should_yield_return_error=True,
     ),
 }

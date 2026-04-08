@@ -45,13 +45,13 @@ Changelog = "https://github.com/sco1/flake8-annotations/blob/main/CHANGELOG.md"
 
 [dependency-groups]
 dev = [
-    "black~=25.0",
+    "black~=26.3",
     "bump2version~=1.0",
     "cogapp~=3.3",
-    "isort~=6.0",
+    "isort~=8.0",
     "mypy~=1.11",
     "pre-commit~=4.0",
-    "pytest~=8.3",
+    "pytest~=9.0",
     "pytest-check~=2.4",
     "pytest-cov~=7.0",
     "pytest-randomly~=4.0",
@@ -91,5 +91,5 @@ module-name = "flake8_annotations"
 module-root = ""
 
 [build-system]
-requires = ["uv_build"]
+requires = ["uv_build>=0.11.2,<0.12"]
 build-backend = "uv_build"
