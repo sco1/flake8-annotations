@@ -1,6 +1,6 @@
 [project]
 name = "flake8-annotations"
-version = "3.2.0"
+version = "3.3.0"
 description = "Flake8 Type Annotation Checks"
 license = "MIT"
 license-files = ["LICENSE"]
@@ -17,7 +17,6 @@ classifiers = [
     "Development Status :: 6 - Mature",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
@@ -29,7 +28,7 @@ classifiers = [
     "Typing :: Typed",
 ]
 
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 dependencies = [
     "flake8>=5.0",
 ]
@@ -47,16 +46,16 @@ Changelog = "https://github.com/sco1/flake8-annotations/blob/main/CHANGELOG.md"
 [dependency-groups]
 dev = [
     "black~=26.3",
-    "bump2version~=1.0",
     "cogapp~=3.3",
-    "isort~=8.0",
+    "isort~=9.0",
     "mypy~=2.1",
     "pre-commit~=4.0",
     "pytest~=9.0",
     "pytest-check~=2.4",
     "pytest-cov~=7.0",
-    "pytest-randomly~=4.0",
+    "pytest-randomly~=5.0",
     "ruff~=0.6",
+    "sco1-bumper~=2.0",
     "tox~=4.18",
     "tox-uv~=1.11",
 ]
@@ -92,5 +91,5 @@ module-name = "flake8_annotations"
 module-root = ""
 
 [build-system]
-requires = ["uv_build>=0.11.17,<0.12"]
+requires = ["uv_build>=0.12.9,<0.13"]
 build-backend = "uv_build"

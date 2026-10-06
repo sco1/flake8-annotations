@@ -1,6 +1,10 @@
 # Changelog
 Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (`<major>`.`<minor>`.`<patch>`)
 
+## [v3.3.0]
+### Changed
+* Python 3.11 is now the minimum supported version
+
 ## [v3.2.0]
 ### Changed
 * Python 3.10 is now the minimum supported version

@@ -297,7 +297,7 @@ def classify_error(function: Function, arg: Argument) -> error_codes.Error:
     return error_code.from_argument(arg)
 
 
-@lru_cache()
+@lru_cache
 def _return_error_classifier(
     is_class_method: bool,
     class_decorator_type: enums.ClassDecoratorType,
@@ -321,7 +321,7 @@ def _return_error_classifier(
         return error_codes.ANN201
 
 
-@lru_cache()
+@lru_cache
 def _argument_error_classifier(
     is_class_method: bool,
     is_first_arg: bool,

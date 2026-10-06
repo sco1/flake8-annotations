@@ -1,0 +1,15 @@
+[tool.bumper]
+current_version = "3.3.0"
+versioning_type = "semver"
+
+[[tool.bumper.files]]
+file = "./pyproject.toml"
+search = 'version = "{current_version}"'
+
+[[tool.bumper.files]]
+file = "./README.md"
+search = "flake8-annotations/{current_version}"
+
+[[tool.bumper.files]]
+file = "./flake8_annotations/__init__.py"
+search = '__version__ = "{current_version}"'
