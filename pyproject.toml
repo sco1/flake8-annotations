@@ -51,7 +51,7 @@ dev = [
     "mypy~=2.1",
     "pre-commit~=4.0",
     "pytest~=9.0",
-    "pytest-check~=2.4",
+    "pytest-check~=3.0",
     "pytest-cov~=7.0",
     "pytest-randomly~=5.0",
     "ruff~=0.6",
@@ -91,5 +91,5 @@ module-name = "flake8_annotations"
 module-root = ""
 
 [build-system]
-requires = ["uv_build>=0.12.9,<0.13"]
+requires = ["uv_build>=0.13.4,<0.14"]
 build-backend = "uv_build"
