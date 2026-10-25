@@ -1,5 +1,3 @@
-from typing import Tuple
-
 import pytest
 import pytest_check as check
 
@@ -20,7 +18,7 @@ class TestNoneReturnErrorSuppression:
     )
     def yielded_errors(
         self, request  # noqa: ANN001
-    ) -> Tuple[str, NoneReturnSuppressionTestCase, Tuple[Error]]:
+    ) -> tuple[str, NoneReturnSuppressionTestCase, tuple[Error]]:
         """
         Build a fixture for the error codes emitted from parsing the None return test code.
 
@@ -36,7 +34,7 @@ class TestNoneReturnErrorSuppression:
         )
 
     def test_suppressed_return_error(
-        self, yielded_errors: Tuple[str, NoneReturnSuppressionTestCase, Tuple[FORMATTED_ERROR]]
+        self, yielded_errors: tuple[str, NoneReturnSuppressionTestCase, tuple[FORMATTED_ERROR]]
     ) -> None:
         """Test that ANN200 level errors are suppressed if a function only returns None."""
         failure_msg = f"Check failed for case '{yielded_errors[0]}'"

@@ -1,5 +1,4 @@
 import re
-from typing import List, Tuple
 
 import pytest
 
@@ -7,7 +6,7 @@ from flake8_annotations.checker import FORMATTED_ERROR
 from testing.helpers import check_source
 from testing.test_cases.variable_formatting_test_cases import variable_formatting_test_cases
 
-SIMPLE_ERROR_CODE = Tuple[str, str]
+SIMPLE_ERROR_CODE = tuple[str, str]
 
 # Error type specific matching patterns
 TEST_ARG_NAMES = {"ANN001": "some_arg", "ANN002": "some_args", "ANN003": "some_kwargs"}
@@ -37,7 +36,7 @@ class TestArgumentFormatting:
     @pytest.fixture(
         params=variable_formatting_test_cases.items(), ids=variable_formatting_test_cases.keys()
     )
-    def parsed_errors(self, request) -> Tuple[List[SIMPLE_ERROR_CODE], str]:  # noqa: ANN001
+    def parsed_errors(self, request) -> tuple[list[SIMPLE_ERROR_CODE], str]:  # noqa: ANN001
         """
         Create a fixture for the error codes emitted by the test case source code.
 
@@ -49,7 +48,7 @@ class TestArgumentFormatting:
 
         return simplified_errors, test_case_name
 
-    def test_arg_name(self, parsed_errors: Tuple[List[SIMPLE_ERROR_CODE], str]) -> None:
+    def test_arg_name(self, parsed_errors: tuple[list[SIMPLE_ERROR_CODE], str]) -> None:
         """
         Check for correctly formatted argument names.
 

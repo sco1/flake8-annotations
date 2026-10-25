@@ -1,5 +1,3 @@
-from typing import Tuple
-
 import pytest
 
 from flake8_annotations.error_codes import Error
@@ -18,7 +16,7 @@ class TestOverloadDecoratorErrorSuppression:
     )
     def yielded_errors(
         self, request  # noqa: ANN001
-    ) -> Tuple[str, OverloadDecoratorTestCase, Tuple[Error]]:
+    ) -> tuple[str, OverloadDecoratorTestCase, tuple[Error]]:
         """
         Build a fixture for the errors emitted from parsing `@overload` decorated test code.
 
@@ -38,7 +36,7 @@ class TestOverloadDecoratorErrorSuppression:
         )
 
     def test_overload_decorator_error_suppression(
-        self, yielded_errors: Tuple[str, OverloadDecoratorTestCase, Tuple[Error]]
+        self, yielded_errors: tuple[str, OverloadDecoratorTestCase, tuple[Error]]
     ) -> None:
         """Test that no errors are yielded for the closing def of a `typing.overload` series."""
         test_case_name, test_case, errors = yielded_errors

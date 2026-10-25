@@ -1,5 +1,3 @@
-from typing import Tuple
-
 import pytest
 
 from flake8_annotations.error_codes import Error
@@ -18,7 +16,7 @@ class TestDispatchDecoratorErrorSuppression:
     )
     def yielded_errors(
         self, request  # noqa: ANN001
-    ) -> Tuple[str, DispatchDecoratorTestCase, Tuple[Error]]:
+    ) -> tuple[str, DispatchDecoratorTestCase, tuple[Error]]:
         """
         Build a fixture for the errors emitted from parsing dispatch decorated test code.
 
@@ -38,7 +36,7 @@ class TestDispatchDecoratorErrorSuppression:
         )
 
     def test_dispatch_decorator_error_suppression(
-        self, yielded_errors: Tuple[str, DispatchDecoratorTestCase, Tuple[Error]]
+        self, yielded_errors: tuple[str, DispatchDecoratorTestCase, tuple[Error]]
     ) -> None:
         """Test that no errors are yielded dispatch decorated functions."""
         test_case_name, test_case, errors = yielded_errors

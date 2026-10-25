@@ -6,13 +6,13 @@ from dataclasses import dataclass
 
 from flake8_annotations.enums import AnnotationType, ClassDecoratorType, FunctionType
 
-AST_DECORATOR_NODES = t.Union[ast.Attribute, ast.Call, ast.Name]
-AST_DEF_NODES = t.Union[ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef]
-AST_FUNCTION_TYPES = t.Union[ast.FunctionDef, ast.AsyncFunctionDef]
+AST_DECORATOR_NODES = ast.Attribute | ast.Call | ast.Name
+AST_DEF_NODES = ast.FunctionDef | ast.AsyncFunctionDef | ast.ClassDef
+AST_FUNCTION_TYPES = ast.FunctionDef | ast.AsyncFunctionDef
 
 # The order of AST_ARG_TYPES must match Python's grammar
 # See: https://docs.python.org/3/library/ast.html#abstract-grammar
-AST_ARG_TYPES: t.Tuple[str, ...] = ("posonlyargs", "args", "vararg", "kwonlyargs", "kwarg")
+AST_ARG_TYPES: tuple[str, ...] = ("posonlyargs", "args", "vararg", "kwonlyargs", "kwarg")
 
 
 @dataclass(slots=True)
@@ -86,11 +86,11 @@ class Function:
     name: str
     lineno: int
     col_offset: int
-    decorator_list: t.List[AST_DECORATOR_NODES]
-    args: t.List[Argument]
+    decorator_list: list[AST_DECORATOR_NODES]
+    args: list[Argument]
     function_type: FunctionType = FunctionType.PUBLIC
     is_class_method: bool = False
-    class_decorator_type: t.Union[ClassDecoratorType, None] = None
+    class_decorator_type: ClassDecoratorType | None = None
     is_return_annotated: bool = False
     has_type_comment: bool = False
     has_only_none_returns: bool = True
@@ -108,15 +108,15 @@ class Function:
         """Determine if the function is dynamically typed, defined as completely lacking hints."""
         return not any(arg.has_type_annotation for arg in self.args)
 
-    def get_missed_annotations(self) -> t.List[Argument]:
+    def get_missed_annotations(self) -> list[Argument]:
         """Provide a list of arguments with missing type annotations."""
         return [arg for arg in self.args if not arg.has_type_annotation]
 
-    def get_annotated_arguments(self) -> t.List[Argument]:
+    def get_annotated_arguments(self) -> list[Argument]:
         """Provide a list of arguments with type annotations."""
         return [arg for arg in self.args if arg.has_type_annotation]
 
-    def has_decorator(self, check_decorators: t.Set[str]) -> bool:
+    def has_decorator(self, check_decorators: set[str]) -> bool:
         """
         Determine whether the function node is decorated by any of the provided decorators.
 
@@ -135,7 +135,7 @@ class Function:
             return False
 
     def _decorator_checker(
-        self, decorator: AST_DECORATOR_NODES, check_decorators: t.Set[str]
+        self, decorator: AST_DECORATOR_NODES, check_decorators: set[str]
     ) -> bool:
         """
         Check the provided decorator for a match against the provided set of check names.
@@ -178,7 +178,7 @@ class Function:
 
     @classmethod
     def from_function_node(
-        cls, node: AST_FUNCTION_TYPES, lines: t.List[str], **kwargs: t.Any
+        cls, node: AST_FUNCTION_TYPES, lines: list[str], **kwargs: t.Any
     ) -> Function:
         """
         Create an Function object from ast.FunctionDef or ast.AsyncFunctionDef nodes.
@@ -241,7 +241,7 @@ class Function:
         return new_function
 
     @staticmethod
-    def colon_seeker(node: AST_FUNCTION_TYPES, lines: t.List[str]) -> t.Tuple[int, int]:
+    def colon_seeker(node: AST_FUNCTION_TYPES, lines: list[str]) -> tuple[int, int]:
         """
         Find the line & column indices of the function definition's closing colon.
 
@@ -266,7 +266,7 @@ class Function:
         return def_end_lineno, def_end_col_offset
 
     @staticmethod
-    def _single_line_colon_seeker(node: AST_FUNCTION_TYPES, line: str) -> t.Tuple[int, int]:
+    def _single_line_colon_seeker(node: AST_FUNCTION_TYPES, line: str) -> tuple[int, int]:
         """Locate the closing colon for a single-line function definition."""
         col_start = node.col_offset
         col_end = node.body[0].col_offset
@@ -297,7 +297,7 @@ class Function:
     @staticmethod
     def get_class_decorator_type(
         function_node: AST_FUNCTION_TYPES,
-    ) -> t.Union[ClassDecoratorType, None]:
+    ) -> ClassDecoratorType | None:
         """
         Get the class method's decorator type from its function node.
 
@@ -327,10 +327,10 @@ class FunctionVisitor(ast.NodeVisitor):
 
     AST_FUNC_TYPES = (ast.FunctionDef, ast.AsyncFunctionDef)
 
-    def __init__(self, lines: t.List[str]):
+    def __init__(self, lines: list[str]):
         self.lines = lines
-        self.function_definitions: t.List[Function] = []
-        self._context: t.List[AST_DEF_NODES] = []
+        self.function_definitions: list[Function] = []
+        self._context: list[AST_DEF_NODES] = []
 
     def switch_context(self, node: AST_DEF_NODES) -> None:
         """
@@ -384,8 +384,8 @@ class ReturnVisitor(ast.NodeVisitor):
 
     def __init__(self, parent_node: AST_FUNCTION_TYPES):
         self.parent_node = parent_node
-        self._context: t.List[AST_FUNCTION_TYPES] = []
-        self._non_none_return_nodes: t.Set[AST_FUNCTION_TYPES] = set()
+        self._context: list[AST_FUNCTION_TYPES] = []
+        self._non_none_return_nodes: set[AST_FUNCTION_TYPES] = set()
 
     @property
     def has_only_none_returns(self) -> bool:

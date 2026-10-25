@@ -1,5 +1,3 @@
-from typing import Tuple
-
 import pytest
 import pytest_check as check
 
@@ -17,7 +15,7 @@ class TestMypyStyleInitReturnErrorSuppression:
     @pytest.fixture(params=mypy_init_test_cases.items(), ids=mypy_init_test_cases.keys())
     def yielded_errors(
         self, request  # noqa: ANN001
-    ) -> Tuple[str, MypyInitReturnTestCase, Tuple[FORMATTED_ERROR]]:
+    ) -> tuple[str, MypyInitReturnTestCase, tuple[FORMATTED_ERROR]]:
         """
         Build a fixture for the error codes emitted from parsing the Mypy __init__ return test code.
 
@@ -33,7 +31,7 @@ class TestMypyStyleInitReturnErrorSuppression:
         )
 
     def test_suppressed_return_error(
-        self, yielded_errors: Tuple[str, MypyInitReturnTestCase, Tuple[FORMATTED_ERROR]]
+        self, yielded_errors: tuple[str, MypyInitReturnTestCase, tuple[FORMATTED_ERROR]]
     ) -> None:
         """
         Test that ANN200 level errors are suppressed in class __init__ according to Mypy's behavior.

@@ -1,5 +1,3 @@
-from typing import Tuple
-
 import pytest
 import pytest_check as check
 
@@ -19,7 +17,7 @@ class TestDummyArgErrorSuppression:
     )
     def yielded_errors(
         self, request  # noqa: ANN001
-    ) -> Tuple[str, DummyArgSuppressionTestCase, Tuple[FORMATTED_ERROR]]:
+    ) -> tuple[str, DummyArgSuppressionTestCase, tuple[FORMATTED_ERROR]]:
         """
         Build a fixture for the error codes emitted from parsing the dummy argument test code.
 
@@ -35,7 +33,7 @@ class TestDummyArgErrorSuppression:
         )
 
     def test_suppressed_return_error(
-        self, yielded_errors: Tuple[str, DummyArgSuppressionTestCase, Tuple[FORMATTED_ERROR]]
+        self, yielded_errors: tuple[str, DummyArgSuppressionTestCase, tuple[FORMATTED_ERROR]]
     ) -> None:
         """Test that ANN000 level errors are suppressed if an annotation is named '_'."""
         failure_msg = f"Check failed for case '{yielded_errors[0]}'"

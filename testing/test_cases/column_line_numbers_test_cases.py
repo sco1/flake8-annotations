@@ -1,5 +1,5 @@
 from textwrap import dedent
-from typing import NamedTuple, Tuple
+from typing import NamedTuple
 
 
 class ParserTestCase(NamedTuple):
@@ -12,7 +12,7 @@ class ParserTestCase(NamedTuple):
     """
 
     src: str
-    error_locations: Tuple[Tuple[int, int], ...]
+    error_locations: tuple[tuple[int, int], ...]
 
 
 parser_test_cases = {

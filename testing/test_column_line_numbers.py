@@ -1,5 +1,5 @@
+from collections.abc import Generator
 from itertools import zip_longest
-from typing import Generator, Tuple
 
 import pytest
 import pytest_check as check
@@ -8,13 +8,13 @@ from flake8_annotations import checker
 from testing.helpers import check_source
 from testing.test_cases.column_line_numbers_test_cases import ParserTestCase, parser_test_cases
 
-ERROR_CODE = Tuple[int, int, str, checker.TypeHintChecker]
+ERROR_CODE = tuple[int, int, str, checker.TypeHintChecker]
 
 
 @pytest.fixture(params=parser_test_cases.items(), ids=parser_test_cases.keys())
 def parsed_errors(
     request,  # noqa: ANN001
-) -> Tuple[Generator[ERROR_CODE, None, None], ParserTestCase]:
+) -> tuple[Generator[ERROR_CODE, None, None], ParserTestCase]:
     """
     Create a fixture for the error codes emitted by our testing code.
 
@@ -32,7 +32,7 @@ def parsed_errors(
     return check_source(test_case.src), test_case
 
 
-def test_lineno(parsed_errors: Tuple[Generator[ERROR_CODE, None, None], ParserTestCase]) -> None:
+def test_lineno(parsed_errors: tuple[Generator[ERROR_CODE, None, None], ParserTestCase]) -> None:
     """
     Check for correct line number values.
 
@@ -48,7 +48,7 @@ def test_lineno(parsed_errors: Tuple[Generator[ERROR_CODE, None, None], ParserTe
 
 
 def test_column_offset(
-    parsed_errors: Tuple[Generator[ERROR_CODE, None, None], ParserTestCase],
+    parsed_errors: tuple[Generator[ERROR_CODE, None, None], ParserTestCase],
 ) -> None:
     """
     Check for correct column number values.

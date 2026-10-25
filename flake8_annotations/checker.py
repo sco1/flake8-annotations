@@ -9,7 +9,7 @@ from flake8.options.manager import OptionManager
 from flake8_annotations import __version__, enums, error_codes
 from flake8_annotations.ast_walker import Argument, Function, FunctionVisitor, ast
 
-FORMATTED_ERROR = t.Tuple[int, int, str, t.Type[t.Any]]
+FORMATTED_ERROR = tuple[int, int, str, type[t.Any]]
 
 _DEFAULT_DISPATCH_DECORATORS = [
     "singledispatch",
@@ -33,7 +33,7 @@ class TypeHintChecker:
     name = "flake8-annotations"
     version = __version__
 
-    def __init__(self, tree: t.Optional[ast.Module], lines: t.List[str]):
+    def __init__(self, tree: ast.Module | None, lines: list[str]):
         # Request `tree` in order to ensure flake8 will run the plugin, even though we don't use it
         # Request `lines` here and join to allow for correct handling of input from stdin
         self.lines = lines
@@ -53,8 +53,8 @@ class TypeHintChecker:
         self.mypy_init_return: bool
         self.allow_star_arg_any: bool
         self.respect_type_ignore: bool
-        self.dispatch_decorators: t.Set[str]
-        self.overload_decorators: t.Set[str]
+        self.dispatch_decorators: set[str]
+        self.overload_decorators: set[str]
 
     def run(self) -> t.Generator[FORMATTED_ERROR, None, None]:
         """
@@ -69,7 +69,7 @@ class TypeHintChecker:
         # Keep track of the last encountered function decorated by `typing.overload`, if any.
         # Per the `typing` module documentation, a series of overload-decorated definitions must be
         # followed by exactly one non-overload-decorated definition of the same function.
-        last_overload_decorated_function_name: t.Optional[str] = None
+        last_overload_decorated_function_name: str | None = None
 
         # Iterate over the arguments with missing type hints, by function, and yield linting errors
         # to flake8
@@ -302,7 +302,7 @@ def _return_error_classifier(
     is_class_method: bool,
     class_decorator_type: enums.ClassDecoratorType,
     function_type: enums.FunctionType,
-) -> t.Type[error_codes.Error]:
+) -> type[error_codes.Error]:
     """Classify return type annotation error."""
     # Decorated class methods (@classmethod, @staticmethod) have a higher priority than the rest
     if is_class_method:
@@ -327,7 +327,7 @@ def _argument_error_classifier(
     is_first_arg: bool,
     class_decorator_type: enums.ClassDecoratorType,
     annotation_type: enums.AnnotationType,
-) -> t.Type[error_codes.Error]:
+) -> type[error_codes.Error]:
     """Classify argument type annotation error."""
     # Check for regular class methods and @classmethod, @staticmethod is deferred to final check
     if is_class_method:

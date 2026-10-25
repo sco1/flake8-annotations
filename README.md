@@ -23,7 +23,7 @@ You can verify it's being picked up by invoking the following in your shell:
 <!-- [[[cog
 import cog
 from subprocess import PIPE, run
-out = run(["flake8", "--version"], stdout=PIPE, encoding="ascii", env={"TYPER_USE_RICH": "0"})
+out = run(["flake8", "--version"], stdout=PIPE, encoding="ascii")
 ver_str = out.stdout.replace("\n", "")
 cog.out(
     f"```bash\n$ flake8 --version\n{ver_str}\n```"
@@ -31,7 +31,7 @@ cog.out(
 ]]] -->
 ```bash
 $ flake8 --version
-7.4.1 (flake8-annotations: 3.3.0, mccabe: 0.7.0, pycodestyle: 2.15.0,pyflakes: 4.0.3) CPython 3.15.0 on Darwin
+7.4.1 (flake8-annotations: 3.3.0, mccabe: 0.7.0, pycodestyle: 2.15.0,pyflakes: 4.0.3) CPython 3.15.1 on Darwin
 ```
 <!-- [[[end]]] -->
 

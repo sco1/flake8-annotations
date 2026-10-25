@@ -1,5 +1,3 @@
-from typing import Tuple
-
 import pytest
 
 from flake8_annotations.ast_walker import Argument, Function
@@ -17,7 +15,7 @@ class TestReturnClassifier:
     )
 
     @pytest.fixture(params=classifier_object_attributes.return_classifications.keys())
-    def function_builder(self, request) -> Tuple[Function, Error]:  # noqa: ANN001
+    def function_builder(self, request) -> tuple[Function, Error]:  # noqa: ANN001
         """
         Build a Function object from the fixtured parameters.
 
@@ -40,7 +38,7 @@ class TestReturnClassifier:
         )
         return function_object, error_object
 
-    def test_return(self, function_builder: Tuple[Function, Error]) -> None:
+    def test_return(self, function_builder: tuple[Function, Error]) -> None:
         """Test missing return annotation error codes."""
         test_function, error_object = function_builder
         assert isinstance(classify_error(test_function, self.dummy_return), error_object)
@@ -54,7 +52,7 @@ class TestArgumentClassifier:
     dummy_arg = Argument(argname="DummyArg", lineno=0, col_offset=0, annotation_type=None)
 
     @pytest.fixture(params=classifier_object_attributes.argument_classifications.keys())
-    def function_builder(self, request) -> Tuple[Function, Argument, Error]:  # noqa: ANN001
+    def function_builder(self, request) -> tuple[Function, Argument, Error]:  # noqa: ANN001
         """
         Build function and argument objects from the fixtured parameters.
 
@@ -91,7 +89,7 @@ class TestArgumentClassifier:
 
         return function_object, argument_object, error_object
 
-    def test_argument(self, function_builder: Tuple[Function, Argument, Error]) -> None:
+    def test_argument(self, function_builder: tuple[Function, Argument, Error]) -> None:
         """Test missing argument annotation error codes."""
         test_function, test_argument, error_object = function_builder
         assert isinstance(classify_error(test_function, test_argument), error_object)

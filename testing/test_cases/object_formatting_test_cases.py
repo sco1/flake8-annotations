@@ -1,5 +1,5 @@
 from functools import partial
-from typing import NamedTuple, Union
+from typing import NamedTuple
 
 from flake8_annotations.ast_walker import Argument, Function
 from flake8_annotations.enums import AnnotationType
@@ -8,7 +8,7 @@ from flake8_annotations.enums import AnnotationType
 class FormatTestCase(NamedTuple):
     """Named tuple for representing our test cases."""
 
-    test_object: Union[Argument, Function]
+    test_object: Argument | Function
     str_output: str
 
 

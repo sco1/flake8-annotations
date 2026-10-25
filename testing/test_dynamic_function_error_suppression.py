@@ -1,5 +1,3 @@
-from typing import Tuple
-
 import pytest
 
 from flake8_annotations.error_codes import Error
@@ -20,7 +18,7 @@ class TestDynamicallyTypedFunctionErrorSuppression:
     )
     def yielded_errors(
         self, request  # noqa: ANN001
-    ) -> Tuple[str, DynamicallyTypedFunctionTestCase, Tuple[Error]]:
+    ) -> tuple[str, DynamicallyTypedFunctionTestCase, tuple[Error]]:
         """
         Build a fixture for the errors emitted from parsing the dynamically typed def test code.
 
@@ -37,7 +35,7 @@ class TestDynamicallyTypedFunctionErrorSuppression:
         )
 
     def test_suppressed_dynamic_function_error(
-        self, yielded_errors: Tuple[str, DynamicallyTypedFunctionTestCase, Tuple[Error]]
+        self, yielded_errors: tuple[str, DynamicallyTypedFunctionTestCase, tuple[Error]]
     ) -> None:
         """Test that all errors are suppressed if a function is dynamically typed."""
         test_case_name, test_case, errors = yielded_errors
@@ -58,7 +56,7 @@ class TestDynamicallyTypedNestedFunctionErrorSuppression:
     )
     def yielded_errors(
         self, request  # noqa: ANN001
-    ) -> Tuple[str, DynamicallyTypedNestedFunctionTestCase, Tuple[Error]]:
+    ) -> tuple[str, DynamicallyTypedNestedFunctionTestCase, tuple[Error]]:
         """
         Build a fixture for the errors emitted from parsing the dynamically typed def test code.
 
@@ -75,7 +73,7 @@ class TestDynamicallyTypedNestedFunctionErrorSuppression:
         )
 
     def test_suppressed_dynamic_nested_function_error(
-        self, yielded_errors: Tuple[str, DynamicallyTypedNestedFunctionTestCase, Tuple[Error]]
+        self, yielded_errors: tuple[str, DynamicallyTypedNestedFunctionTestCase, tuple[Error]]
     ) -> None:
         """Test that all errors are suppressed if a nested function is dynamically typed."""
         test_case_name, test_case, errors = yielded_errors

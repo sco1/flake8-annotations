@@ -1,5 +1,4 @@
 from itertools import zip_longest
-from typing import List, Tuple
 
 import pytest
 import pytest_check as check
@@ -9,8 +8,8 @@ from testing.helpers import find_matching_function, parse_source
 from testing.test_cases.argument_parsing_test_cases import argument_test_cases
 from testing.test_cases.function_parsing_test_cases import function_test_cases
 
-ARG_FIXTURE_TYPE = Tuple[List[Argument], List[Argument], str]
-FUNC_FIXTURE_TYPE = Tuple[Tuple[Function], List[Function], str]
+ARG_FIXTURE_TYPE = tuple[list[Argument], list[Argument], str]
+FUNC_FIXTURE_TYPE = tuple[tuple[Function], list[Function], str]
 
 
 class TestArgumentParsing:

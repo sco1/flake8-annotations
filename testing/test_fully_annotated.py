@@ -1,5 +1,3 @@
-from typing import Tuple
-
 import pytest
 import pytest_check as check
 
@@ -15,14 +13,14 @@ class TestFunctionParsing:
     """Test for proper determinition of whether the parsed Function is fully annotated."""
 
     @pytest.fixture(params=annotation_test_cases.items(), ids=annotation_test_cases.keys())
-    def functions(self, request) -> Tuple[Function, AnnotationTestCase, str]:  # noqa: ANN001
+    def functions(self, request) -> tuple[Function, AnnotationTestCase, str]:  # noqa: ANN001
         """Provide the Function object from the test case source & the TestCase instance."""
         test_case_name, test_case = request.param
         function_definitions = functions_from_source(test_case.src)
 
         return function_definitions[0], test_case, test_case_name
 
-    def test_fully_annotated(self, functions: Tuple[Function, AnnotationTestCase, str]) -> None:
+    def test_fully_annotated(self, functions: tuple[Function, AnnotationTestCase, str]) -> None:
         """Check the result of Function.is_fully_annotated() against the test case's truth value."""
         failure_msg = f"Comparison check failed for function: '{functions[2]}'"
 
