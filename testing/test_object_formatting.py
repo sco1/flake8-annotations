@@ -5,7 +5,7 @@ from testing.test_cases.object_formatting_test_cases import FormatTestCase, form
 
 
 @pytest.fixture(params=formatting_test_cases.keys())
-def build_test_cases(request) -> tuple[FormatTestCase, str]:  # noqa: ANN001
+def build_test_cases(request: pytest.FixtureRequest) -> tuple[FormatTestCase, str]:
     """
     Create a fixture for the provided test cases.
 

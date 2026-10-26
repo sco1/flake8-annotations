@@ -4,7 +4,10 @@ import pytest
 
 from flake8_annotations.checker import FORMATTED_ERROR
 from testing.helpers import check_source
-from testing.test_cases.variable_formatting_test_cases import variable_formatting_test_cases
+from testing.test_cases.variable_formatting_test_cases import (
+    FormatTestCase,
+    variable_formatting_test_cases,
+)
 
 SIMPLE_ERROR_CODE = tuple[str, str]
 
@@ -30,31 +33,18 @@ def _simplify_error(error_code: FORMATTED_ERROR) -> SIMPLE_ERROR_CODE:
     return error_type, arg_name
 
 
-class TestArgumentFormatting:
-    """Testing class for containerizing parsed error codes & running the fixtured tests."""
+@pytest.mark.parametrize(
+    "test_case",
+    variable_formatting_test_cases.values(),
+    ids=list(variable_formatting_test_cases),
+)
+def test_arg_name(test_case: FormatTestCase) -> None:
+    """
+    Check for correctly formatted argument names.
 
-    @pytest.fixture(
-        params=variable_formatting_test_cases.items(), ids=variable_formatting_test_cases.keys()
-    )
-    def parsed_errors(self, request) -> tuple[list[SIMPLE_ERROR_CODE], str]:  # noqa: ANN001
-        """
-        Create a fixture for the error codes emitted by the test case source code.
+    Error codes for the test case source code are simplified into a list of
+    (error code, argument name) tuples.
+    """
+    simplified_errors = [_simplify_error(error) for error in check_source(test_case.src)]
 
-        Error codes for the test case source code are simplified into a list of
-        (error code, argument name) tuples.
-        """
-        test_case_name, test_case = request.param
-        simplified_errors = [_simplify_error(error) for error in check_source(test_case.src)]
-
-        return simplified_errors, test_case_name
-
-    def test_arg_name(self, parsed_errors: tuple[list[SIMPLE_ERROR_CODE], str]) -> None:
-        """
-        Check for correctly formatted argument names.
-
-        Simplified error code information is provided by the fixture as a list of
-        (yielded error, test case name) tuples
-        """
-        assert all(
-            TEST_ARG_NAMES[error_type] == arg_name for error_type, arg_name in parsed_errors[0]
-        )
+    assert all(TEST_ARG_NAMES[error_type] == arg_name for error_type, arg_name in simplified_errors)

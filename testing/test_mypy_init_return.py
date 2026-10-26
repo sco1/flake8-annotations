@@ -1,7 +1,6 @@
 import pytest
 import pytest_check as check
 
-from flake8_annotations.checker import FORMATTED_ERROR
 from testing.helpers import check_source
 from testing.test_cases.mypy_init_return_test_cases import (
     MypyInitReturnTestCase,
@@ -9,38 +8,15 @@ from testing.test_cases.mypy_init_return_test_cases import (
 )
 
 
-class TestMypyStyleInitReturnErrorSuppression:
-    """Test Mypy-style omission of return type hints for typed __init__ methods."""
+@pytest.mark.parametrize("test_case", mypy_init_test_cases.values(), ids=list(mypy_init_test_cases))
+def test_suppressed_return_error(test_case: MypyInitReturnTestCase) -> None:
+    """
+    Test that ANN200 level errors are suppressed in class __init__ according to Mypy's behavior.
 
-    @pytest.fixture(params=mypy_init_test_cases.items(), ids=mypy_init_test_cases.keys())
-    def yielded_errors(
-        self, request  # noqa: ANN001
-    ) -> tuple[str, MypyInitReturnTestCase, tuple[FORMATTED_ERROR]]:
-        """
-        Build a fixture for the error codes emitted from parsing the Mypy __init__ return test code.
+    Mypy allows omission of the return type hint for __init__ methods if at least one argument
+    is annotated.
+    """
+    errors = check_source(test_case.src, mypy_init_return=True)
 
-        Fixture provides a tuple of: test case name, its corresponding MypyInitReturnTestCase
-        instance, and a tuple of the errors yielded by the checker
-        """
-        test_case_name, test_case = request.param
-
-        return (
-            test_case_name,
-            test_case,
-            tuple(check_source(test_case.src, mypy_init_return=True)),
-        )
-
-    def test_suppressed_return_error(
-        self, yielded_errors: tuple[str, MypyInitReturnTestCase, tuple[FORMATTED_ERROR]]
-    ) -> None:
-        """
-        Test that ANN200 level errors are suppressed in class __init__ according to Mypy's behavior.
-
-        Mypy allows omission of the return type hint for __init__ methods if at least one argument
-        is annotated.
-        """
-        test_case_name, test_case, errors = yielded_errors
-        failure_msg = f"Check failed for case '{test_case_name}'"
-
-        yielded_ANN200 = any("ANN2" in error[2] for error in errors)
-        check.equal(test_case.should_yield_return_error, yielded_ANN200, msg=failure_msg)
+    yielded_ANN200 = any("ANN2" in error[2] for error in errors)
+    check.equal(test_case.should_yield_return_error, yielded_ANN200)

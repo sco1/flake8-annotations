@@ -45,8 +45,8 @@ def check_source(
     checker_instance.mypy_init_return = mypy_init_return
     checker_instance.allow_star_arg_any = allow_star_arg_any
     checker_instance.respect_type_ignore = respect_type_ignore
-    checker_instance.dispatch_decorators = dispatch_decorators
-    checker_instance.overload_decorators = overload_decorators
+    checker_instance.dispatch_decorators = set(dispatch_decorators)
+    checker_instance.overload_decorators = set(overload_decorators)
 
     return checker_instance.run()
 
@@ -64,10 +64,16 @@ def find_matching_function(func_list: t.Iterable[Function], match_name: str) -> 
     """
     Iterate over a list of Function objects & find the first matching named function.
 
-    Due to the definition of the test cases, this should always return something, but there is no
-    protection if a match isn't found & will raise an `IndexError`.
+    Due to the definition of the test cases, this should always return something; a `ValueError` is
+    raised if a match isn't found.
     """
-    return [function for function in func_list if function.name == match_name][0]
+    for function in func_list:
+        if function.name == match_name:
+            return function
+
+    raise ValueError(  # pragma: no cover
+        f"No function named '{match_name}' found in the provided function list"
+    )
 
 
 @check_func

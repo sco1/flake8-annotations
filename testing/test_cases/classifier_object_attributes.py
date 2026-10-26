@@ -44,7 +44,7 @@ return_classifications = {
 # Keys are named tuples of the form:
 #   (is_class_method, is_first_arg, class_decorator_type, annotation_type)
 class AT(NamedTuple):
-    """Helper object for return type attribute specification."""
+    """Helper object for argument type attribute specification."""
 
     is_class_method: bool
     is_first_arg: bool
