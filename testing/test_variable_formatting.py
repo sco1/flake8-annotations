@@ -9,7 +9,7 @@ from testing.test_cases.variable_formatting_test_cases import (
     variable_formatting_test_cases,
 )
 
-SIMPLE_ERROR_CODE = tuple[str, str]
+SIMPLE_ERROR_CODE = tuple[str, str | None]
 
 # Error type specific matching patterns
 TEST_ARG_NAMES = {"ANN001": "some_arg", "ANN002": "some_args", "ANN003": "some_kwargs"}
@@ -27,10 +27,19 @@ def _simplify_error(error_code: FORMATTED_ERROR) -> SIMPLE_ERROR_CODE:
     ANN001: '{arg name}'
     ANN002: *{arg name}
     ANN003: **{arg name}
+
+    If the error type isn't one of the above, or the arg name can't be found, the arg name is
+    returned as `None` so the mismatch is reported by the test's comparison.
     """
     error_type = error_code[2].split()[0]
-    arg_name = re.findall(RE_DICT[error_type], error_code[2])[0]
-    return error_type, arg_name
+    if error_type not in RE_DICT:
+        return error_type, None  # pragma: no cover
+
+    match = re.search(RE_DICT[error_type], error_code[2])
+    if match is None:
+        return error_type, None  # pragma: no cover
+
+    return error_type, match.group(1)
 
 
 @pytest.mark.parametrize(
@@ -46,5 +55,6 @@ def test_arg_name(test_case: FormatTestCase) -> None:
     (error code, argument name) tuples.
     """
     simplified_errors = [_simplify_error(error) for error in check_source(test_case.src)]
+    TRUTH_ERRORS = list(TEST_ARG_NAMES.items())
 
-    assert all(TEST_ARG_NAMES[error_type] == arg_name for error_type, arg_name in simplified_errors)
+    assert simplified_errors == TRUTH_ERRORS

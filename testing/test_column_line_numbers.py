@@ -1,7 +1,4 @@
-from itertools import zip_longest
-
 import pytest
-import pytest_check as check
 
 from testing.helpers import check_source
 from testing.test_cases.column_line_numbers_test_cases import ParserTestCase, parser_test_cases
@@ -21,10 +18,9 @@ def test_lineno(test_case: ParserTestCase) -> None:
 
     NOTE: Line numbers are 1-indexed
     """
-    for should_error_idx, raised_error_code in zip_longest(
-        test_case.error_locations, check_source(test_case.src)
-    ):
-        check.equal(should_error_idx[0], raised_error_code[0])
+    linenos = [error[0] for error in check_source(test_case.src)]
+    TRUTH_LINENOS = [location[0] for location in test_case.error_locations]
+    assert linenos == TRUTH_LINENOS
 
 
 @PARAMETRIZE_TEST_CASES
@@ -37,7 +33,6 @@ def test_column_offset(test_case: ParserTestCase) -> None:
 
     Note: Column offsets are 0-indexed when yielded by our checker; flake8 adds 1 when emitted
     """
-    for should_error_idx, raised_error_code in zip_longest(
-        test_case.error_locations, check_source(test_case.src)
-    ):
-        check.equal(should_error_idx[1], raised_error_code[1])
+    col_offsets = [error[1] for error in check_source(test_case.src)]
+    TRUTH_OFFSETS = [location[1] for location in test_case.error_locations]
+    assert col_offsets == TRUTH_OFFSETS

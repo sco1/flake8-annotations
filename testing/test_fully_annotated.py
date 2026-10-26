@@ -13,6 +13,9 @@ from testing.test_cases.annotation_presence_test_cases import (
 )
 def test_fully_annotated(test_case: AnnotationTestCase) -> None:
     """Check the result of Function.is_fully_annotated() against the test case's truth value."""
-    function = functions_from_source(test_case.src)[0]
+    # Each test case should define a single function
+    functions = functions_from_source(test_case.src)
+    assert len(functions) == 1
 
+    function = functions[0]
     check.equal(function.is_fully_annotated(), test_case.is_fully_annotated)

@@ -14,6 +14,10 @@ SAMPLE_SRC = dedent("""\
 
 
 def test_respect_type_ignore() -> None:
+    # First check that we get errors from the source before we see if the flag has an effect
+    yielded_errs = list(check_source(SAMPLE_SRC))
+    assert yielded_errs
+
     errs = check_source(SAMPLE_SRC, respect_type_ignore=True)
     assert len(list(errs)) == 0
 
@@ -27,6 +31,10 @@ SAMPLE_TOP_LEVEL_MYPY_IGNORE = dedent("""\
 
 
 def test_respect_module_level_mypy_ignore() -> None:
+    # First check that we get errors from the source before we see if the flag has an effect
+    yielded_errs = list(check_source(SAMPLE_TOP_LEVEL_MYPY_IGNORE))
+    assert yielded_errs
+
     errs = check_source(SAMPLE_TOP_LEVEL_MYPY_IGNORE, respect_type_ignore=True)
     assert len(list(errs)) == 0
 
@@ -40,5 +48,9 @@ SAMPLE_TOP_LEVEL_IGNORE = dedent("""\
 
 
 def test_respect_module_level_type_ignore() -> None:
+    # First check that we get errors from the source before we see if the flag has an effect
+    yielded_errs = list(check_source(SAMPLE_TOP_LEVEL_IGNORE))
+    assert yielded_errs
+
     errs = check_source(SAMPLE_TOP_LEVEL_IGNORE, respect_type_ignore=True)
     assert len(list(errs)) == 0
