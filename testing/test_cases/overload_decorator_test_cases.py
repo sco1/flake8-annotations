@@ -1,5 +1,6 @@
+from collections import abc
 from textwrap import dedent
-from typing import AbstractSet, NamedTuple
+from typing import NamedTuple
 
 from flake8_annotations.checker import _DEFAULT_OVERLOAD_DECORATORS
 
@@ -9,7 +10,7 @@ class OverloadDecoratorTestCase(NamedTuple):
 
     src: str
     should_yield_error: bool
-    overload_decorators: AbstractSet[str] = frozenset(_DEFAULT_OVERLOAD_DECORATORS)
+    overload_decorators: abc.Set[str] = frozenset(_DEFAULT_OVERLOAD_DECORATORS)
     allow_untyped_defs: bool = False
 
 

@@ -1,5 +1,6 @@
+from collections import abc
 from textwrap import dedent
-from typing import AbstractSet, NamedTuple
+from typing import NamedTuple
 
 from flake8_annotations.checker import _DEFAULT_DISPATCH_DECORATORS
 
@@ -9,7 +10,7 @@ class DispatchDecoratorTestCase(NamedTuple):
 
     src: str
     should_yield_error: bool
-    dispatch_decorators: AbstractSet[str] = frozenset(_DEFAULT_DISPATCH_DECORATORS)
+    dispatch_decorators: abc.Set[str] = frozenset(_DEFAULT_DISPATCH_DECORATORS)
 
 
 dispatch_decorator_test_cases = {

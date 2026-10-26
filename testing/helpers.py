@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import typing as t
+from collections import abc
 
 from pytest_check import check_func
 
@@ -13,7 +13,7 @@ from flake8_annotations.checker import (
 )
 
 
-def parse_source(src: str) -> t.Tuple[ast.Module, t.List[str]]:
+def parse_source(src: str) -> tuple[ast.Module, list[str]]:
     """Parse the provided Python source string and return an (typed AST, source) tuple."""
     tree = ast.parse(src, type_comments=True)
     lines = src.splitlines(keepends=True)
@@ -30,9 +30,9 @@ def check_source(
     mypy_init_return: bool = False,
     allow_star_arg_any: bool = False,
     respect_type_ignore: bool = False,
-    dispatch_decorators: t.AbstractSet[str] = frozenset(_DEFAULT_DISPATCH_DECORATORS),
-    overload_decorators: t.AbstractSet[str] = frozenset(_DEFAULT_OVERLOAD_DECORATORS),
-) -> t.Generator[FORMATTED_ERROR, None, None]:
+    dispatch_decorators: abc.Set[str] = frozenset(_DEFAULT_DISPATCH_DECORATORS),
+    overload_decorators: abc.Set[str] = frozenset(_DEFAULT_OVERLOAD_DECORATORS),
+) -> abc.Generator[FORMATTED_ERROR, None, None]:
     """Helper for generating linting errors from the provided source code."""
     _, lines = parse_source(src)
     checker_instance = TypeHintChecker(None, lines)
@@ -51,7 +51,17 @@ def check_source(
     return checker_instance.run()
 
 
-def functions_from_source(src: str) -> t.List[Function]:
+def simplify_errors(errors: abc.Iterable[FORMATTED_ERROR]) -> list[tuple[int, str]]:
+    """
+    Simplify the errors yielded by the checker into a list of (line number, error code) tuples.
+
+    Yielded errors are assumed to be tuples of the form:
+      (line number, column number, error string, checker class)
+    """
+    return [(lineno, message.split()[0]) for lineno, _, message, _ in errors]
+
+
+def functions_from_source(src: str) -> list[Function]:
     """Helper for obtaining a list of Function objects from the provided source code."""
     tree, lines = parse_source(src)
     visitor = FunctionVisitor(lines)
@@ -60,7 +70,7 @@ def functions_from_source(src: str) -> t.List[Function]:
     return visitor.function_definitions
 
 
-def find_matching_function(func_list: t.Iterable[Function], match_name: str) -> Function:
+def find_matching_function(func_list: abc.Iterable[Function], match_name: str) -> Function:
     """
     Iterate over a list of Function objects & find the first matching named function.
 
@@ -77,12 +87,12 @@ def find_matching_function(func_list: t.Iterable[Function], match_name: str) -> 
 
 
 @check_func
-def check_is_empty(in_sequence: t.Sequence, msg: str = "") -> None:
+def check_is_empty(in_sequence: abc.Sequence, msg: str = "") -> None:
     """Check whether the input sequence is empty."""
     assert not in_sequence
 
 
 @check_func
-def check_is_not_empty(in_sequence: t.Sequence, msg: str = "") -> None:
+def check_is_not_empty(in_sequence: abc.Sequence, msg: str = "") -> None:
     """Check whether the input sequence is not empty."""
     assert in_sequence

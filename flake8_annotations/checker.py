@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import typing as t
 from argparse import Namespace
+from collections import abc
 from functools import lru_cache
 
 from flake8.options.manager import OptionManager
@@ -43,7 +44,15 @@ class TypeHintChecker:
         # Type ignores are provided by ast at the module level & we'll need them later when deciding
         # whether or not to emit errors for a given function
         self._type_ignore_lineno = {ti.lineno for ti in self.tree.type_ignores}
-        self._has_mypy_ignore_errors = "# mypy: ignore-errors" in lines[0] if lines else False
+
+        # Module-level ignores are only considered when provided as the sole contents of the first
+        # line of the module. Since ast only provides the line number of a type ignore comment, a
+        # comment-only first line ensures that the ignore isn't trailing a function definition
+        first_line = lines[0].strip() if lines else ""
+        self._has_module_level_type_ignore = (1 in self._type_ignore_lineno) and (
+            first_line.startswith("#")
+        )
+        self._has_mypy_ignore_errors = first_line == "# mypy: ignore-errors"
 
         # Set by flake8's config parser
         self.suppress_none_returning: bool
@@ -56,7 +65,7 @@ class TypeHintChecker:
         self.dispatch_decorators: set[str]
         self.overload_decorators: set[str]
 
-    def run(self) -> t.Generator[FORMATTED_ERROR, None, None]:
+    def run(self) -> abc.Generator[FORMATTED_ERROR, None, None]:
         """
         This method is called by flake8 to perform the actual check(s) on the source code.
 
@@ -121,7 +130,7 @@ class TypeHintChecker:
                 if function.lineno in self._type_ignore_lineno:
                     # function-level ignore
                     continue
-                elif (1 in self._type_ignore_lineno) or (
+                elif self._has_module_level_type_ignore or (
                     self._has_mypy_ignore_errors
                 ):  # pragma: no branch
                     # module-level ignore
