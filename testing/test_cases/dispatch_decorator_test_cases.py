@@ -116,4 +116,51 @@ dispatch_decorator_test_cases = {
             """),
         should_yield_error=False,
     ),
+    "singledispatch_not_first_decorator": DispatchDecoratorTestCase(
+        src=dedent("""\
+            @log_calls
+            @functools.singledispatch
+            def foo(a):
+                print(a)
+            """),
+        should_yield_error=False,
+    ),
+    "singledispatch_not_first_decorator_callable": DispatchDecoratorTestCase(
+        src=dedent("""\
+            @register("foo")
+            @singledispatch()
+            def foo(a):
+                print(a)
+            """),
+        should_yield_error=False,
+    ),
+    "singledispatch_last_of_several_decorators": DispatchDecoratorTestCase(
+        src=dedent("""\
+            @log_calls
+            @functools.cache
+            @functools.singledispatch
+            def foo(a):
+                print(a)
+            """),
+        should_yield_error=False,
+    ),
+    "singledispatchmethod_not_first_decorator": DispatchDecoratorTestCase(
+        src=dedent("""\
+            class Foo:
+                @log_calls
+                @functools.singledispatchmethod
+                def foo(self, a):
+                    print(a)
+            """),
+        should_yield_error=False,
+    ),
+    "multiple_decorators_no_dispatch": DispatchDecoratorTestCase(
+        src=dedent("""\
+            @log_calls
+            @functools.cache
+            def foo(a):
+                print(a)
+            """),
+        should_yield_error=True,
+    ),
 }

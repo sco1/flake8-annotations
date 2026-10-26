@@ -32,7 +32,13 @@ class TestOverloadDecoratorErrorSuppression:
         return (
             test_case_name,
             test_case,
-            tuple(check_source(test_case.src, overload_decorators=test_case.overload_decorators)),
+            tuple(
+                check_source(
+                    test_case.src,
+                    overload_decorators=test_case.overload_decorators,
+                    allow_untyped_defs=test_case.allow_untyped_defs,
+                )
+            ),
         )
 
     def test_overload_decorator_error_suppression(

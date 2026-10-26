@@ -66,16 +66,15 @@ class TypeHintChecker:
         visitor = FunctionVisitor(self.lines)
         visitor.visit(self.tree)
 
-        # Keep track of the last encountered function decorated by `typing.overload`, if any.
-        # Per the `typing` module documentation, a series of overload-decorated definitions must be
-        # followed by exactly one non-overload-decorated definition of the same function.
-        last_overload_decorated_function_name: str | None = None
-
         # Iterate over the arguments with missing type hints, by function, and yield linting errors
         # to flake8
         #
         # Flake8 handles all noqa and error code ignore configurations after the error is yielded
-        for function in visitor.function_definitions:
+        #
+        # Each function is paired with the one preceding it, which is needed to identify the closing
+        # definition of a series of `typing.overload` decorated functions.
+        functions = visitor.function_definitions
+        for previous_function, function in zip([None, *functions], functions, strict=False):
             if function.has_type_comment:
                 yield error_codes.ANN402.from_function(function).to_flake8()
 
@@ -105,13 +104,16 @@ class TypeHintChecker:
                     yield error_codes.ANN401.from_argument(arg).to_flake8()
 
             # Before we iterate over the function's missing annotations, check to see if it's the
-            # closing function def in a series of `typing.overload` decorated functions.
-            if last_overload_decorated_function_name == function.name:
+            # closing function def in a series of `typing.overload` decorated functions. Per the
+            # `typing` module documentation, this must immediately follow the series, so only the
+            # preceding function needs to be considered.
+            if (
+                previous_function is not None
+                and previous_function.name == function.name
+                and previous_function.has_decorator(self.overload_decorators)
+                and not function.has_decorator(self.overload_decorators)
+            ):
                 continue
-
-            # If it's not, and it is overload decorated, store it for the next iteration
-            if function.has_decorator(self.overload_decorators):
-                last_overload_decorated_function_name = function.name
 
             # Optionally respect a type: ignore comment
             # These are considered at the function level & tags are not considered

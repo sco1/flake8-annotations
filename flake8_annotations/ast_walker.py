@@ -128,11 +128,7 @@ class Function:
 
         NOTE: Deeper decorator imports (e.g. `a.b.overload`) are not explicitly supported
         """
-        for decorator in self.decorator_list:
-            # Drop to a helper to allow for simpler handling of callable decorators
-            return self._decorator_checker(decorator, check_decorators)
-        else:
-            return False
+        return any(self._decorator_checker(d, check_decorators) for d in self.decorator_list)
 
     def _decorator_checker(
         self, decorator: AST_DECORATOR_NODES, check_decorators: set[str]
