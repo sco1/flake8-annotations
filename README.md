@@ -1,5 +1,5 @@
 # flake8-annotations
-[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/flake8-annotations/3.3.0?logo=python&logoColor=FFD43B)](https://pypi.org/project/flake8-annotations/)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/flake8-annotations/3.3.1?logo=python&logoColor=FFD43B)](https://pypi.org/project/flake8-annotations/)
 [![PyPI](https://img.shields.io/pypi/v/flake8-annotations?logo=Python&logoColor=FFD43B)](https://pypi.org/project/flake8-annotations/)
 [![PyPI - License](https://img.shields.io/pypi/l/flake8-annotations?color=magenta)](https://github.com/sco1/flake8-annotations/blob/main/LICENSE)
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/sco1/flake8-annotations/main.svg)](https://results.pre-commit.ci/latest/github/sco1/flake8-annotations/main)
@@ -9,7 +9,7 @@
 What this won't do: replace [mypy](http://mypy-lang.org/), check type comments (see: [PEP 484](https://peps.python.org/pep-0484/#type-comments)), check variable annotations (see: [PEP 526](https://www.python.org/dev/peps/pep-0526/)), or respect stub files.
 
 ## Installation
-Install from PyPi with your favorite `pip` invocation:
+Install from PyPI with your favorite `pip` invocation:
 
 ```bash
 $ pip install flake8-annotations
@@ -23,7 +23,7 @@ You can verify it's being picked up by invoking the following in your shell:
 <!-- [[[cog
 import cog
 from subprocess import PIPE, run
-out = run(["flake8", "--version"], stdout=PIPE, encoding="ascii", env={"TYPER_USE_RICH": "0"})
+out = run(["flake8", "--version"], stdout=PIPE, encoding="ascii")
 ver_str = out.stdout.replace("\n", "")
 cog.out(
     f"```bash\n$ flake8 --version\n{ver_str}\n```"
@@ -31,7 +31,7 @@ cog.out(
 ]]] -->
 ```bash
 $ flake8 --version
-7.4.1 (flake8-annotations: 3.3.0, mccabe: 0.7.0, pycodestyle: 2.15.0,pyflakes: 4.0.3) CPython 3.15.0 on Darwin
+7.5.0 (flake8-annotations: 3.3.1, mccabe: 0.7.0, pycodestyle: 2.15.0, pyflakes: 4.1.0) CPython 3.15.1 on Darwin
 ```
 <!-- [[[end]]] -->
 
@@ -68,7 +68,7 @@ These warnings are disabled by default.
 | `ANN401` | Dynamically typed expressions (typing.Any) are disallowed<sup>2,3</sup> |
 | `ANN402` | Type comments are disallowed<sup>3</sup>                                |
 
-Use [`extend-select`](https://flake8.pycqa.org/en/latest/user/options.html#cmdoption-flake8-extend-ignore) to enable opinionated warnings without overriding other implicit configurations<sup>4</sup>.
+Use [`extend-select`](https://flake8.pycqa.org/en/latest/user/options.html#cmdoption-flake8-extend-select) to enable opinionated warnings without overriding other implicit configurations<sup>4</sup>.
 
 **Notes:**
 1. See: [PEP 484](https://www.python.org/dev/peps/pep-0484/#annotating-instance-and-class-methods) and [PEP 563](https://www.python.org/dev/peps/pep-0563/) for suggestions on annotating `self` and `cls` arguments
@@ -179,7 +179,7 @@ Per the [`typing`](https://docs.python.org/3/library/typing.html#typing.overload
 
 > The `@overload` decorator allows describing functions and methods that support multiple different combinations of argument types. A series of `@overload`-decorated definitions must be followed by exactly one non-`@overload`-decorated definition (for the same function/method).
 
-In the spirit of the purpose of this decorator, errors for missing annotations for non-`@overload`-decorated functions are ignored if they meet this criteria.
+In the spirit of the purpose of this decorator, errors for missing annotations for non-`@overload`-decorated functions are ignored if they meet these criteria.
 
 For example, this code:
 
@@ -201,7 +201,7 @@ Decorator(s) to treat as `typing.overload` may be specified by the [`--overload-
 
 ## Dynamic Typing Caveats
 Support is only provided for the following patterns:
-  * `from typing import any; foo: Any`
+  * `from typing import Any; foo: Any`
   * `import typing; foo: typing.Any`
   * `import typing as <alias>; foo: <alias>.Any`
 

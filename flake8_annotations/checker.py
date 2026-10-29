@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import typing as t
 from argparse import Namespace
+from collections import abc
 from functools import lru_cache
 
 from flake8.options.manager import OptionManager
@@ -9,7 +10,7 @@ from flake8.options.manager import OptionManager
 from flake8_annotations import __version__, enums, error_codes
 from flake8_annotations.ast_walker import Argument, Function, FunctionVisitor, ast
 
-FORMATTED_ERROR = t.Tuple[int, int, str, t.Type[t.Any]]
+FORMATTED_ERROR = tuple[int, int, str, type[t.Any]]
 
 _DEFAULT_DISPATCH_DECORATORS = [
     "singledispatch",
@@ -33,7 +34,7 @@ class TypeHintChecker:
     name = "flake8-annotations"
     version = __version__
 
-    def __init__(self, tree: t.Optional[ast.Module], lines: t.List[str]):
+    def __init__(self, tree: ast.Module | None, lines: list[str]):
         # Request `tree` in order to ensure flake8 will run the plugin, even though we don't use it
         # Request `lines` here and join to allow for correct handling of input from stdin
         self.lines = lines
@@ -43,7 +44,15 @@ class TypeHintChecker:
         # Type ignores are provided by ast at the module level & we'll need them later when deciding
         # whether or not to emit errors for a given function
         self._type_ignore_lineno = {ti.lineno for ti in self.tree.type_ignores}
-        self._has_mypy_ignore_errors = "# mypy: ignore-errors" in lines[0] if lines else False
+
+        # Module-level ignores are only considered when provided as the sole contents of the first
+        # line of the module. Since ast only provides the line number of a type ignore comment, a
+        # comment-only first line ensures that the ignore isn't trailing a function definition
+        first_line = lines[0].strip() if lines else ""
+        self._has_module_level_type_ignore = (1 in self._type_ignore_lineno) and (
+            first_line.startswith("#")
+        )
+        self._has_mypy_ignore_errors = first_line == "# mypy: ignore-errors"
 
         # Set by flake8's config parser
         self.suppress_none_returning: bool
@@ -53,10 +62,10 @@ class TypeHintChecker:
         self.mypy_init_return: bool
         self.allow_star_arg_any: bool
         self.respect_type_ignore: bool
-        self.dispatch_decorators: t.Set[str]
-        self.overload_decorators: t.Set[str]
+        self.dispatch_decorators: set[str]
+        self.overload_decorators: set[str]
 
-    def run(self) -> t.Generator[FORMATTED_ERROR, None, None]:
+    def run(self) -> abc.Generator[FORMATTED_ERROR, None, None]:
         """
         This method is called by flake8 to perform the actual check(s) on the source code.
 
@@ -66,16 +75,15 @@ class TypeHintChecker:
         visitor = FunctionVisitor(self.lines)
         visitor.visit(self.tree)
 
-        # Keep track of the last encountered function decorated by `typing.overload`, if any.
-        # Per the `typing` module documentation, a series of overload-decorated definitions must be
-        # followed by exactly one non-overload-decorated definition of the same function.
-        last_overload_decorated_function_name: t.Optional[str] = None
-
         # Iterate over the arguments with missing type hints, by function, and yield linting errors
         # to flake8
         #
         # Flake8 handles all noqa and error code ignore configurations after the error is yielded
-        for function in visitor.function_definitions:
+        #
+        # Each function is paired with the one preceding it, which is needed to identify the closing
+        # definition of a series of `typing.overload` decorated functions.
+        functions = visitor.function_definitions
+        for previous_function, function in zip([None, *functions], functions, strict=False):
             if function.has_type_comment:
                 yield error_codes.ANN402.from_function(function).to_flake8()
 
@@ -105,13 +113,16 @@ class TypeHintChecker:
                     yield error_codes.ANN401.from_argument(arg).to_flake8()
 
             # Before we iterate over the function's missing annotations, check to see if it's the
-            # closing function def in a series of `typing.overload` decorated functions.
-            if last_overload_decorated_function_name == function.name:
+            # closing function def in a series of `typing.overload` decorated functions. Per the
+            # `typing` module documentation, this must immediately follow the series, so only the
+            # preceding function needs to be considered.
+            if (
+                previous_function is not None
+                and previous_function.name == function.name
+                and previous_function.has_decorator(self.overload_decorators)
+                and not function.has_decorator(self.overload_decorators)
+            ):
                 continue
-
-            # If it's not, and it is overload decorated, store it for the next iteration
-            if function.has_decorator(self.overload_decorators):
-                last_overload_decorated_function_name = function.name
 
             # Optionally respect a type: ignore comment
             # These are considered at the function level & tags are not considered
@@ -119,7 +130,7 @@ class TypeHintChecker:
                 if function.lineno in self._type_ignore_lineno:
                     # function-level ignore
                     continue
-                elif (1 in self._type_ignore_lineno) or (
+                elif self._has_module_level_type_ignore or (
                     self._has_mypy_ignore_errors
                 ):  # pragma: no branch
                     # module-level ignore
@@ -247,7 +258,7 @@ class TypeHintChecker:
             action="store_true",
             parse_from_config=True,
             help=(
-                "Supress errors for functions annotated with a 'type: ignore' comment. (Default: "
+                "Suppress errors for functions annotated with a 'type: ignore' comment. (Default: "
                 "%(default)s)"
             ),
         )
@@ -275,7 +286,7 @@ def classify_error(function: Function, arg: Argument) -> error_codes.Error:
     For the currently defined rules & program flow, the assumption can be made that an argument
     passed to this method will match a linting error, and will only match a single linting error
 
-    This function provides an initial classificaton, then passes relevant attributes to cached
+    This function provides an initial classification, then passes relevant attributes to cached
     helper function(s).
     """
     # Check for return type
@@ -302,7 +313,7 @@ def _return_error_classifier(
     is_class_method: bool,
     class_decorator_type: enums.ClassDecoratorType,
     function_type: enums.FunctionType,
-) -> t.Type[error_codes.Error]:
+) -> type[error_codes.Error]:
     """Classify return type annotation error."""
     # Decorated class methods (@classmethod, @staticmethod) have a higher priority than the rest
     if is_class_method:
@@ -327,7 +338,7 @@ def _argument_error_classifier(
     is_first_arg: bool,
     class_decorator_type: enums.ClassDecoratorType,
     annotation_type: enums.AnnotationType,
-) -> t.Type[error_codes.Error]:
+) -> type[error_codes.Error]:
     """Classify argument type annotation error."""
     # Check for regular class methods and @classmethod, @staticmethod is deferred to final check
     if is_class_method:

@@ -1,9 +1,6 @@
-from typing import Tuple
-
 import pytest
 import pytest_check as check
 
-from flake8_annotations.ast_walker import Function
 from testing.helpers import functions_from_source
 from testing.test_cases.annotation_presence_test_cases import (
     AnnotationTestCase,
@@ -11,21 +8,14 @@ from testing.test_cases.annotation_presence_test_cases import (
 )
 
 
-class TestFunctionParsing:
-    """Test for proper determinition of whether the parsed Function is fully annotated."""
+@pytest.mark.parametrize(
+    "test_case", annotation_test_cases.values(), ids=list(annotation_test_cases)
+)
+def test_fully_annotated(test_case: AnnotationTestCase) -> None:
+    """Check the result of Function.is_fully_annotated() against the test case's truth value."""
+    # Each test case should define a single function
+    functions = functions_from_source(test_case.src)
+    assert len(functions) == 1
 
-    @pytest.fixture(params=annotation_test_cases.items(), ids=annotation_test_cases.keys())
-    def functions(self, request) -> Tuple[Function, AnnotationTestCase, str]:  # noqa: ANN001
-        """Provide the Function object from the test case source & the TestCase instance."""
-        test_case_name, test_case = request.param
-        function_definitions = functions_from_source(test_case.src)
-
-        return function_definitions[0], test_case, test_case_name
-
-    def test_fully_annotated(self, functions: Tuple[Function, AnnotationTestCase, str]) -> None:
-        """Check the result of Function.is_fully_annotated() against the test case's truth value."""
-        failure_msg = f"Comparison check failed for function: '{functions[2]}'"
-
-        check.equal(
-            functions[0].is_fully_annotated(), functions[1].is_fully_annotated, msg=failure_msg
-        )
+    function = functions[0]
+    check.equal(function.is_fully_annotated(), test_case.is_fully_annotated)

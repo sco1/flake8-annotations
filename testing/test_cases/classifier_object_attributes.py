@@ -1,4 +1,4 @@
-from typing import NamedTuple, Optional
+from typing import NamedTuple
 
 from flake8_annotations import error_codes
 from flake8_annotations.enums import AnnotationType, ClassDecoratorType, FunctionType
@@ -11,7 +11,7 @@ class RT(NamedTuple):
 
     function_type: FunctionType
     is_class_method: bool
-    class_decorator_type: Optional[ClassDecoratorType]
+    class_decorator_type: ClassDecoratorType | None
 
 
 return_classifications = {
@@ -44,11 +44,11 @@ return_classifications = {
 # Keys are named tuples of the form:
 #   (is_class_method, is_first_arg, class_decorator_type, annotation_type)
 class AT(NamedTuple):
-    """Helper object for return type attribute specification."""
+    """Helper object for argument type attribute specification."""
 
     is_class_method: bool
     is_first_arg: bool
-    class_decorator_type: Optional[ClassDecoratorType]
+    class_decorator_type: ClassDecoratorType | None
     annotation_type: AnnotationType
 
 

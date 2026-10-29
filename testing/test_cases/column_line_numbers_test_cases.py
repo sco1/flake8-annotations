@@ -1,5 +1,5 @@
 from textwrap import dedent
-from typing import NamedTuple, Tuple
+from typing import NamedTuple
 
 
 class ParserTestCase(NamedTuple):
@@ -12,7 +12,7 @@ class ParserTestCase(NamedTuple):
     """
 
     src: str
-    error_locations: Tuple[Tuple[int, int], ...]
+    error_locations: tuple[tuple[int, int], ...]
 
 
 parser_test_cases = {
@@ -135,5 +135,47 @@ parser_test_cases = {
                 ...              # 5
             """),
         error_locations=((1, 9),),
+    ),
+    "comment_between_def_and_body": ParserTestCase(
+        src=dedent("""\
+            def foo(        # 1
+                x: int,     # 2
+            ):              # 3
+                # Comment   # 4
+                pass        # 5
+            """),
+        error_locations=((3, 1),),
+    ),
+    "blank_line_between_def_and_body": ParserTestCase(
+        src=dedent("""\
+            def foo(        # 1
+                x: int,     # 2
+            ):              # 3
+
+                pass        # 5
+            """),
+        error_locations=((3, 1),),
+    ),
+    "body_on_multiline_def_closing_line": ParserTestCase(
+        src=dedent("""\
+            def foo(               # 1
+                x: int): return x  # 2
+            """),
+        error_locations=((2, 11),),
+    ),
+    "comment_with_colon_on_def_closing_line": ParserTestCase(
+        src=dedent("""\
+            def foo(                # 1
+                x: int,             # 2
+            ):  # Note: something   # 3
+                pass                # 4
+            """),
+        error_locations=((3, 1),),
+    ),
+    "single_line_def_non_ascii": ParserTestCase(
+        src=dedent("""\
+            def foo(x: str = "日本語日本語日本語"): return {1: 2}  # 1
+            """),
+        error_locations=((1, 29),),
     ),
 }

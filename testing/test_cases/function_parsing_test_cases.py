@@ -1,6 +1,6 @@
 from functools import partial
 from textwrap import dedent
-from typing import NamedTuple, Tuple
+from typing import NamedTuple
 
 from flake8_annotations.ast_walker import Function
 from flake8_annotations.enums import ClassDecoratorType, FunctionType
@@ -10,7 +10,7 @@ class FunctionTestCase(NamedTuple):
     """Helper container for Function parsing test cases."""
 
     src: str
-    func: Tuple[Function, ...]
+    func: tuple[Function, ...]
 
 
 # Note: For testing purposes, lineno and col_offset are ignored so these are set to dummy values

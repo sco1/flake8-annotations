@@ -8,7 +8,7 @@ assignees: ''
 ---
 
 **Describe the bug**
-A clear and concise description the bug you encountered.
+A clear and concise description of the bug you encountered.
 
 If this is something behaving contrary to what you'd expect, please provide your expectation as well.
 

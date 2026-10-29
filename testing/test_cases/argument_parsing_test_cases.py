@@ -1,6 +1,6 @@
 from functools import partial
 from textwrap import dedent
-from typing import NamedTuple, Tuple
+from typing import NamedTuple
 
 from flake8_annotations.ast_walker import Argument
 from flake8_annotations.enums import AnnotationType
@@ -8,7 +8,7 @@ from flake8_annotations.enums import AnnotationType
 
 class ArgumentTestCase(NamedTuple):  # noqa: D101
     src: str
-    args: Tuple[Argument, ...]
+    args: tuple[Argument, ...]
 
 
 # Note: For testing purposes, lineno and col_offset are ignored so these are set to dummy values

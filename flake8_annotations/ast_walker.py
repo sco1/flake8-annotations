@@ -1,18 +1,19 @@
 from __future__ import annotations
 
 import ast
+import tokenize
 import typing as t
 from dataclasses import dataclass
 
 from flake8_annotations.enums import AnnotationType, ClassDecoratorType, FunctionType
 
-AST_DECORATOR_NODES = t.Union[ast.Attribute, ast.Call, ast.Name]
-AST_DEF_NODES = t.Union[ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef]
-AST_FUNCTION_TYPES = t.Union[ast.FunctionDef, ast.AsyncFunctionDef]
+AST_DECORATOR_NODES = ast.Attribute | ast.Call | ast.Name
+AST_DEF_NODES = ast.FunctionDef | ast.AsyncFunctionDef | ast.ClassDef
+AST_FUNCTION_TYPES = ast.FunctionDef | ast.AsyncFunctionDef
 
 # The order of AST_ARG_TYPES must match Python's grammar
 # See: https://docs.python.org/3/library/ast.html#abstract-grammar
-AST_ARG_TYPES: t.Tuple[str, ...] = ("posonlyargs", "args", "vararg", "kwonlyargs", "kwarg")
+AST_ARG_TYPES: tuple[str, ...] = ("posonlyargs", "args", "vararg", "kwonlyargs", "kwarg")
 
 
 @dataclass(slots=True)
@@ -38,7 +39,7 @@ class Argument:
 
     @classmethod
     def from_arg_node(cls, node: ast.arg, annotation_type_name: str) -> Argument:
-        """Create an Argument object from an ast.arguments node."""
+        """Create an Argument object from an ast.arg node."""
         annotation_type = AnnotationType[annotation_type_name]
         new_arg = cls(node.arg, node.lineno, node.col_offset, annotation_type)
 
@@ -86,11 +87,11 @@ class Function:
     name: str
     lineno: int
     col_offset: int
-    decorator_list: t.List[AST_DECORATOR_NODES]
-    args: t.List[Argument]
+    decorator_list: list[AST_DECORATOR_NODES]
+    args: list[Argument]
     function_type: FunctionType = FunctionType.PUBLIC
     is_class_method: bool = False
-    class_decorator_type: t.Union[ClassDecoratorType, None] = None
+    class_decorator_type: ClassDecoratorType | None = None
     is_return_annotated: bool = False
     has_type_comment: bool = False
     has_only_none_returns: bool = True
@@ -108,15 +109,15 @@ class Function:
         """Determine if the function is dynamically typed, defined as completely lacking hints."""
         return not any(arg.has_type_annotation for arg in self.args)
 
-    def get_missed_annotations(self) -> t.List[Argument]:
+    def get_missed_annotations(self) -> list[Argument]:
         """Provide a list of arguments with missing type annotations."""
         return [arg for arg in self.args if not arg.has_type_annotation]
 
-    def get_annotated_arguments(self) -> t.List[Argument]:
+    def get_annotated_arguments(self) -> list[Argument]:
         """Provide a list of arguments with type annotations."""
         return [arg for arg in self.args if arg.has_type_annotation]
 
-    def has_decorator(self, check_decorators: t.Set[str]) -> bool:
+    def has_decorator(self, check_decorators: set[str]) -> bool:
         """
         Determine whether the function node is decorated by any of the provided decorators.
 
@@ -128,14 +129,10 @@ class Function:
 
         NOTE: Deeper decorator imports (e.g. `a.b.overload`) are not explicitly supported
         """
-        for decorator in self.decorator_list:
-            # Drop to a helper to allow for simpler handling of callable decorators
-            return self._decorator_checker(decorator, check_decorators)
-        else:
-            return False
+        return any(self._decorator_checker(d, check_decorators) for d in self.decorator_list)
 
     def _decorator_checker(
-        self, decorator: AST_DECORATOR_NODES, check_decorators: t.Set[str]
+        self, decorator: AST_DECORATOR_NODES, check_decorators: set[str]
     ) -> bool:
         """
         Check the provided decorator for a match against the provided set of check names.
@@ -178,10 +175,10 @@ class Function:
 
     @classmethod
     def from_function_node(
-        cls, node: AST_FUNCTION_TYPES, lines: t.List[str], **kwargs: t.Any
+        cls, node: AST_FUNCTION_TYPES, lines: list[str], **kwargs: t.Any
     ) -> Function:
         """
-        Create an Function object from ast.FunctionDef or ast.AsyncFunctionDef nodes.
+        Create a Function object from ast.FunctionDef or ast.AsyncFunctionDef nodes.
 
         Accept the source code, as a list of strings, in order to get the column where the function
         definition ends.
@@ -241,38 +238,42 @@ class Function:
         return new_function
 
     @staticmethod
-    def colon_seeker(node: AST_FUNCTION_TYPES, lines: t.List[str]) -> t.Tuple[int, int]:
+    def colon_seeker(node: AST_FUNCTION_TYPES, lines: list[str]) -> tuple[int, int]:
         """
         Find the line & column indices of the function definition's closing colon.
-
-        For Python >= 3.8, docstrings are contained in the body of the function node.
 
         NOTE: AST's line numbers are 1-indexed, column offsets are 0-indexed. Since `lines` is a
         list, it will be 0-indexed.
         """
-        # Special case single line function definitions
-        if node.lineno == node.body[0].lineno:
-            return Function._single_line_colon_seeker(node, lines[node.lineno - 1])
+        # Slice the lines belonging to our node using a generator rather than copying the source
+        # generate_tokens expects a callable that returns a single line, as str, and terminates
+        # tokenization when an empty string is encountered ("ENDMARKER")
+        # Tokenizing mid-stream should be fine, since we know that def must start a new line
+        source = (lines[i] for i in range(node.lineno - 1, len(lines)))
 
-        # Once we've gotten here, we've found the line where the docstring begins, so we have
-        # to step up one more line to get to the close of the def
-        def_end_lineno = node.body[0].lineno
-        def_end_lineno -= 1
+        # Keep track of opening/closing brackets so we don't match anything else inside the function
+        # declaration
+        depth = 0
+        for tok in tokenize.generate_tokens(lambda: next(source, "")):
+            # Parentheses, brackets, and colons are all tokenized as OP, we don't care about others
+            # Comments receive their own token type, so they aren't a factor
+            if tok.type != tokenize.OP:
+                continue
 
-        # Use str.rfind() to account for annotations on the same line, definition closure should
-        # be the last : on the line
-        def_end_col_offset = lines[def_end_lineno - 1].rfind(":")
+            if tok.string in "([{":
+                depth += 1
+            elif tok.string in ")]}":
+                depth -= 1
+            elif tok.string == ":" and depth == 0:
+                # Since we're tokenizing mid-stream, token rows are relative to the first line
+                # provided to the tokenizer
+                colon_lineno = node.lineno + tok.start[0] - 1
+                colon_col = tok.start[1]
+                return colon_lineno, colon_col
 
-        return def_end_lineno, def_end_col_offset
-
-    @staticmethod
-    def _single_line_colon_seeker(node: AST_FUNCTION_TYPES, line: str) -> t.Tuple[int, int]:
-        """Locate the closing colon for a single-line function definition."""
-        col_start = node.col_offset
-        col_end = node.body[0].col_offset
-        def_end_col_offset = line.rfind(":", col_start, col_end)
-
-        return node.lineno, def_end_col_offset
+        # Shouldn't be possible to get here, by the time we get to colon seeking we have
+        # syntactically valid Python so every def will have a closing colon
+        raise ValueError(f"Could not locate closing colon for '{node.name}'")  # pragma: no cover
 
     @staticmethod
     def get_function_type(function_name: str) -> FunctionType:
@@ -297,7 +298,7 @@ class Function:
     @staticmethod
     def get_class_decorator_type(
         function_node: AST_FUNCTION_TYPES,
-    ) -> t.Union[ClassDecoratorType, None]:
+    ) -> ClassDecoratorType | None:
         """
         Get the class method's decorator type from its function node.
 
@@ -327,10 +328,10 @@ class FunctionVisitor(ast.NodeVisitor):
 
     AST_FUNC_TYPES = (ast.FunctionDef, ast.AsyncFunctionDef)
 
-    def __init__(self, lines: t.List[str]):
+    def __init__(self, lines: list[str]):
         self.lines = lines
-        self.function_definitions: t.List[Function] = []
-        self._context: t.List[AST_DEF_NODES] = []
+        self.function_definitions: list[Function] = []
+        self._context: list[AST_DEF_NODES] = []
 
     def switch_context(self, node: AST_DEF_NODES) -> None:
         """
@@ -379,13 +380,13 @@ class ReturnVisitor(ast.NodeVisitor):
 
     Due to the generic visiting being done, we need to keep track of the context in which a
     non-`None` return node is found. These functions are added to a set that is checked to see
-    whether nor not the parent node is present.
+    whether or not the parent node is present.
     """
 
     def __init__(self, parent_node: AST_FUNCTION_TYPES):
         self.parent_node = parent_node
-        self._context: t.List[AST_FUNCTION_TYPES] = []
-        self._non_none_return_nodes: t.Set[AST_FUNCTION_TYPES] = set()
+        self._context: list[AST_FUNCTION_TYPES] = []
+        self._non_none_return_nodes: set[AST_FUNCTION_TYPES] = set()
 
     @property
     def has_only_none_returns(self) -> bool:

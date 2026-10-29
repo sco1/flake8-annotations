@@ -1,5 +1,3 @@
-from typing import Tuple
-
 import pytest
 import pytest_check as check
 
@@ -24,7 +22,7 @@ ALL_ERROR_CODES = (
 
 
 @pytest.fixture(params=ALL_ERROR_CODES)
-def error_objects(request) -> Tuple[Tuple, error_codes.Error]:  # noqa: ANN001
+def error_objects(request: pytest.FixtureRequest) -> tuple[tuple, error_codes.Error]:
     """
     Create a fixture for the error object's tuple-formatted parameters emitted for flake8.
 
@@ -35,7 +33,7 @@ def error_objects(request) -> Tuple[Tuple, error_codes.Error]:  # noqa: ANN001
     return error_object.to_flake8(), error_object
 
 
-def test_emitted_tuple_format(error_objects: Tuple[Tuple, error_codes.Error]) -> None:
+def test_emitted_tuple_format(error_objects: tuple[tuple, error_codes.Error]) -> None:
     """
     Test that the emitted message is a tuple with the appropriate information.
 
@@ -45,7 +43,7 @@ def test_emitted_tuple_format(error_objects: Tuple[Tuple, error_codes.Error]) ->
     emitted_error = error_objects[0]
 
     # Emitted warning should be a tuple
-    check.is_instance(emitted_error, Tuple)
+    check.is_instance(emitted_error, tuple)
 
     # Tuple should be of length 4
     check.equal(len(emitted_error), 4)
@@ -62,7 +60,7 @@ def test_emitted_tuple_format(error_objects: Tuple[Tuple, error_codes.Error]) ->
     check.equal(emitted_error[3], TypeHintChecker)
 
 
-def test_emitted_message_prefix(error_objects: Tuple[Tuple, error_codes.Error]) -> None:
+def test_emitted_message_prefix(error_objects: tuple[tuple, error_codes.Error]) -> None:
     """
     Test that the emitted message is prefixed with a code that matches the error object's name.
 

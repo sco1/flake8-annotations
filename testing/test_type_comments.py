@@ -39,7 +39,7 @@ TEST_CASES = (
 
 
 @pytest.mark.parametrize(("src", "n_errors", "n_ann402"), TEST_CASES)
-def test_dynamic_typing_errors(src: str, n_errors: int, n_ann402: int) -> None:
+def test_forbid_type_comments(src: str, n_errors: int, n_ann402: int) -> None:
     found_errors = list(check_source(src))
     assert len(found_errors) == n_errors
 

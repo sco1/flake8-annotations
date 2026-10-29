@@ -1,6 +1,14 @@
 # Changelog
 Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (`<major>`.`<minor>`.`<patch>`)
 
+## [v3.3.1]
+### Fixed
+* Fix dispatch and `typing.overload` decorators only being recognized when they are the first decorator applied to a function
+* Fix errors being suppressed for any later function sharing a name with the closing definition of a `typing.overload` series, such as a same-named method of another class
+* Fix only the first definition in a series of `typing.overload` decorated functions being checked for missing annotations
+* Fix `--respect-type-ignore` treating a `# type: ignore` or `# mypy: ignore-errors` comment trailing code on the first line of a module as a module-level ignore
+* Fix incorrect locations reported for missing return annotations when certain common patterns are encountered, such as the closing line of the function definition containing a comment with a colon, or being followed by a comment or blank line
+
 ## [v3.3.0]
 ### Changed
 * Python 3.11 is now the minimum supported version
@@ -78,7 +86,7 @@ Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (`<ma
 
 ## [v2.5.0]
 ### Added
-* #103 Add `--allow-untyped-nested` to suppress all errors from dynamically typted nested functions. A function is considered dynamically typed if it does not contain any type hints.
+* #103 Add `--allow-untyped-nested` to suppress all errors from dynamically typed nested functions. A function is considered dynamically typed if it does not contain any type hints.
 
 ## [v2.4.1]
 ### Fixed
