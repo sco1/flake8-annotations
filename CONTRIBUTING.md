@@ -35,4 +35,4 @@ A [pytest](https://docs.pytest.org/en/latest/) suite is provided, with coverage 
 $ tox
 ```
 
-Details on missing coverage, including in the test suite, is provided in the report to allow the user to generate additional tests for full coverage. Full code coverage is expected for the majority of code contributed to this project. Some exceptions are expected, primarily around code whose functionality relies on either user input or the presence of external drives; these interactions are currently not mocked, though this may change in the future.
+Details on missing coverage, including in the test suite, are provided in the report to allow the user to generate additional tests for full coverage. Full code coverage is expected for the majority of code contributed to this project.

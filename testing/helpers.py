@@ -14,7 +14,7 @@ from flake8_annotations.checker import (
 
 
 def parse_source(src: str) -> tuple[ast.Module, list[str]]:
-    """Parse the provided Python source string and return an (typed AST, source) tuple."""
+    """Parse the provided Python source string and return a (typed AST, source) tuple."""
     tree = ast.parse(src, type_comments=True)
     lines = src.splitlines(keepends=True)
 

@@ -258,7 +258,7 @@ class TypeHintChecker:
             action="store_true",
             parse_from_config=True,
             help=(
-                "Supress errors for functions annotated with a 'type: ignore' comment. (Default: "
+                "Suppress errors for functions annotated with a 'type: ignore' comment. (Default: "
                 "%(default)s)"
             ),
         )
@@ -286,7 +286,7 @@ def classify_error(function: Function, arg: Argument) -> error_codes.Error:
     For the currently defined rules & program flow, the assumption can be made that an argument
     passed to this method will match a linting error, and will only match a single linting error
 
-    This function provides an initial classificaton, then passes relevant attributes to cached
+    This function provides an initial classification, then passes relevant attributes to cached
     helper function(s).
     """
     # Check for return type

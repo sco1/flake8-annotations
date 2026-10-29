@@ -34,7 +34,7 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/sco1/"
+Homepage = "https://github.com/sco1/flake8-annotations"
 Documentation = "https://github.com/sco1/flake8-annotations/blob/main/README.md"
 Repository = "https://github.com/sco1/flake8-annotations"
 Issues = "https://github.com/sco1/flake8-annotations/issues"

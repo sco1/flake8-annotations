@@ -14,7 +14,7 @@ from testing.test_cases.dispatch_decorator_test_cases import (
 )
 def test_dispatch_decorator_error_suppression(test_case: DispatchDecoratorTestCase) -> None:
     """
-    Test that no errors are yielded dispatch decorated functions.
+    Test that no errors are yielded for dispatch decorated functions.
 
     To support decorator aliases, the `dispatch_decorators` param is optionally specified by the
     test case. If none is explicitly set, the decorator list defaults to the checker's default.
